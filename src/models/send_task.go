@@ -14,27 +14,18 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2020/07/08 23:36:30
+// Created at 2020/07/12 23:49:43
 
-package helpers
+package models
 
-import (
-	"github.com/avino-plan/postar/src/models"
-	"gopkg.in/gomail.v2"
-)
+type SendTask struct {
+	To          string `json:"to"`
+	Subject     string `json:"subject"`
+	ContentType string `json:"contentType"`
+	Body        string `json:"body"`
+}
 
-// 发送邮件
-func SendEmail(email *models.Email) error {
-
-	// 定义一个邮件信息
-	msg := gomail.NewMessage()
-	msg.SetHeader("From", "smtp.user")
-	msg.SetHeader("To", email.To)
-	msg.SetHeader("Subject", email.Subject)
-	msg.SetBody(email.ContentType, email.Body)
-
-	// 连接并发送
-	d := gomail.NewDialer("smtp.host", 537, "smtp.user", "smtp.password")
-	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-	return d.DialAndSend(msg)
+// NewEmptySendTask 返回一个空的邮件发送任务
+func NewEmptySendTask() *SendTask {
+	return &SendTask{}
 }

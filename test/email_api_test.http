@@ -1,0 +1,11 @@
+POST http://localhost:5779/send
+Content-Type: application/json
+
+{
+  "to": "",
+  "subject": "",
+  "contentType": "",
+  "body": ""
+}
+
+###

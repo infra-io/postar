@@ -14,27 +14,12 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2020/07/08 23:36:30
+// Created at 2020/07/13 00:43:49
 
-package helpers
+package handlers
 
-import (
-	"github.com/avino-plan/postar/src/models"
-	"gopkg.in/gomail.v2"
-)
+import "github.com/kataras/iris/v12"
 
-// 发送邮件
-func SendEmail(email *models.Email) error {
-
-	// 定义一个邮件信息
-	msg := gomail.NewMessage()
-	msg.SetHeader("From", "smtp.user")
-	msg.SetHeader("To", email.To)
-	msg.SetHeader("Subject", email.Subject)
-	msg.SetBody(email.ContentType, email.Body)
-
-	// 连接并发送
-	d := gomail.NewDialer("smtp.host", 537, "smtp.user", "smtp.password")
-	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-	return d.DialAndSend(msg)
+func PingHandler(context iris.Context) {
+	context.Write([]byte(`<h1 style="text-align: center;">Pong!</h1><h3 style="text-align: center;">- Postar is ready! -</h3>`))
 }

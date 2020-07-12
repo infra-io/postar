@@ -3,6 +3,7 @@ module github.com/avino-plan/postar
 go 1.14
 
 require (
+	github.com/FishGoddess/logit v0.2.7
 	github.com/iris-contrib/jade v1.1.4 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/kataras/golog v0.0.18 // indirect
