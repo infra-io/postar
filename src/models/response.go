@@ -24,21 +24,21 @@ import "encoding/json"
 type response struct {
 
 	// code 是状态码
-	code int
+	Code int `json:"code"`
 
 	// msg 是信息
-	msg string
+	Msg string `json:"msg"`
 
 	// data 是携带的数据
-	data interface{}
+	Data interface{} `json:"data"`
 }
 
 // newResponse 返回一个完整的响应结构体对象
 func newResponse(code int, msg string, data interface{}) *response {
 	return &response{
-		code: code,
-		msg:  msg,
-		data: data,
+		Code: code,
+		Msg:  msg,
+		Data: data,
 	}
 }
 

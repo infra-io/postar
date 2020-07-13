@@ -14,31 +14,24 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2020/07/08 23:41:46
-package main
+// Created at 2020/07/13 23:23:24
+
+package system
 
 import (
-	"strconv"
+	"sync"
 
-	"github.com/FishGoddess/logit"
-	"github.com/avino-plan/postar/src/config"
-	"github.com/avino-plan/postar/src/handlers"
-	"github.com/avino-plan/postar/src/models"
-	"github.com/avino-plan/postar/src/system"
-	"github.com/kataras/iris/v12"
+	"gopkg.in/gomail.v2"
 )
 
-func main() {
+var (
+	emailDialer         *gomail.Dialer
+	emailDialerInitOnce = &sync.Once{}
+)
 
-	config.UseConfig(func(config *models.Config) {
-		system.InitAllComponentsWith(config)
+// initEmailDialerWith 可以初始化 emailDialer，并且保证多次调用也只初始化一次。
+func initEmailDialerWith(host string, port int, username string, password string) {
+	emailDialerInitOnce.Do(func() {
+		emailDialer = gomail.NewDialer(host, port, username, password)
 	})
-
-	app := iris.New()
-	app.Get("/ping", handlers.PingHandler)
-	app.Post("/send", handlers.SendHandler)
-
-	port := strconv.Itoa(5779)
-	logit.Infof("Postar is running at port %s.", port)
-	app.Listen(":" + port)
 }

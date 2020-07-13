@@ -20,8 +20,8 @@ package handlers
 
 import (
 	"github.com/FishGoddess/logit"
-	"github.com/avino-plan/postar/src/helpers"
 	"github.com/avino-plan/postar/src/models"
+	"github.com/avino-plan/postar/src/system"
 	"github.com/kataras/iris/v12/context"
 )
 
@@ -39,7 +39,8 @@ func SendHandler(context context.Context) {
 	}
 
 	// 发送邮件
-	err = helpers.SendEmail(models.NewEmail(sendTask.To, sendTask.Subject, sendTask.ContentType, sendTask.Body))
+	email := models.NewEmail(sendTask.To, sendTask.Subject, sendTask.ContentType, sendTask.Body)
+	err = system.SendEmail(email)
 	if err != nil {
 		logit.Errorf("The error is %s. The information of this email is %+v.", err.Error(), sendTask)
 		context.StatusCode(500)
@@ -48,7 +49,7 @@ func SendHandler(context context.Context) {
 		return
 	}
 
-	logit.Debugf("Email %v successfully sent.")
+	logit.Debugf("Email %+v successfully sent.", email)
 	context.Header("Content-Type", "application/json; charset=utf-8")
 	context.Write(models.EmailSuccessfullySentResponse())
 }

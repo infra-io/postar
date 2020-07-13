@@ -14,31 +14,20 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2020/07/08 23:41:46
-package main
+// Created at 2020/07/13 23:04:31
 
-import (
-	"strconv"
+package models
 
-	"github.com/FishGoddess/logit"
-	"github.com/avino-plan/postar/src/config"
-	"github.com/avino-plan/postar/src/handlers"
-	"github.com/avino-plan/postar/src/models"
-	"github.com/avino-plan/postar/src/system"
-	"github.com/kataras/iris/v12"
-)
+type Config struct {
+	Smtp SmtpConfig `ini:"smtp"`
+}
 
-func main() {
+type SmtpConfig struct {
+	Host string `ini:"host"`
 
-	config.UseConfig(func(config *models.Config) {
-		system.InitAllComponentsWith(config)
-	})
+	Port int `ini:"port"`
 
-	app := iris.New()
-	app.Get("/ping", handlers.PingHandler)
-	app.Post("/send", handlers.SendHandler)
+	Username string `ini:"username"`
 
-	port := strconv.Itoa(5779)
-	logit.Infof("Postar is running at port %s.", port)
-	app.Listen(":" + port)
+	Password string `ini:"password"`
 }

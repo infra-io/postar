@@ -14,27 +14,30 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2020/07/08 23:36:30
+// Created at 2020/07/13 23:00:26
 
-package helpers
+package system
 
 import (
 	"github.com/avino-plan/postar/src/models"
 	"gopkg.in/gomail.v2"
 )
 
-// 发送邮件
+func InitAllComponentsWith(config *models.Config) {
+	initEmailDialerWith(config.Smtp.Host, config.Smtp.Port, config.Smtp.Username, config.Smtp.Password)
+}
+
+// SendEmail 可以发送一封邮件。
 func SendEmail(email *models.Email) error {
 
 	// 定义一个邮件信息
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", "smtp.user")
+	msg.SetHeader("From", emailDialer.Username)
 	msg.SetHeader("To", email.To)
 	msg.SetHeader("Subject", email.Subject)
 	msg.SetBody(email.ContentType, email.Body)
 
 	// 连接并发送
-	d := gomail.NewDialer("smtp.host", 537, "smtp.user", "smtp.password")
 	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-	return d.DialAndSend(msg)
+	return emailDialer.DialAndSend(msg)
 }
