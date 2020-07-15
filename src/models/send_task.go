@@ -18,6 +18,7 @@
 
 package models
 
+// SendTask is the struct represents of all information of sending task.
 type SendTask struct {
 	To          string `json:"to"`
 	Subject     string `json:"subject"`
@@ -25,7 +26,7 @@ type SendTask struct {
 	Body        string `json:"body"`
 }
 
-// NewEmptySendTask 返回一个空的邮件发送任务
+// NewEmptySendTask returns an empty SendTask holder.
 func NewEmptySendTask() *SendTask {
 	return &SendTask{}
 }

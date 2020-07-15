@@ -17,28 +17,8 @@
 // Created at 2020/07/08 23:41:46
 package main
 
-import (
-	"strconv"
-
-	"github.com/FishGoddess/logit"
-	"github.com/avino-plan/postar/src/config"
-	"github.com/avino-plan/postar/src/handlers"
-	"github.com/avino-plan/postar/src/models"
-	"github.com/avino-plan/postar/src/system"
-	"github.com/kataras/iris/v12"
-)
+import "github.com/avino-plan/postar/src/net/http"
 
 func main() {
-
-	config.UseConfig(func(config *models.Config) {
-		system.InitAllComponentsWith(config)
-	})
-
-	app := iris.New()
-	app.Get("/ping", handlers.PingHandler)
-	app.Post("/send", handlers.SendHandler)
-
-	port := strconv.Itoa(5779)
-	logit.Infof("Postar is running at port %s.", port)
-	app.Listen(":" + port)
+	http.RunServer()
 }

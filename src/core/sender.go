@@ -14,30 +14,37 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2020/07/13 23:00:26
+// Created at 2020/07/13 23:23:24
 
-package system
+package core
 
 import (
-	"github.com/avino-plan/postar/src/models"
 	"gopkg.in/gomail.v2"
 )
 
-func InitAllComponentsWith(config *models.Config) {
-	initEmailDialerWith(config.Smtp.Host, config.Smtp.Port, config.Smtp.Username, config.Smtp.Password)
+// sender is for sending an email.
+type sender struct {
+	dialer *gomail.Dialer
 }
 
-// SendEmail 可以发送一封邮件。
-func SendEmail(email *models.Email) error {
+// newSender returns a sender with given parameters.
+func newSender(host string, port int, username string, password string) *sender {
+	return &sender{
+		dialer: gomail.NewDialer(host, port, username, password),
+	}
+}
 
-	// 定义一个邮件信息
+// Send sends the email and returns an error if failed.
+func (s *sender) Send(email *Email) error {
+
+	// Create one message including information for sending.
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", emailDialer.Username)
+	msg.SetHeader("From", s.dialer.Username)
 	msg.SetHeader("To", email.To)
 	msg.SetHeader("Subject", email.Subject)
 	msg.SetBody(email.ContentType, email.Body)
 
-	// 连接并发送
-	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-	return emailDialer.DialAndSend(msg)
+	// Dial and send this message.
+	//s.dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	return s.dialer.DialAndSend(msg)
 }
