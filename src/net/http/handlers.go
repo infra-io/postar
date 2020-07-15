@@ -16,14 +16,19 @@
 // Email: fishgoddess@qq.com
 // Created at 2020/07/13 00:42:12
 
-package handlers
+package http
 
 import (
 	"github.com/FishGoddess/logit"
+	"github.com/avino-plan/postar/src/core"
 	"github.com/avino-plan/postar/src/models"
-	"github.com/avino-plan/postar/src/system"
+	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 )
+
+func PingHandler(context iris.Context) {
+	context.Write([]byte(`<h1 style="text-align: center;">Pong!</h1><h3 style="text-align: center;">- Postar is ready! -</h3>`))
+}
 
 func SendHandler(context context.Context) {
 
@@ -39,8 +44,8 @@ func SendHandler(context context.Context) {
 	}
 
 	// 发送邮件
-	email := models.NewEmail(sendTask.To, sendTask.Subject, sendTask.ContentType, sendTask.Body)
-	err = system.SendEmail(email)
+	email := core.NewEmail(sendTask.To, sendTask.Subject, sendTask.ContentType, sendTask.Body)
+	err = core.Send(email)
 	if err != nil {
 		logit.Errorf("The error is %s. The information of this email is %+v.", err.Error(), sendTask)
 		context.StatusCode(500)

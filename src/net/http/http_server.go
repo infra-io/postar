@@ -14,12 +14,23 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2020/07/13 00:43:49
+// Created at 2020/07/16 00:07:38
 
-package handlers
+package http
 
-import "github.com/kataras/iris/v12"
+import (
+	"strconv"
 
-func PingHandler(context iris.Context) {
-	context.Write([]byte(`<h1 style="text-align: center;">Pong!</h1><h3 style="text-align: center;">- Postar is ready! -</h3>`))
+	"github.com/FishGoddess/logit"
+	"github.com/kataras/iris/v12"
+)
+
+func RunServer() {
+	app := iris.New()
+	app.Get("/ping", PingHandler)
+	app.Post("/send", SendHandler)
+
+	port := strconv.Itoa(5779)
+	logit.Infof("Postar is running at port %s.", port)
+	app.Listen(":" + port)
 }

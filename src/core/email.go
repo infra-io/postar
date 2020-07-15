@@ -14,28 +14,24 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2020/07/13 22:38:33
+// Created at 2020/07/08 23:37:24
 
-package config
+package core
 
-import (
-	"flag"
-
-	"github.com/avino-plan/postar/src/models"
-	"gopkg.in/ini.v1"
-)
-
-var (
-	pathOfConfigFile string
-)
-
-func init() {
-	flag.StringVar(&pathOfConfigFile, "c", "./postar.ini", "The path of config file.")
-	flag.Parse()
+// Email is the struct represents of a message including all information for sending.
+type Email struct {
+	To          string
+	Subject     string
+	ContentType string
+	Body        string
 }
 
-func UseConfig(useFunc func(config *models.Config)) {
-	config := &models.Config{}
-	ini.MapTo(config, pathOfConfigFile)
-	useFunc(config)
+// NewEmail returns an Email holder with given parameters.
+func NewEmail(to string, subject string, contentType string, body string) *Email {
+	return &Email{
+		To:          to,
+		Subject:     subject,
+		ContentType: contentType,
+		Body:        body,
+	}
 }

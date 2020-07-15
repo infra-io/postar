@@ -14,29 +14,6 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2020/07/08 23:37:24
+// Created at 2020/07/15 23:44:43
 
-package models
-
-// 邮件结构体
-type Email struct {
-	To          string
-	Subject     string
-	ContentType string
-	Body        string
-}
-
-// 创建邮件对象
-func NewEmail(to string, subject string, contentType string, body string) *Email {
-	return &Email{
-		To:          to,
-		Subject:     subject,
-		ContentType: contentType,
-		Body:        body,
-	}
-}
-
-// 创建 HTML 类型邮件
-func NewHtmlEmail(to string, subject string, body string) *Email {
-	return NewEmail(to, subject, "text/html;charset=utf-8", body)
-}
+package net
