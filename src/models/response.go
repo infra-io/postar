@@ -52,13 +52,13 @@ var (
 	emailSuccessfullySentResponse, _ = json.Marshal(newResponse(0, "Email successfully sent!", nil))
 
 	// 服务器正在关闭的响应状态码和信息
-	serverIsClosingResponse, _ = json.Marshal(newResponse(0, "Server is closing!", nil))
+	serverIsClosingResponse, _ = json.Marshal(newResponse(0, "Server is closing! Please wait a few moments.", nil))
 
 	// 请求体错误的响应状态码和信息
 	wrongRequestBodyResponse, _ = json.Marshal(newResponse(100, "Please check your request body! It should be a Json string!", nil))
 
 	// 邮件发送失败的响应状态码和信息
-	failedToSendEmailResponse, _ = json.Marshal(newResponse(200, "Failed to send this email, maybe the email has something wrong!", nil))
+	failedToSendEmailResponse, _ = json.Marshal(newResponse(200, "Failed to send this email, maybe the email has something wrong?", nil))
 
 	// 服务器关闭失败的响应状态码和信息
 	failedToCloseServerResponse, _ = json.Marshal(newResponse(300, "Failed to close server! Try to kill it?", nil))
