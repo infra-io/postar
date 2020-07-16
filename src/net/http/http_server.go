@@ -22,6 +22,7 @@ import (
 	"context"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/avino-plan/postar/src/core"
 	"github.com/avino-plan/postar/src/models"
@@ -61,9 +62,9 @@ func initServerForService(port string, afterListening func()) {
 	serverForService.Logger().SetLevel("disable")
 	serverForService.Get("/", pingHandler)
 	serverForService.Post("/send", sendHandler)
-	err := serverForService.Listen(":"+port, iris.WithoutStartupLog)
+	err := serverForService.Listen(":"+port, iris.WithoutStartupLog, iris.WithoutServerError(iris.ErrServerClosed))
 	if err != nil {
-		core.Logger().Errorf("The port %s maybe used! Try to change another one!", port)
+		core.Logger().Errorf("The port %s maybe used! Try to change another one! [%s]", port, err.Error())
 	}
 	afterListening()
 }
@@ -71,11 +72,11 @@ func initServerForService(port string, afterListening func()) {
 // initServerForShutdown initializes the server for shutdown.
 func initServerForShutdown(port string, afterListening func()) {
 	serverForShutdown = iris.New()
-	serverForService.Logger().SetLevel("disable")
+	serverForShutdown.Logger().SetLevel("disable")
 	serverForShutdown.Post("/close", closeHandler)
-	err := serverForShutdown.Listen(":"+port, iris.WithoutStartupLog)
+	err := serverForShutdown.Listen(":"+port, iris.WithoutStartupLog, iris.WithoutServerError(iris.ErrServerClosed))
 	if err != nil {
-		core.Logger().Errorf("The port %s maybe used! Try to change another one!", port)
+		core.Logger().Errorf("The port %s maybe used! Try to change another one! [%s]", port, err.Error())
 	}
 	afterListening()
 }
@@ -95,16 +96,20 @@ func closeHandler(ctx iris.Context) {
 		}
 	}
 
+	core.Logger().Info("Server for service has been closed! Have a good day :)")
+	ctx.Write(models.ServerIsClosingResponse())
+	ctx.ResponseWriter().Flush()
+
 	// Close the server for shutdown.
 	if serverForShutdown != nil {
-		defer func() {
+		// This server should be closed after finishing flushing all data to clients, or
+		// you will get a Connection Reset error, so do it after 3 seconds.
+		time.AfterFunc(3*time.Second, func() {
 			err := serverForShutdown.Shutdown(ctxBackground)
 			if err != nil {
-				core.Logger().Errorf("Failed to close server for shutdown! Try to kill it? [%s].", err.Error())
+				core.Logger().Errorf("Failed to close server for shutdown! Exit with code 0. [%s].", err.Error())
 				os.Exit(0) // Return 0 if failed to close serverForShutdown.
 			}
-		}()
+		})
 	}
-
-	ctx.Write(models.ServerIsClosingResponse())
 }
