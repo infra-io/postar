@@ -19,27 +19,28 @@
 package http
 
 import (
-	"github.com/FishGoddess/logit"
 	"github.com/avino-plan/postar/src/core"
 	"github.com/avino-plan/postar/src/models"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 )
 
-func PingHandler(context iris.Context) {
-	context.Write([]byte(`<h1 style="text-align: center;">Pong!</h1><h3 style="text-align: center;">- Postar is ready! -</h3>`))
+// pingHandler tells you if postar is ready or not.
+func pingHandler(ctx iris.Context) {
+	ctx.Write([]byte(`<h1 style="text-align: center;">Pong!</h1><h3 style="text-align: center;">- Postar is ready! -</h3>`))
 }
 
-func SendHandler(context context.Context) {
+// sendHandler handles the service of sending emails.
+func sendHandler(ctx context.Context) {
 
 	// 获取邮件发送任务信息
 	sendTask := models.NewEmptySendTask()
-	err := context.ReadJSON(&sendTask)
+	err := ctx.ReadJSON(&sendTask)
 	if err != nil {
-		logit.Errorf("The error is %s.", err.Error())
-		context.StatusCode(400)
-		context.Header("Content-Type", "application/json; charset=utf-8")
-		context.Write(models.WrongRequestBodyResponse())
+		core.Logger().Errorf("The error is %s.", err.Error())
+		ctx.StatusCode(400)
+		ctx.Header("Content-Type", "application/json; charset=utf-8")
+		ctx.Write(models.WrongRequestBodyResponse())
 		return
 	}
 
@@ -47,14 +48,14 @@ func SendHandler(context context.Context) {
 	email := core.NewEmail(sendTask.To, sendTask.Subject, sendTask.ContentType, sendTask.Body)
 	err = core.Send(email)
 	if err != nil {
-		logit.Errorf("The error is %s. The information of this email is %+v.", err.Error(), sendTask)
-		context.StatusCode(500)
-		context.Header("Content-Type", "application/json; charset=utf-8")
-		context.Write(models.FailedToSendEmailResponse())
+		core.Logger().Errorf("The error is %s. The information of this email is %+v.", err.Error(), sendTask)
+		ctx.StatusCode(500)
+		ctx.Header("Content-Type", "application/json; charset=utf-8")
+		ctx.Write(models.FailedToSendEmailResponse())
 		return
 	}
 
-	logit.Debugf("Email %+v successfully sent.", email)
-	context.Header("Content-Type", "application/json; charset=utf-8")
-	context.Write(models.EmailSuccessfullySentResponse())
+	core.Logger().Debugf("Email %+v successfully sent.", email)
+	ctx.Header("Content-Type", "application/json; charset=utf-8")
+	ctx.Write(models.EmailSuccessfullySentResponse())
 }

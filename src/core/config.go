@@ -35,7 +35,8 @@ var (
 
 // config is the struct represents of all settings of this system.
 type config struct {
-	Smtp smtpConfig `ini:"smtp"`
+	Smtp   smtpConfig   `ini:"smtp"`
+	Server serverConfig `ini:"server"`
 }
 
 // smtpConfig is the struct represents of all settings of smtp.
@@ -44,6 +45,13 @@ type smtpConfig struct {
 	Port     int    `ini:"port"`
 	Username string `ini:"username"`
 	Password string `ini:"password"`
+}
+
+// serverConfig is the struct represents of all settings of server.
+type serverConfig struct {
+	Type       string `ini:"type"`
+	Port       string `ini:"port"`
+	ClosedPort string `ini:"closedPort"`
 }
 
 // getConfig returns the global config.

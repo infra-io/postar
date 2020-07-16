@@ -18,18 +18,7 @@
 
 package core
 
-import (
-	"sync"
-
-	"github.com/FishGoddess/logit"
-)
-
 var (
-	// globalLogger is the logger holder for global usage.
-	// This holder is singleton, so it uses initLoggerOnce to do that.
-	globalLogger   *logit.Logger
-	initLoggerOnce = &sync.Once{}
-
 	// globalSender is the sender holder for global usage.
 	globalSender *sender
 )
@@ -40,15 +29,24 @@ func init() {
 	globalSender = newSender(config.Smtp.Host, config.Smtp.Port, config.Smtp.Username, config.Smtp.Password)
 }
 
-// Log returns the global logger.
-func Log() *logit.Logger {
-	initLoggerOnce.Do(func() {
-		globalLogger = logit.Me()
-	})
-	return globalLogger
-}
-
 // Send sends the email and returns an error if failed.
 func Send(email *Email) error {
 	return globalSender.Send(email)
+}
+
+// ===================================== for fetching settings =====================================
+
+// ServerType returns the type of server in the config.
+func ServerType() string {
+	return getConfig().Server.Type
+}
+
+// ServerPort returns the port of server in the config.
+func ServerPort() string {
+	return getConfig().Server.Port
+}
+
+// ServerClosedPort returns the closedPort of server in the config.
+func ServerClosedPort() string {
+	return getConfig().Server.ClosedPort
 }

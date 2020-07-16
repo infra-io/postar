@@ -1,7 +1,17 @@
-GET http://localhost:5779/ping
+# 测试关闭服务器 API
+POST http://localhost:5780/close
+Content-Type: application/json
+
+{}
 
 ###
 
+# 测试 ready 界面 API
+GET http://localhost:5779
+
+###
+
+# 测试发送邮件 API
 POST http://localhost:5779/send
 Content-Type: application/json
 

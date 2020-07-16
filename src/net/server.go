@@ -17,3 +17,28 @@
 // Created at 2020/07/15 23:44:43
 
 package net
+
+import (
+	"sync"
+
+	"github.com/avino-plan/postar/src/core"
+	"github.com/avino-plan/postar/src/net/http"
+)
+
+var (
+	// servers stores all servers that can be used.
+	servers = map[string]func(port string, closedPort string) *sync.WaitGroup{
+		"http": http.InitServer,
+	}
+)
+
+// RunServer runs a server for service and shutdown.
+// Notice that the returning value is *sync.WaitGroup, so you can use it to
+// block your main goroutine before closing the server.
+func RunServer() *sync.WaitGroup {
+	initServer, ok := servers[core.ServerType()]
+	if !ok {
+		core.Logger().Errorf("The server type %s doesn't exist! Try 'http'?", core.ServerType())
+	}
+	return initServer(core.ServerPort(), core.ServerClosedPort())
+}
