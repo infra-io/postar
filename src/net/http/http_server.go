@@ -19,18 +19,92 @@
 package http
 
 import (
-	"strconv"
+	"context"
+	"os"
+	"sync"
 
-	"github.com/FishGoddess/logit"
+	"github.com/avino-plan/postar/src/core"
+	"github.com/avino-plan/postar/src/models"
 	"github.com/kataras/iris/v12"
 )
 
-func RunServer() {
-	app := iris.New()
-	app.Get("/ping", PingHandler)
-	app.Post("/send", SendHandler)
+var (
+	// serverForService is for main service and serverForShutdown is for closed service.
+	serverForService  *iris.Application
+	serverForShutdown *iris.Application
+)
 
-	port := strconv.Itoa(5779)
-	logit.Infof("Postar is running at port %s.", port)
-	app.Listen(":" + port)
+// InitServer initializes servers with given two ports.
+func InitServer(port string, closedPort string) *sync.WaitGroup {
+	wg := &sync.WaitGroup{}
+	go func() {
+		wg.Add(1)
+		initServerForService(port, func() {
+			wg.Done()
+		})
+	}()
+
+	go func() {
+		wg.Add(1)
+		initServerForShutdown(closedPort, func() {
+			wg.Done()
+		})
+	}()
+
+	core.Logger().Infof("The main service is using port %s. The closed service is using port %s.", port, closedPort)
+	return wg
+}
+
+// initServerForService initializes the server for service.
+func initServerForService(port string, afterListening func()) {
+	serverForService = iris.New()
+	serverForService.Logger().SetLevel("disable")
+	serverForService.Get("/", pingHandler)
+	serverForService.Post("/send", sendHandler)
+	err := serverForService.Listen(":"+port, iris.WithoutStartupLog)
+	if err != nil {
+		core.Logger().Errorf("The port %s maybe used! Try to change another one!", port)
+	}
+	afterListening()
+}
+
+// initServerForShutdown initializes the server for shutdown.
+func initServerForShutdown(port string, afterListening func()) {
+	serverForShutdown = iris.New()
+	serverForService.Logger().SetLevel("disable")
+	serverForShutdown.Post("/close", closeHandler)
+	err := serverForShutdown.Listen(":"+port, iris.WithoutStartupLog)
+	if err != nil {
+		core.Logger().Errorf("The port %s maybe used! Try to change another one!", port)
+	}
+	afterListening()
+}
+
+// closeHandler handles the service of closing the server.
+func closeHandler(ctx iris.Context) {
+
+	ctxBackground := context.Background()
+
+	// Close the server for service.
+	if serverForService != nil {
+		err := serverForService.Shutdown(ctxBackground)
+		if err != nil {
+			core.Logger().Errorf("Failed to close server for service! Try to kill it? [%s].", err.Error())
+			ctx.Write(models.ServerIsClosingResponse())
+			return
+		}
+	}
+
+	// Close the server for shutdown.
+	if serverForShutdown != nil {
+		defer func() {
+			err := serverForShutdown.Shutdown(ctxBackground)
+			if err != nil {
+				core.Logger().Errorf("Failed to close server for shutdown! Try to kill it? [%s].", err.Error())
+				os.Exit(0) // Return 0 if failed to close serverForShutdown.
+			}
+		}()
+	}
+
+	ctx.Write(models.ServerIsClosingResponse())
 }

@@ -51,16 +51,27 @@ var (
 	// 邮件成功发送的响应状态码和信息
 	emailSuccessfullySentResponse, _ = json.Marshal(newResponse(0, "Email successfully sent!", nil))
 
-	// 请求体错误的响应结果
+	// 服务器正在关闭的响应状态码和信息
+	serverIsClosingResponse, _ = json.Marshal(newResponse(0, "Server is closing!", nil))
+
+	// 请求体错误的响应状态码和信息
 	wrongRequestBodyResponse, _ = json.Marshal(newResponse(100, "Please check your request body! It should be a Json string!", nil))
 
 	// 邮件发送失败的响应状态码和信息
 	failedToSendEmailResponse, _ = json.Marshal(newResponse(200, "Failed to send this email, maybe the email has something wrong!", nil))
+
+	// 服务器关闭失败的响应状态码和信息
+	failedToCloseServerResponse, _ = json.Marshal(newResponse(300, "Failed to close server! Try to kill it?", nil))
 )
 
 // EmailSuccessfullySentResponse 返回一个邮件成功发送的响应结果
 func EmailSuccessfullySentResponse() []byte {
 	return emailSuccessfullySentResponse
+}
+
+// ServerIsClosingResponse 返回一个服务器正在关闭的响应结果
+func ServerIsClosingResponse() []byte {
+	return serverIsClosingResponse
 }
 
 // WrongRequestBodyResponse 返回一个请求体错误的响应结果
@@ -71,4 +82,9 @@ func WrongRequestBodyResponse() []byte {
 // FailedToSendEmailResponse 返回一个邮件发送失败的响应结果
 func FailedToSendEmailResponse() []byte {
 	return failedToSendEmailResponse
+}
+
+// FailedToCloseResponse 返回一个服务器关闭失败的响应结果
+func FailedToCloseResponse() []byte {
+	return failedToCloseServerResponse
 }

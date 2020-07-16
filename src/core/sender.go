@@ -27,13 +27,6 @@ type sender struct {
 	dialer *gomail.Dialer
 }
 
-// newSender returns a sender with given parameters.
-func newSender(host string, port int, username string, password string) *sender {
-	return &sender{
-		dialer: gomail.NewDialer(host, port, username, password),
-	}
-}
-
 // Send sends the email and returns an error if failed.
 func (s *sender) Send(email *Email) error {
 
@@ -47,4 +40,11 @@ func (s *sender) Send(email *Email) error {
 	// Dial and send this message.
 	//s.dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	return s.dialer.DialAndSend(msg)
+}
+
+// newSender returns a sender with given parameters.
+func newSender(host string, port int, username string, password string) *sender {
+	return &sender{
+		dialer: gomail.NewDialer(host, port, username, password),
+	}
 }

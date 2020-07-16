@@ -14,20 +14,27 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2020/07/08 23:41:46
-package main
+// Created at 2020/07/16 23:09:31
+
+package core
 
 import (
-	"time"
+	"sync"
 
-	"github.com/avino-plan/postar/src/core"
-	"github.com/avino-plan/postar/src/net"
+	"github.com/FishGoddess/logit"
 )
 
-func main() {
-	core.Logger().Infof("Postar is booting, please wait a moment...")
-	beginTime := time.Now()
-	wg := net.RunServer()
-	core.Logger().Infof("Postar is ready! It takes %s to boot it.", time.Now().Sub(beginTime))
-	wg.Wait()
+var (
+	// globalLogger is the logger holder for global usage.
+	// This holder is singleton, so it uses initLoggerOnce to do that.
+	globalLogger   *logit.Logger
+	initLoggerOnce = &sync.Once{}
+)
+
+// Logger returns the global logger.
+func Logger() *logit.Logger {
+	initLoggerOnce.Do(func() {
+		globalLogger = logit.Me()
+	})
+	return globalLogger
 }
