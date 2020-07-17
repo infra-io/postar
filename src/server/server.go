@@ -16,13 +16,13 @@
 // Email: fishgoddess@qq.com
 // Created at 2020/07/15 23:44:43
 
-package net
+package server
 
 import (
 	"sync"
 
 	"github.com/avino-plan/postar/src/core"
-	"github.com/avino-plan/postar/src/net/http"
+	"github.com/avino-plan/postar/src/server/http"
 )
 
 var (

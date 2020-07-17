@@ -18,6 +18,10 @@
 
 package core
 
+const (
+	Version = "v0.1.0-alpha"
+)
+
 var (
 	// globalSender is the sender holder for global usage.
 	globalSender *sender

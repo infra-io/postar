@@ -30,7 +30,7 @@ type sender struct {
 // Send sends the email and returns an error if failed.
 func (s *sender) Send(email *Email) error {
 
-	// Create one message including information for sending.
+	// Create one message including information to be sent.
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", s.dialer.Username)
 	msg.SetHeader("To", email.To)

@@ -18,16 +18,39 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/avino-plan/postar/src/core"
-	"github.com/avino-plan/postar/src/net"
+	"github.com/avino-plan/postar/src/server"
 )
 
 func main() {
-	core.Logger().Infof("Postar is booting, please wait a moment...")
+
+	// Before booting.
+	printSymbol()
+	core.Logger().Infof("Postar %s is booting, please wait a moment...", core.Version)
+
+	// Boot and record the time it takes.
 	beginTime := time.Now()
-	wg := net.RunServer()
-	core.Logger().Infof("Postar is ready! It takes %s to boot it.", time.Now().Sub(beginTime))
+	wg := server.RunServer()
+	endTime := time.Now()
+
+	// After booting.
+	core.Logger().Infof("Postar is ready! It takes %s to boot it.", endTime.Sub(beginTime))
 	wg.Wait()
+}
+
+func printSymbol() {
+	fmt.Println(`
+*******************************************************************
+*   _____      ____      _____   ________     ____     ______     *
+*  (  __ \    / __ \    / ____\ (___  ___)   (    )   (   __ \    *
+*   ) )_) )  / /  \ \  ( (___       ) )      / /\ \    ) (__) )   *
+*  (  ___/  ( ()  () )  \___ \     ( (      ( (__) )  (    __/    *
+*   ) )     ( ()  () )      ) )     ) )      )    (    ) \ \  _   *
+*  ( (       \ \__/ /   ___/ /     ( (      /  /\  \  ( ( \ \_))  *
+*  /__\       \____/   /____/      /__\    /__(  )__\  )_) \__/   *
+*                                                                 *
+*******************************************************************`)
 }

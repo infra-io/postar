@@ -84,7 +84,7 @@ func FailedToSendEmailResponse() []byte {
 	return failedToSendEmailResponse
 }
 
-// FailedToCloseResponse 返回一个服务器关闭失败的响应结果
-func FailedToCloseResponse() []byte {
+// FailedToCloseServerResponse 返回一个服务器关闭失败的响应结果
+func FailedToCloseServerResponse() []byte {
 	return failedToCloseServerResponse
 }

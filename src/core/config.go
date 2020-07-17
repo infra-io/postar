@@ -22,21 +22,20 @@ import (
 	"flag"
 	"sync"
 
-	"github.com/FishGoddess/logit"
 	"gopkg.in/ini.v1"
 )
 
 var (
 	// globalConfig is the config holder for global usage.
 	// This holder is singleton, so it uses initConfigOnce to do that.
-	globalConfig   = &config{}
+	globalConfig   = defaultConfig()
 	initConfigOnce = &sync.Once{}
 )
 
 // config is the struct represents of all settings of this system.
 type config struct {
-	Smtp   smtpConfig   `ini:"smtp"`
-	Server serverConfig `ini:"server"`
+	Smtp   *smtpConfig   `ini:"smtp"`
+	Server *serverConfig `ini:"server"`
 }
 
 // smtpConfig is the struct represents of all settings of smtp.
@@ -54,17 +53,39 @@ type serverConfig struct {
 	ClosedPort string `ini:"closedPort"`
 }
 
-// getConfig returns the global config.
-func getConfig() *config {
+// defaultConfig returns a default config for use.
+func defaultConfig() *config {
+	return &config{
+		Smtp: &smtpConfig{
+			Port: 587,
+		},
+		Server: &serverConfig{
+			Type:       "http",
+			Port:       "5779",
+			ClosedPort: "5780",
+		},
+	}
+}
 
-	// Only init config once.
+// ensureGlobalConfigIsValid will check the global config and do all the prepared jobs
+// if it's not ready. You should know that the global config is Only initialized once.
+func ensureGlobalConfigIsValid() {
 	initConfigOnce.Do(func() {
+
+		// Parse flag and get the path of config file.
 		pathOfConfigFile := flag.String("c", "./postar.ini", "The path of config file.")
 		flag.Parse()
+
+		// Map config file to global config.
 		err := ini.MapTo(globalConfig, *pathOfConfigFile)
 		if err != nil {
-			logit.Warnf("Can't map globalConfig to path: %s. Using default config.", *pathOfConfigFile)
+			Logger().Warnf("Can't map globalConfig to path: %s. Using default config.", *pathOfConfigFile)
 		}
 	})
+}
+
+// getConfig returns the global config.
+func getConfig() *config {
+	ensureGlobalConfigIsValid()
 	return globalConfig
 }
