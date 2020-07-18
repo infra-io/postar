@@ -1,14 +1,13 @@
 FROM alpine:3.12.0
 MAINTAINER  fishgoddess
 
-# 部署 postar 到工作目录
+# Deploy postar to work directory
 WORKDIR /postar/
-COPY ./postar-v0.0.1-alpha ./
+COPY ./postar-v0.1.0-alpha ./
+COPY ./src/logit.conf ./
+COPY ./_examples/config/postar.ini ./
 EXPOSE 5779
+EXPOSE 5780
 
-# 这个 entrypoint 文件的写法很有讲究，比如开头的 set -e 和结尾的 exec "$@"
-# COPY ./docker-entrypoint.sh ./
-# RUN chmod 755 ./docker-entrypoint.sh
-# ENTRYPOINT ["./docker-entrypoint.sh"]
-
-CMD ["./postar-v0.0.1-alpha"]
+# Run postar
+CMD ["./postar-v0.0.1-alpha", "-c", "./postar.ini"]

@@ -19,21 +19,58 @@
 package http
 
 import (
+	"context"
+	"os"
+	"time"
+
 	"github.com/avino-plan/postar/src/core"
 	"github.com/avino-plan/postar/src/models"
 	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/context"
 )
+
+// closeHandler handles the service of closing the server.
+func closeHandler(ctx iris.Context) {
+
+	ctxBackground := context.Background()
+
+	// Close the server for service.
+	if serverForService != nil {
+		err := serverForService.Shutdown(ctxBackground)
+		if err != nil {
+			core.Logger().Errorf("Failed to close server for service! Try to kill it? [%s].", err.Error())
+			ctx.StatusCode(iris.StatusInternalServerError)
+			ctx.Write(models.FailedToCloseServerResponse())
+			return
+		}
+	}
+
+	core.Logger().Info("Server for service has been closed! Have a good day :)")
+	ctx.Write(models.ServerIsClosingResponse())
+	ctx.ResponseWriter().Flush()
+
+	// Close the server for shutdown.
+	if serverForShutdown != nil {
+		// This server should be closed after finishing flushing all data to clients, or
+		// you will get a Connection Reset error, so do it after 3 seconds.
+		time.AfterFunc(3*time.Second, func() {
+			err := serverForShutdown.Shutdown(ctxBackground)
+			if err != nil {
+				core.Logger().Errorf("Failed to close server for shutdown! Exit with code 0. [%s].", err.Error())
+				os.Exit(0) // Return 0 if failed to close serverForShutdown.
+			}
+		})
+	}
+}
 
 // pingHandler tells you if postar is ready or not.
 func pingHandler(ctx iris.Context) {
-	ctx.Write([]byte(`<h1 style="text-align: center;">Pong!</h1><h3 style="text-align: center;">- Postar is ready! -</h3>`))
+	ctx.Write([]byte(`<body style="text-align: center;"><h1>Pong!</h1><h3>- Postar is ready! -</h3><p>- The version is ` + core.Version + ` -</p></body>`))
 }
 
 // sendHandler handles the service of sending emails.
-func sendHandler(ctx context.Context) {
+func sendHandler(ctx iris.Context) {
 
-	// 获取邮件发送任务信息
+	// Parse send task from request.
 	sendTask := models.NewEmptySendTask()
 	err := ctx.ReadJSON(&sendTask)
 	if err != nil {
@@ -44,7 +81,7 @@ func sendHandler(ctx context.Context) {
 		return
 	}
 
-	// 发送邮件
+	// Try to send this email.
 	email := core.NewEmail(sendTask.To, sendTask.Subject, sendTask.ContentType, sendTask.Body)
 	err = core.Send(email)
 	if err != nil {
@@ -55,6 +92,7 @@ func sendHandler(ctx context.Context) {
 		return
 	}
 
+	// Successfully.
 	core.Logger().Debugf("Email %+v successfully sent.", email)
 	ctx.Header("Content-Type", "application/json; charset=utf-8")
 	ctx.Write(models.EmailSuccessfullySentResponse())
