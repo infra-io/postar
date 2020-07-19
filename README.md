@@ -8,11 +8,21 @@
 
 ### 🥇 功能特性
 
-* 敬请期待。。。
+* 支持发送文本邮件和 HTML 邮件
+* 网络访问接口支持 http，后续考虑引入 websocket/quic/rpc 等多种接口调用
 
 _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新特性和计划请查看 [FUTURE.md](./FUTURE.md)。_
 
 ### 🚀 安装方式
+
+> 使用 docker 的方式（推荐）
+```bash
+$ docker pull fishgoddess/postar
+```
+
+> 使用安装包的方式
+1. 下载指定版本的 postar 二进制包
+2. 根据不同平台的启动方式运行二进制包
 
 ### 📖 使用手册
 

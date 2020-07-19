@@ -8,11 +8,21 @@
 
 ### 🥇 Features
 
-* coming soon...
+* Plain and Html form email supports
+* HTTP api supports, websocket/quic/rpc is coming soon
 
 _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about more information._
 
 ### 🚀 Installation
+
+> Use docker (recommend)
+```bash
+$ docker pull fishgoddess/postar
+```
+
+> Use binary
+1. Choose one version and download the binary of postar
+2. Run binary according to different system
 
 ### 📖 Guides
 
