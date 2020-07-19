@@ -1,5 +1,6 @@
 ## ✒ 历史版本的特性介绍 (Features in old versions)
 
-### v0.0.1
-> 此版本发布于 2020-xx-xx
-* 敬请期待。。。
+### v0.1.0-alpha
+> 此版本发布于 2020-07-20
+* 基础的 HTTP API 提供邮件发送功能
+* 支持 PLAIN 和 HTML 两种邮件格式
