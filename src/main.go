@@ -21,26 +21,16 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/FishGoddess/logit"
 	"github.com/avino-plan/postar/src/core"
 	"github.com/avino-plan/postar/src/server"
 )
 
 func main() {
-
-	// Before booting.
-	printSymbol()
-	core.Logger().Infof("Postar %s is booting, please wait a moment...", core.Version)
-
-	// Boot and record the time it takes.
-	beginTime := time.Now()
-	wg := server.RunServer()
-	endTime := time.Now()
-
-	// After booting.
-	core.Logger().Infof("Postar is ready! It takes %s to boot it.", endTime.Sub(beginTime))
-	wg.Wait()
+	startPostar()
 }
 
+// printSymbol prints the symbol of postar.
 func printSymbol() {
 	fmt.Println(`
 *******************************************************************
@@ -53,4 +43,44 @@ func printSymbol() {
 *  /__\       \____/   /____/      /__\    /__(  )__\  )_) \__/   *
 *                                                                 *
 *******************************************************************`)
+}
+
+// printBootingInformation prints the booting information of postar.
+func printBootingInformation() {
+	if core.Logger().Level() <= logit.InfoLevel {
+		core.Logger().Infof("Postar %s is booting, please wait a moment...", core.Version)
+		return
+	}
+	fmt.Printf("Postar %s is booting, please wait a moment...\n", core.Version)
+}
+
+// printReadyInformation prints the ready information of postar.
+func printReadyInformation(timeSpent time.Duration) {
+	if core.Logger().Level() <= logit.InfoLevel {
+		core.Logger().Infof("Postar is ready! It takes %s to boot it.\n", timeSpent)
+		return
+	}
+	fmt.Printf("Postar is ready! It takes %s to boot it.\n", timeSpent)
+}
+
+// startPostar starts postar services.
+func startPostar() {
+
+	// Before booting.
+	printSymbol()
+	printBootingInformation()
+
+	// Boot and record the time it takes.
+	beginTime := time.Now()
+	wg := server.RunServer()
+	endTime := time.Now()
+
+	// After booting.
+	printReadyInformation(endTime.Sub(beginTime))
+	wg.Wait()
+}
+
+// shutdownPostar shutdowns postar services.
+func shutdownPostar() {
+
 }

@@ -48,7 +48,8 @@ func InitServer(port string, closedPort string) *sync.WaitGroup {
 		})
 	}()
 
-	core.Logger().Infof("The main service is using port %s. The closed service is using port %s.", port, closedPort)
+	core.Logger().Infof("The main service is using port %s.", port)
+	core.Logger().Infof("The closed service is using port %s.", closedPort)
 	return wg
 }
 
