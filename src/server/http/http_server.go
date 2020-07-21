@@ -109,5 +109,6 @@ func StopServer() error {
 		core.Logger().Error(buffer.String())
 	}
 
+	core.Logger().Info("Successfully closed the running servers.")
 	return nil
 }
