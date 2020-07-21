@@ -19,6 +19,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/FishGoddess/logit"
@@ -26,8 +27,21 @@ import (
 	"github.com/avino-plan/postar/src/server"
 )
 
+var (
+	// systemCommands stores all systemCommands can be executed.
+	systemCommands = map[string]func(){
+		"boot": startPostar,
+		"off":  shutdownPostar,
+	}
+)
+
 func main() {
-	startPostar()
+	systemCommand, ok := systemCommands[core.SystemCommand()]
+	if !ok {
+		fmt.Printf("Unsupported system command: %s. Try boot, off.\n", core.SystemCommand())
+		os.Exit(1)
+	}
+	systemCommand()
 }
 
 // printSymbol prints the symbol of postar.
@@ -82,5 +96,5 @@ func startPostar() {
 
 // shutdownPostar shutdowns postar services.
 func shutdownPostar() {
-
+	server.ShutdownServer()
 }

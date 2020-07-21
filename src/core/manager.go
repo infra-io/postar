@@ -40,6 +40,12 @@ func Send(email *Email) error {
 
 // ===================================== for fetching settings =====================================
 
+// SystemCommand returns the system command postar will execute.
+func SystemCommand() string {
+	getConfig() // For initializing config.
+	return systemCommand
+}
+
 // ServerType returns the type of server in the config.
 func ServerType() string {
 	return getConfig().Server.Type

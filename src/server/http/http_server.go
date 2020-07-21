@@ -19,6 +19,9 @@
 package http
 
 import (
+	"io"
+	"net/http"
+	"strings"
 	"sync"
 
 	"github.com/avino-plan/postar/src/core"
@@ -33,6 +36,8 @@ var (
 
 // InitServer initializes servers with given two ports.
 func InitServer(port string, closedPort string) *sync.WaitGroup {
+
+	// Create a wait group to wait these servers.
 	wg := &sync.WaitGroup{}
 	go func() {
 		wg.Add(1)
@@ -77,4 +82,32 @@ func initServerForShutdown(port string, afterListening func()) {
 		core.Logger().Errorf("The port %s maybe used! Try to change another one! [%s]", port, err.Error())
 	}
 	afterListening()
+}
+
+// StopServer stops running servers.
+func StopServer() error {
+
+	// Send a request to server.
+	response, err := http.Post("http://localhost:"+core.ServerClosedPort()+"/close", "application/json; charset=utf-8", nil)
+	if err != nil {
+		core.Logger().Errorf("Failed to request server. Error: %s.", err.Error())
+		return err
+	}
+
+	// If StatusCode != OK, then something wrong happened.
+	if response.StatusCode != iris.StatusOK {
+		core.Logger().Errorf("Server doesn't response ok. StatusCode is [%d].", response.StatusCode)
+
+		// Try to read body of response.
+		defer response.Body.Close()
+		buffer := &strings.Builder{}
+		written, err := io.Copy(buffer, response.Body)
+		if written == 0 || (err != nil && err != io.EOF) {
+			core.Logger().Errorf("Failed to read response's body. Written byte is [%d]. Error: %s.", written, err.Error())
+			return err
+		}
+		core.Logger().Error(buffer.String())
+	}
+
+	return nil
 }

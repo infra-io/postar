@@ -19,6 +19,8 @@
 package server
 
 import (
+	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/avino-plan/postar/src/core"
@@ -26,9 +28,14 @@ import (
 )
 
 var (
-	// servers stores all servers that can be used.
-	servers = map[string]func(port string, closedPort string) *sync.WaitGroup{
+	// initServers stores all servers that can be initialized.
+	initServers = map[string]func(port string, closedPort string) *sync.WaitGroup{
 		"http": http.InitServer,
+	}
+
+	// stopServers stores all servers that can be shutdown.
+	stopServers = map[string]func() error{
+		"http": http.StopServer,
 	}
 )
 
@@ -36,9 +43,21 @@ var (
 // Notice that the returning value is *sync.WaitGroup, so you can use it to
 // block your main goroutine before closing the server.
 func RunServer() *sync.WaitGroup {
-	initServer, ok := servers[core.ServerType()]
+	initServer, ok := initServers[core.ServerType()]
 	if !ok {
-		core.Logger().Errorf("The server type %s doesn't exist! Try 'http'?", core.ServerType())
+		core.Logger().Errorf("The initializing server type %s doesn't exist! Try 'http'?", core.ServerType())
+		return nil
 	}
 	return initServer(core.ServerPort(), core.ServerClosedPort())
+}
+
+// ShutdownServer shutdowns the running server.
+func ShutdownServer() error {
+	stopServer, ok := stopServers[core.ServerType()]
+	if !ok {
+		msg := fmt.Sprintf("The stopping server type %s doesn't exist! Try 'http'?", core.ServerType())
+		core.Logger().Errorf(msg)
+		return errors.New(msg)
+	}
+	return stopServer()
 }
