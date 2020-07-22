@@ -30,6 +30,9 @@ var (
 	// This holder is singleton, so it uses initConfigOnce to do that.
 	globalConfig   = defaultConfig()
 	initConfigOnce = &sync.Once{}
+
+	// systemCommand is the system command postar will execute.
+	systemCommand string
 )
 
 // config is the struct represents of all settings of this system.
@@ -72,7 +75,8 @@ func defaultConfig() *config {
 func ensureGlobalConfigIsValid() {
 	initConfigOnce.Do(func() {
 
-		// Parse flag and get the path of config file.
+		// Parse flags and get the path of config file.
+		flag.StringVar(&systemCommand, "system", "boot", "Execute a system's command.")
 		pathOfConfigFile := flag.String("c", "./postar.ini", "The path of config file.")
 		flag.Parse()
 
