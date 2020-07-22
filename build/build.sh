@@ -13,14 +13,16 @@ echo "Building windows version..."
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o ../build/postar-$VERSION-windows/postar-$VERSION-windows-amd64.exe main.go
 echo "Building linux version..."
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ../build/postar-$VERSION-linux/postar-$VERSION-linux-amd64 main.go
+chmod +x ../build/postar-$VERSION-linux/postar-$VERSION-linux-amd64
 echo "Building darwin version..."
 CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ../build/postar-$VERSION-darwin/postar-$VERSION-darwin-amd64 main.go
+chmod +x ../build/postar-$VERSION-darwin/postar-$VERSION-darwin-amd64
 
 # Before packaging
 cd ../build || exit
-mkdir ./postar-$VERSION-windows/logs
-mkdir ./postar-$VERSION-linux/logs
-mkdir ./postar-$VERSION-darwin/logs
+mkdir -p ./postar-$VERSION-windows/logs/error
+mkdir -p ./postar-$VERSION-linux/logs/error
+mkdir -p ./postar-$VERSION-darwin/logs/error
 cp ./logit.conf ./postar-$VERSION-windows/
 cp ./logit.conf ./postar-$VERSION-linux/
 cp ./logit.conf ./postar-$VERSION-darwin/

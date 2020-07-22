@@ -16,13 +16,16 @@ _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新�
 ### 🚀 安装方式
 
 > 使用 docker 的方式（推荐）
-```bash
-$ docker pull fishgoddess/postar
-```
+
+Docker 版本安装请看：[]()
 
 > 使用安装包的方式
-1. 下载指定版本的 postar 二进制包
-2. 根据不同平台的启动方式运行二进制包
+
+**postar 仅提供 windows、linux 和 darwin 三种系统下 amd64 架构的二进制包**
+
+Windows 版本安装请看：[_examples/install/windows_installation_manual.md](_examples/install/windows_installation_manual.md)
+
+Linux 和 Mac 版本安装请看：[_examples/install/linux_and_mac_installation_manual.md](_examples/install/linux_and_mac_installation_manual.md)
 
 ### 📖 使用手册
 
