@@ -1,6 +1,6 @@
 # 📝 postar
 
-[![License](_icon/license.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![License](_icon/license.svg)](https://opensource.org/licenses/MIT)
 
 **postar** 是一个简单易用且低耦合的邮件服务，可以为您的应用程序提供邮件功能。
 
@@ -9,7 +9,7 @@
 ### 🥇 功能特性
 
 * 支持发送文本邮件和 HTML 邮件
-* 网络访问接口支持 http，后续考虑引入 websocket/quic/rpc 等多种接口调用
+* 网络访问接口支持 http，后续考虑引入 websocket/quic/rpc 等多种调用方式
 
 _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新特性和计划请查看 [FUTURE.md](./FUTURE.md)。_
 
@@ -17,19 +17,23 @@ _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新�
 
 > 使用 docker 的方式（推荐）
 
-Docker 版本安装请看：[]()
+Docker 版本安装请看：[docker](_examples/install/docker_installation_manual.md)
 
 > 使用安装包的方式
 
 **postar 仅提供 windows、linux 和 darwin 三种系统下 amd64 架构的二进制包**
 
-Windows 版本安装请看：[_examples/install/windows_installation_manual.md](_examples/install/windows_installation_manual.md)
+Windows 版本安装请看：[windows](_examples/install/windows_installation_manual.md)
 
-Linux 和 Mac 版本安装请看：[_examples/install/linux_and_mac_installation_manual.md](_examples/install/linux_and_mac_installation_manual.md)
+Linux 和 Mac 版本安装请看：[linux_and_mac](_examples/install/linux_and_mac_installation_manual.md)
 
 ### 📖 使用手册
 
+* 敬请期待
+
 ### 🔥 性能测试
+
+* 敬请期待
 
 ### 👥 贡献者
 
