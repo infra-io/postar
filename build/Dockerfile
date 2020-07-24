@@ -17,12 +17,16 @@ WORKDIR /opt/
 RUN set -e; \
     wget $POSTAR_DOWNLOAD_URL; \
     tar -xf $POSTAR_PACKAGE_NAME.tar.gz; \
-    rm $POSTAR_PACKAGE_NAME.tar.gz; \
+    rm $POSTAR_PACKAGE_NAME.tar.gz;
+
+# Add executable permission
 WORKDIR /opt/postar-$POSTAR_VERSION-linux
+RUN set -e; \
+    chmod +x ./postar-$POSTAR_VERSION-linux-amd64
 
 # Expose two port for services
 EXPOSE 5779
 EXPOSE 5780
 
 # Run postar
-CMD ["./$POSTAR_PACKAGE_NAME"]
+CMD ["./postar-v0.1.0-alpha-linux-amd64"]
