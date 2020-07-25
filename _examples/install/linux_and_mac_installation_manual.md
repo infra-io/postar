@@ -2,7 +2,7 @@
 
 1. Go to releases and download one version that you want to install.
 
-_Use version v0.1.0-alpha and Linux as an example._
+_Use version v0.1.1-alpha and Linux as an example._
 _Linux's users choose linux, and Mac's users choose darwin._
 
 ![linux_mac_package.png](pictures/linux_mac_package.png)
