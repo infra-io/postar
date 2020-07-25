@@ -1,5 +1,5 @@
 # Build a docker image
-docker build -t fishgoddess/postar:v0.1.0-alpha .
+docker build -t fishgoddess/postar:v0.1.1-alpha .
 
 # Login to docker
 docker login

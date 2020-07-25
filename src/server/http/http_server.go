@@ -29,17 +29,23 @@ func InitServer(port string, closedPort string) *sync.WaitGroup {
 
 	// Create a wait group to wait these servers.
 	wg := &sync.WaitGroup{}
+
+	// Notice that wg.Add must be executed before wg.Done, so they can't code in go func.
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
 		initServerForService(port, func() {
+			core.Logger().Debug("Before initServerForService done.")
 			wg.Done()
+			core.Logger().Debug("After initServerForService done.")
 		})
 	}()
 
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
 		initServerForShutdown(closedPort, func() {
+			core.Logger().Debug("Before initServerForShutdown done.")
 			wg.Done()
+			core.Logger().Debug("After initServerForShutdown done.")
 		})
 	}()
 

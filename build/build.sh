@@ -1,6 +1,6 @@
 # Postar build script
 # Author: fishgoddess
-VERSION=v0.1.0-alpha
+VERSION=v0.1.1-alpha
 
 # Before building
 mkdir postar-$VERSION-windows
@@ -10,13 +10,13 @@ cd ../src || exit
 
 # Go build: windows, linux and darwin
 echo "Building windows version..."
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o ../build/postar-$VERSION-windows/postar-$VERSION-windows-amd64.exe main.go
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o ../build/postar-$VERSION-windows/postar-$VERSION.exe main.go
 echo "Building linux version..."
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ../build/postar-$VERSION-linux/postar-$VERSION-linux-amd64 main.go
-chmod +x ../build/postar-$VERSION-linux/postar-$VERSION-linux-amd64
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ../build/postar-$VERSION-linux/postar-$VERSION main.go
+chmod +x ../build/postar-$VERSION-linux/postar-$VERSION
 echo "Building darwin version..."
-CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ../build/postar-$VERSION-darwin/postar-$VERSION-darwin-amd64 main.go
-chmod +x ../build/postar-$VERSION-darwin/postar-$VERSION-darwin-amd64
+CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ../build/postar-$VERSION-darwin/postar-$VERSION main.go
+chmod +x ../build/postar-$VERSION-darwin/postar-$VERSION
 
 # Before packaging
 cd ../build || exit
@@ -32,11 +32,11 @@ cp ../_examples/config/postar.english.ini ./postar-$VERSION-darwin/postar.ini
 
 # Package all versions
 echo "Packaging windows version..."
-tar -czf postar-$VERSION-windows-amd64.tar.gz postar-$VERSION-windows
+tar -czf postar-$VERSION-windows.tar.gz postar-$VERSION-windows
 echo "Packaging linux version..."
-tar -czf postar-$VERSION-linux-amd64.tar.gz postar-$VERSION-linux
+tar -czf postar-$VERSION-linux.tar.gz postar-$VERSION-linux
 echo "Packaging darwin version..."
-tar -czf postar-$VERSION-darwin-amd64.tar.gz postar-$VERSION-darwin
+tar -czf postar-$VERSION-darwin.tar.gz postar-$VERSION-darwin
 
 # After packaging
 echo "Cleaning..."

@@ -82,6 +82,7 @@ func startPostar() {
 	// After booting.
 	printReadyInformation(endTime.Sub(beginTime))
 	wg.Wait()
+	core.Logger().Debug("Exit wait status...")
 }
 
 // shutdownPostar shutdowns postar services.

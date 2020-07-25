@@ -2,11 +2,11 @@ version: "3.1"
 
 services:
   postar:
-    image: fishgoddess/postar:v0.1.0-alpha
+    image: fishgoddess/postar:v0.1.1-alpha
     ports:
       - "5779:5779"
       # - "5780:5780"
     volumes:
-      - ./logs:/opt/postar-v0.1.0-alpha-linux/logs
-      - ./logs/error:/opt/postar-v0.1.0-alpha-linux/logs/error
-      - ./postar.ini:/opt/postar-v0.1.0-alpha-linux/postar.ini
+      - ./logs:/opt/postar-v0.1.1-alpha/logs
+      - ./logs/error:/opt/postar-v0.1.1-alpha/logs/error
+      - ./postar.ini:/opt/postar-v0.1.1-alpha/postar.ini

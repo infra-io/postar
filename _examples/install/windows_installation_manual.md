@@ -2,7 +2,7 @@
 
 1. Go to releases and download one version that you want to install.
 
-_Use version v0.1.0-alpha as an example._
+_Use version v0.1.1-alpha as an example._
 
 ![windows_package.png](pictures/windows_package.png)
 
