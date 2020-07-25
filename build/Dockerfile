@@ -22,7 +22,7 @@ RUN set -e; \
 # Add executable permission
 WORKDIR /opt/postar-$POSTAR_VERSION
 RUN set -e; \
-    mv postar-$VERSION postar
+    mv postar-$POSTAR_VERSION postar; \
     chmod +x ./postar
 
 # Expose two port for services
