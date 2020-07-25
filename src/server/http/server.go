@@ -37,28 +37,41 @@ func NewServer() *serverImpl {
 }
 
 // initServerForService initializes the server for service.
-func (si *serverImpl) initServerForService(port string, afterListening func()) {
+func (si *serverImpl) initServerForService(port string, beforeServing func(), cleanUp func()) {
+
+	// Create a new server, and register some services.
 	si.serverForService = iris.New()
 	si.serverForService.Logger().SetLevel("disable")
 	si.serverForService.Get("/", newPingHandler())
 	si.serverForService.Post("/send", newSendHandler())
-	err := si.serverForService.Listen(":"+port, iris.WithoutStartupLog, iris.WithoutServerError(iris.ErrServerClosed))
-	if err != nil {
-		core.Logger().Errorf("Failed to listen to the port %s! Please try another one. Error: %s.", port, err.Error())
-	}
-	afterListening()
+
+	// Start serving.
+	beforeServing()
+	go func() {
+		err := si.serverForService.Listen(":"+port, iris.WithoutStartupLog, iris.WithoutServerError(iris.ErrServerClosed))
+		if err != nil {
+			core.Logger().Errorf("Failed to listen to the port %s! Please try another one. Error: %s.", port, err.Error())
+		}
+		cleanUp()
+	}()
 }
 
 // initServerForShutdown initializes the server for shutdown.
-func (si *serverImpl) initServerForShutdown(port string, afterListening func()) {
+func (si *serverImpl) initServerForShutdown(port string, cleanUp func()) {
+
+	// Create a new server, and register some services.
 	si.serverForShutdown = iris.New()
 	si.serverForShutdown.Logger().SetLevel("disable")
 	si.serverForShutdown.Post("/close", newCloseHandler(si))
-	err := si.serverForShutdown.Listen(":"+port, iris.WithoutStartupLog, iris.WithoutServerError(iris.ErrServerClosed))
-	if err != nil {
-		core.Logger().Errorf("The port %s maybe used! Try to change another one! [%s]", port, err.Error())
-	}
-	afterListening()
+
+	// Start serving.
+	go func() {
+		err := si.serverForShutdown.Listen(":"+port, iris.WithoutStartupLog, iris.WithoutServerError(iris.ErrServerClosed))
+		if err != nil {
+			core.Logger().Errorf("The port %s maybe used! Try to change another one! [%s]", port, err.Error())
+		}
+		cleanUp()
+	}()
 }
 
 // InitServer initializes servers with given two ports.
@@ -69,16 +82,20 @@ func (si *serverImpl) Init(port string, closedPort string) *sync.WaitGroup {
 
 	// Notice that wg.Add must be executed before wg.Done, so they can't code in go func.
 	si.wg.Add(1)
-	go si.initServerForService(port, func() {
-		core.Logger().Debug("Add 1 to wg in initServerForService...")
-		si.wg.Done()
-	})
-
-	si.wg.Add(1)
-	go si.initServerForShutdown(closedPort, func() {
-		core.Logger().Debug("Add 1 to wg in initServerForShutdown...")
-		si.wg.Done()
-	})
+	si.initServerForService(
+		port,
+		func() {
+			si.wg.Add(1)
+			si.initServerForShutdown(closedPort, func() {
+				core.Logger().Debug("Add 1 to wg in initServerForShutdown...")
+				si.wg.Done()
+			})
+		},
+		func() {
+			core.Logger().Debug("Add 1 to wg in initServerForService...")
+			si.wg.Done()
+		},
+	)
 
 	core.Logger().Infof("The main service is using port %s.", port)
 	core.Logger().Infof("The closed service is using port %s.", closedPort)
@@ -86,10 +103,10 @@ func (si *serverImpl) Init(port string, closedPort string) *sync.WaitGroup {
 }
 
 // StopServer stops running servers.
-func (si *serverImpl) Stop() error {
+func (si *serverImpl) Stop(closedPort string) error {
 
 	// Send a request to server.
-	response, err := http.Post("http://localhost:"+core.ServerClosedPort()+"/close", "application/json; charset=utf-8", nil)
+	response, err := http.Post("http://127.0.0.1:"+closedPort+"/close", "application/json; charset=utf-8", nil)
 	if err != nil {
 		core.Logger().Errorf("Failed to request server. Error: %s.", err.Error())
 		return err

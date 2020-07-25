@@ -35,7 +35,7 @@ type Server interface {
 	Init(port string, closedPort string) *sync.WaitGroup
 
 	// Stop should stop this server and return an error if failed.
-	Stop() error
+	Stop(closedPort string) error
 }
 
 // InitServer initializes a server for use.
@@ -58,5 +58,5 @@ func StopServer() error {
 		core.Logger().Errorf(msg)
 		return errors.New(msg)
 	}
-	return server.Stop()
+	return server.Stop(core.ServerClosedPort())
 }

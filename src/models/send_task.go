@@ -17,11 +17,11 @@ type SendTask struct {
 	Email *core.Email `json:"email"`
 
 	// Options are some settings of sending task.
-	Options *sendOptions `json:"options"`
+	Options *SendOptions `json:"options"`
 }
 
 // sendOptions are some settings of sending task.
-type sendOptions struct {
+type SendOptions struct {
 
 	// Sync means the send task is synchronous, default is asynchronous.
 	Sync bool `json:"sync"`
@@ -30,7 +30,7 @@ type sendOptions struct {
 // NewEmptySendTask returns an empty SendTask holder.
 func NewSendTaskWithDefaultOptions() *SendTask {
 	return &SendTask{
-		Options: &sendOptions{
+		Options: &SendOptions{
 			Sync: false,
 		},
 	}

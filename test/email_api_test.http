@@ -16,10 +16,15 @@ POST http://localhost:5779/send
 Content-Type: application/json
 
 {
-  "to": "fishgoddess@qq.com",
-  "subject": "测试 postar 运行情况",
-  "contentType": "text/html; charset=utf-8",
-  "body": "<h1>哈喽！来自 <span style=\"color: #123456;\">postar<span> 的问候！</h1>"
+  "email": {
+    "to": "fishgoddess@qq.com",
+    "subject": "测试 postar 运行情况",
+    "contentType": "text/html; charset=utf-8",
+    "body": "<h1>哈喽！来自 <span style=\"color: #123456;\">postar<span> 的问候！</h1>"
+  },
+  "options": {
+    "sync": true
+  }
 }
 
 ###
