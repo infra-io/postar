@@ -2,7 +2,7 @@
 
 [![License](_icon/license.svg)](https://opensource.org/licenses/MIT)
 
-**postar** is an easy-to-use and low-coupling email service, which can provide email functions for your applications.
+**Postar** is an easy-to-use and low-coupling email service, which can provide email functions for your applications.
 
 [阅读中文版的 Read me](./README.md)
 
@@ -17,16 +17,18 @@ _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about mor
 
 > Use docker (recommend)
 
-Installation manual: [docker](_examples/install/docker_installation_manual.md)
+Installation manual: [docker](_examples/install/docker_installation_manual.md) .
+
+Access the homepage of Docker Hub: [https://hub.docker.com/r/fishgoddess/postar](https://hub.docker.com/r/fishgoddess/postar) .
 
 > Use binary
 
 **postar only provides three versions in amd64: windows, linux and darwin.**
 
 Installation manual: 
-[windows](_examples/install/windows_installation_manual.md)
+[windows](_examples/install/windows_installation_manual.md) .
 /
-[linux_and_mac](_examples/install/linux_and_mac_installation_manual.md)
+[linux_and_mac](_examples/install/linux_and_mac_installation_manual.md).
 
 ### 📖 Guides
 

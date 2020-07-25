@@ -5,4 +5,7 @@ docker build -t fishgoddess/postar:v0.1.1-alpha .
 docker login
 
 # Push to docker hub
-docker push
+docker push fishgoddess/postar:v0.1.1-alpha
+
+# Logout from docker
+docker logout

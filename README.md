@@ -17,15 +17,17 @@ _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新�
 
 > 使用 docker 的方式（推荐）
 
-Docker 版本安装请看：[docker](_examples/install/docker_installation_manual.md)
+Docker 版本安装请看：[docker](_examples/install/docker_installation_manual.md) 。
+
+访问 Docker Hub 上的主页：[https://hub.docker.com/r/fishgoddess/postar](https://hub.docker.com/r/fishgoddess/postar) 。
 
 > 使用安装包的方式
 
-**postar 仅提供 windows、linux 和 darwin 三种系统下 amd64 架构的二进制包**
+**postar 仅提供 windows、linux 和 darwin 三种系统下 amd64 架构的二进制包。**
 
-Windows 版本安装请看：[windows](_examples/install/windows_installation_manual.md)
+Windows 版本安装请看：[windows](_examples/install/windows_installation_manual.md) 。
 
-Linux 和 Mac 版本安装请看：[linux_and_mac](_examples/install/linux_and_mac_installation_manual.md)
+Linux 和 Mac 版本安装请看：[linux_and_mac](_examples/install/linux_and_mac_installation_manual.md) 。
 
 ### 📖 使用手册
 
