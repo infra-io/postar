@@ -12,7 +12,7 @@ GET http://localhost:5779
 ###
 
 # 测试发送邮件 API
-POST http://47.102.142.158:5779/send
+POST http://localhost:5779/send
 Content-Type: application/json
 
 {
