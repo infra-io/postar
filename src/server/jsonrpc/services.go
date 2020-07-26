@@ -47,19 +47,24 @@ func (ps *PostarService) Send(sendTask *models.SendTask, result *Result) error {
 
 // =================================== close service ===================================
 
-// TODO document
+// CloseRequest is an empty struct for closing request.
 type CloseRequest struct{}
 
+// CloseService is the close service of postar.
 type CloseService struct {
+
+	// target is the service that will be closed by this service.
 	target net.Listener
 }
 
+// NewCloseService returns a CloseService holder with target listener.
 func NewCloseService(target net.Listener) *CloseService {
 	return &CloseService{
 		target: target,
 	}
 }
 
+// Close is the main method that CloseService provides.
 func (cs *CloseService) Close(request *CloseRequest, result *Result) error {
 
 	// Close target.

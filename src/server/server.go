@@ -14,6 +14,7 @@ import (
 	"sync"
 
 	"github.com/avino-plan/postar/src/core"
+	"github.com/avino-plan/postar/src/server/grpc"
 	"github.com/avino-plan/postar/src/server/http"
 	"github.com/avino-plan/postar/src/server/jsonrpc"
 )
@@ -23,7 +24,7 @@ var (
 	servers = map[string]Server{
 		"http":    http.NewServer(),
 		"jsonrpc": jsonrpc.NewServer(),
-		"grpc":    nil,
+		"grpc":    grpc.NewServer(),
 	}
 )
 
@@ -47,6 +48,7 @@ func InitServer() *sync.WaitGroup {
 		core.Logger().Errorf("The initializing server type %s doesn't exist! Try these ['http', 'jsonrpc', 'grpc']?", core.ServerType())
 		return &sync.WaitGroup{}
 	}
+	core.Logger().Infof("Start initializing %s server...", core.ServerType())
 	return server.Init(core.ServerPort(), core.ServerClosedPort())
 }
 

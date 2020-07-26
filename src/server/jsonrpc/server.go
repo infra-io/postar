@@ -139,7 +139,7 @@ func (si *serverImpl) Init(port string, closedPort string) *sync.WaitGroup {
 	return si.wg
 }
 
-// StopServer stops running servers.
+// StopServer stops the running servers.
 func (si *serverImpl) Stop(closedPort string) error {
 
 	// Connect to the remote server.
