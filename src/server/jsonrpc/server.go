@@ -127,13 +127,13 @@ func (si *serverImpl) Stop(closedPort string) error {
 	// Connect to the remote server.
 	conn, err := stdJsonRPC.Dial("tcp", "127.0.0.1:"+closedPort)
 	if err != nil {
-		core.Logger().Errorf("Failed to request server. Error: %s.", err.Error())
+		core.Logger().Errorf("Failed to connect to server. Error: %s.", err.Error())
 		return err
 	}
 	defer conn.Close()
 
 	// Send a request to server.
-	req := &CloseRequest{}
+	req := &EmptyRequest{}
 	resp := &Result{}
 	err = conn.Call("CloseService.Close", req, resp)
 	if err != nil {
@@ -141,6 +141,7 @@ func (si *serverImpl) Stop(closedPort string) error {
 		return err
 	}
 
+	core.Logger().Debug(string(resp.Data))
 	core.Logger().Info("Successfully closed the running servers.")
 	return nil
 }

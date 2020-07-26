@@ -15,6 +15,9 @@ import (
 	"github.com/avino-plan/postar/src/models"
 )
 
+// EmptyRequest is an empty struct for requests.
+type EmptyRequest struct{}
+
 // Result represents the result of one call.
 type Result struct {
 
@@ -24,6 +27,12 @@ type Result struct {
 
 // PostarService is the main service of postar.
 type PostarService struct{}
+
+// Ping returns if postar is ready.
+func Ping(request *EmptyRequest, result *Result) error {
+	result.Data = []byte("Pong! Postar is ready! The version is " + core.Version + ".")
+	return nil
+}
 
 // Send will do the sendTask and return error if failed.
 // The result will be stored in sendTaskResult.
@@ -47,13 +56,10 @@ func (ps *PostarService) Send(sendTask *models.SendTask, result *Result) error {
 
 // =================================== close service ===================================
 
-// CloseRequest is an empty struct for closing request.
-type CloseRequest struct{}
-
 // CloseService is the close service of postar.
 type CloseService struct {
 
-	// target is the service that will be closed by this service.
+	// target is the listener that will be closed by this service.
 	target net.Listener
 }
 
@@ -65,7 +71,7 @@ func NewCloseService(target net.Listener) *CloseService {
 }
 
 // Close is the main method that CloseService provides.
-func (cs *CloseService) Close(request *CloseRequest, result *Result) error {
+func (cs *CloseService) Close(request *EmptyRequest, result *Result) error {
 
 	// Close target.
 	err := cs.target.Close()

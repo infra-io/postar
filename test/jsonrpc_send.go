@@ -10,7 +10,9 @@ package main
 
 import (
 	"fmt"
-	"net/rpc/jsonrpc"
+	stdJsonRPC "net/rpc/jsonrpc"
+
+	"github.com/avino-plan/postar/src/server/jsonrpc"
 )
 
 // SendTask is the struct represents of all information of sending task.
@@ -58,11 +60,18 @@ type Result struct {
 func main() {
 
 	// Connect to the remote server.
-	conn, err := jsonrpc.Dial("tcp", "127.0.0.1:5779")
+	conn, err := stdJsonRPC.Dial("tcp", "127.0.0.1:5779")
 	if err != nil {
 		panic(err)
 	}
 	defer conn.Close()
+
+	resp := &Result{}
+	err = conn.Call("PostarService.Send", &jsonrpc.EmptyRequest{}, resp)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(resp.Data))
 
 	// Send a request to server.
 	req := NewSendTaskWithDefaultOptions()
@@ -72,7 +81,6 @@ func main() {
 		ContentType: "text/html; charset=utf-8",
 		Body:        "<h1>哈喽！来自 <span style=\"color: #123456;\">postar<span> 的问候！</h1>",
 	}
-	resp := &Result{}
 	err = conn.Call("PostarService.Send", req, resp)
 	if err != nil {
 		panic(err)

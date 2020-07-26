@@ -45,7 +45,7 @@ func (si *serverImpl) initServerForService(port string, beforeServing func(), cl
 	// Create a new server, and register some services.
 	si.serverForService = iris.New()
 	si.serverForService.Logger().SetLevel("disable")
-	si.serverForService.Get("/", newPingHandler())
+	si.serverForService.Get("/ping", newPingHandler())
 	si.serverForService.Post("/send", newSendHandler())
 
 	// Start serving.

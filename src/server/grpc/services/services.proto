@@ -39,6 +39,9 @@ message SendTask {
   SendOptions options = 2;
 }
 
+// EmptyRequest is an empty request.
+message EmptyRequest {}
+
 // Result represents the result of one call.
 message Result {
   // data is a byte array contains the message,
@@ -49,6 +52,16 @@ message Result {
 // PostarService is the main service of postar.
 service PostarService {
 
+  // Ping returns if postar is ready.
+  rpc Ping(EmptyRequest) returns (Result);
+
   // Send does the send task and returns a result.
   rpc Send(SendTask) returns (Result);
+}
+
+// CloseService is the closing service of postar.
+service CloseService {
+
+  // Close closes the main service.
+  rpc Close(EmptyRequest) returns (Result);
 }
