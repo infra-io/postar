@@ -9,11 +9,15 @@
 package grpc
 
 import (
+	"sync"
+
 	"github.com/avino-plan/postar/src/server/based"
 )
 
 // ServerImpl is an implement of Server interface which provides grpc functions.
 type serverImpl struct {
+
+	// Based on this server.
 	*based.BasedServer
 }
 
@@ -32,6 +36,11 @@ func (si *serverImpl) initServerForService(port string, beforeServing func(), cl
 // initServerForShutdown initializes the server for shutdown.
 func (si *serverImpl) initServerForShutdown(port string, cleanUp func()) {
 
+}
+
+// InitServer initializes servers with given two ports.
+func (si *serverImpl) Init(port string, closedPort string) *sync.WaitGroup {
+	return si.BasedServer.Init(si.initServerForService, si.initServerForShutdown, port, closedPort)
 }
 
 // StopServer stops the running servers.

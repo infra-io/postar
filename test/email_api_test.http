@@ -7,13 +7,13 @@ Content-Type: application/json
 ###
 
 # 测试 ready 界面 API
-GET http://localhost:5779
+GET http://localhost:5779/
 
 ###
 
 # 测试发送邮件 API
 POST http://localhost:5779/send
-Content-Type: application/json
+Content-Type: application/json; charset=utf-8
 
 {
   "email": {

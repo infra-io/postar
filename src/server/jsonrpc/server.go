@@ -16,21 +16,24 @@ import (
 	"sync"
 
 	"github.com/avino-plan/postar/src/core"
+	"github.com/avino-plan/postar/src/server/based"
 )
 
 // ServerImpl is an implement of Server interface which provides jsonrpc functions.
 type serverImpl struct {
 
+	// Based on this server.
+	*based.BasedServer
+
 	// listenerForService listens the main service.
 	listenerForService net.Listener
-
-	// wg is for waiting these servers.
-	wg *sync.WaitGroup
 }
 
 // NewServer returns an empty server implement.
 func NewServer() *serverImpl {
-	return &serverImpl{}
+	return &serverImpl{
+		BasedServer: &based.BasedServer{},
+	}
 }
 
 // initServerForService initializes the server for service.
@@ -52,6 +55,7 @@ func (si *serverImpl) initServerForService(port string, beforeServing func(), cl
 
 	// Start serving.
 	go func() {
+		core.Logger().Debug("Before accepting...")
 		connWg := &sync.WaitGroup{}
 		for {
 			conn, err := si.listenerForService.Accept()
@@ -98,6 +102,7 @@ func (si *serverImpl) initServerForShutdown(port string, cleanUp func()) {
 	// Start serving.
 	go func() {
 		defer listener.Close()
+		core.Logger().Debug("Before accepting...")
 		for {
 			conn, err := listener.Accept()
 			if err != nil {
@@ -113,30 +118,7 @@ func (si *serverImpl) initServerForShutdown(port string, cleanUp func()) {
 
 // InitServer initializes servers with given two ports.
 func (si *serverImpl) Init(port string, closedPort string) *sync.WaitGroup {
-
-	// Create a wait group to wait these servers.
-	si.wg = &sync.WaitGroup{}
-
-	// Notice that wg.Add must be executed before wg.Done, so they can't code in go func.
-	si.wg.Add(1)
-	si.initServerForService(
-		port,
-		func() {
-			si.wg.Add(1)
-			si.initServerForShutdown(closedPort, func() {
-				core.Logger().Debug("Add 1 to wg in initServerForShutdown...")
-				si.wg.Done()
-			})
-		},
-		func() {
-			core.Logger().Debug("Add 1 to wg in initServerForService...")
-			si.wg.Done()
-		},
-	)
-
-	core.Logger().Infof("The main service is using port %s.", port)
-	core.Logger().Infof("The closed service is using port %s.", closedPort)
-	return si.wg
+	return si.BasedServer.Init(si.initServerForService, si.initServerForShutdown, port, closedPort)
 }
 
 // StopServer stops the running servers.
