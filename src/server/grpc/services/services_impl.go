@@ -10,6 +10,7 @@ package services
 
 import (
 	"context"
+	"time"
 
 	"github.com/avino-plan/postar/src/core"
 	"github.com/avino-plan/postar/src/models"
@@ -60,22 +61,31 @@ func (psi *PostarServiceImpl) Send(ctx context.Context, sendTask *SendTask) (*Re
 // CloseServiceImpl is the close service of postar.
 type CloseServiceImpl struct {
 
-	// targets are the servers that will be closed by this service.
-	targets []*grpc.Server
+	// target is the server that will be closed by this service.
+	target *grpc.Server
+
+	// closeServer should be close "inelegantly".
+	closeServer *grpc.Server
 }
 
 // NewCloseService returns a CloseServiceImpl holder with targets servers.
-func NewCloseService(targets ...*grpc.Server) *CloseServiceImpl {
+func NewCloseService(target *grpc.Server, closeServer *grpc.Server) *CloseServiceImpl {
 	return &CloseServiceImpl{
-		targets: targets,
+		target:      target,
+		closeServer: closeServer,
 	}
 }
 
 // Close is the main method that CloseService provides.
 func (sci *CloseServiceImpl) Close(ctx context.Context, request *EmptyRequest) (*Result, error) {
-	for _, target := range sci.targets {
-		target.GracefulStop()
-	}
+
+	// Stop the target server gracefully.
+	sci.target.GracefulStop()
+
+	// The close server should be delayed, and stopped "inelegantly".
+	time.AfterFunc(3*time.Second, func() {
+		sci.closeServer.Stop()
+	})
 	return &Result{
 		Data: models.ServerIsClosingResponse(),
 	}, nil

@@ -1,6 +1,6 @@
 # Postar build script
 # Author: fishgoddess
-VERSION=v0.1.1-alpha
+VERSION=v0.1.2-alpha
 
 # Before building
 mkdir postar-$VERSION-windows

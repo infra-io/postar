@@ -12,76 +12,55 @@ import (
 	"fmt"
 	stdJsonRPC "net/rpc/jsonrpc"
 
+	"github.com/avino-plan/postar/src/core"
+	"github.com/avino-plan/postar/src/models"
 	"github.com/avino-plan/postar/src/server/jsonrpc"
 )
-
-// SendTask is the struct represents of all information of sending task.
-type SendTask struct {
-
-	// Email is the email which will be sent.
-	Email *Email `json:"email"`
-
-	// Options are some settings of sending task.
-	Options *SendOptions `json:"options"`
-}
-
-// Email is the struct represents of a message including all information for sending.
-type Email struct {
-	To          string `json:"to"`
-	Subject     string `json:"subject"`
-	ContentType string `json:"contentType"`
-	Body        string `json:"body"`
-}
-
-// sendOptions are some settings of sending task.
-type SendOptions struct {
-
-	// Sync means the send task is synchronous, default is asynchronous.
-	Sync bool `json:"sync"`
-}
-
-// NewEmptySendTask returns an empty SendTask holder.
-func NewSendTaskWithDefaultOptions() *SendTask {
-	return &SendTask{
-		Options: &SendOptions{
-			Sync: false,
-		},
-	}
-}
-
-// Result represents the result of one call.
-type Result struct {
-
-	// Data is the result data.
-	Data []byte `json:"data"`
-}
 
 // TestServerImpl_Stop tests ServerImpl.Stop.
 func main() {
 
 	// Connect to the remote server.
-	conn, err := stdJsonRPC.Dial("tcp", "127.0.0.1:5779")
+	postarConn, err := stdJsonRPC.Dial("tcp", "127.0.0.1:5779")
 	if err != nil {
 		panic(err)
 	}
-	defer conn.Close()
+	defer postarConn.Close()
 
-	resp := &Result{}
-	err = conn.Call("PostarService.Send", &jsonrpc.EmptyRequest{}, resp)
+	resp := &jsonrpc.Result{}
+	err = postarConn.Call("PostarService.Ping", &jsonrpc.EmptyRequest{}, resp)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(string(resp.Data))
 
 	// Send a request to server.
-	req := NewSendTaskWithDefaultOptions()
-	req.Email = &Email{
+	sendTask := models.NewSendTaskWithDefaultOptions()
+	sendTask.Email = &core.Email{
 		To:          "fishgoddess@qq.com",
 		Subject:     "jsonrpc 测试 postar 运行情况",
 		ContentType: "text/html; charset=utf-8",
 		Body:        "<h1>哈喽！来自 <span style=\"color: #123456;\">postar<span> 的问候！</h1>",
 	}
-	err = conn.Call("PostarService.Send", req, resp)
+	sendTask.Options.Sync = true
+	err = postarConn.Call("PostarService.Send", sendTask, resp)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(resp.Data))
+
+	// ============================================================
+
+	// Connect to the remote server.
+	closeConn, err := stdJsonRPC.Dial("tcp", "127.0.0.1:5780")
+	if err != nil {
+		panic(err)
+	}
+	defer closeConn.Close()
+
+	// Send a request to server.
+	req := &jsonrpc.EmptyRequest{}
+	err = closeConn.Call("CloseService.Close", req, resp)
 	if err != nil {
 		panic(err)
 	}

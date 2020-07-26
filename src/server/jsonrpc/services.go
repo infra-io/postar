@@ -29,7 +29,7 @@ type Result struct {
 type PostarService struct{}
 
 // Ping returns if postar is ready.
-func Ping(request *EmptyRequest, result *Result) error {
+func (ps *PostarService) Ping(request *EmptyRequest, result *Result) error {
 	result.Data = []byte("Pong! Postar is ready! The version is " + core.Version + ".")
 	return nil
 }

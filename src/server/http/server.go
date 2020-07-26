@@ -12,7 +12,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"sync"
 
 	"github.com/avino-plan/postar/src/core"
 	"github.com/avino-plan/postar/src/server/based"
@@ -34,9 +33,12 @@ type serverImpl struct {
 
 // NewServer returns an empty server implement.
 func NewServer() *serverImpl {
-	return &serverImpl{
-		BasedServer: &based.BasedServer{},
+	result := &serverImpl{}
+	result.BasedServer = &based.BasedServer{
+		InitServerForService:  result.initServerForService,
+		InitServerForShutdown: result.initServerForShutdown,
 	}
+	return result
 }
 
 // initServerForService initializes the server for service.
@@ -51,7 +53,7 @@ func (si *serverImpl) initServerForService(port string, beforeServing func(), cl
 	// Start serving.
 	beforeServing()
 	go func() {
-		core.Logger().Debug("Before listening...")
+		core.Logger().Debug("Before main listening...")
 		err := si.serverForService.Listen(":"+port, iris.WithoutStartupLog, iris.WithoutServerError(iris.ErrServerClosed))
 		if err != nil {
 			core.Logger().Errorf("Failed to listen to the port %s! Please try another one. Error: %s.", port, err.Error())
@@ -70,18 +72,13 @@ func (si *serverImpl) initServerForShutdown(port string, cleanUp func()) {
 
 	// Start serving.
 	go func() {
-		core.Logger().Debug("Before listening...")
+		core.Logger().Debug("Before shutdown listening...")
 		err := si.serverForShutdown.Listen(":"+port, iris.WithoutStartupLog, iris.WithoutServerError(iris.ErrServerClosed))
 		if err != nil {
 			core.Logger().Errorf("The port %s maybe used! Try to change another one! [%s]", port, err.Error())
 		}
 		cleanUp()
 	}()
-}
-
-// InitServer initializes servers with given two ports.
-func (si *serverImpl) Init(port string, closedPort string) *sync.WaitGroup {
-	return si.BasedServer.Init(si.initServerForService, si.initServerForShutdown, port, closedPort)
 }
 
 // StopServer stops the running servers.

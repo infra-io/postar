@@ -9,7 +9,7 @@
 package core
 
 const (
-	Version = "v0.1.1-alpha"
+	Version = "v0.1.2-alpha"
 )
 
 var (
