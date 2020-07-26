@@ -9,7 +9,7 @@
 package core
 
 const (
-	Version = "v0.1.1-alpha"
+	Version = "v0.1.2-alpha"
 )
 
 var (
@@ -23,9 +23,18 @@ func init() {
 	globalSender = newSender(config.Smtp.Host, config.Smtp.Port, config.Smtp.Username, config.Smtp.Password)
 }
 
-// Send sends the email and returns an error if failed.
-func Send(email *Email) error {
-	return globalSender.Send(email)
+// SendSync sends the email and returns an error if failed.
+func SendSync(email *Email) error {
+	return <-SendAsync(email)
+}
+
+// SendAsync sends the email and returns an error if failed.
+func SendAsync(email *Email) <-chan error {
+	done := make(chan error)
+	go func() {
+		done <- globalSender.Send(email)
+	}()
+	return done
 }
 
 // ===================================== for fetching settings =====================================

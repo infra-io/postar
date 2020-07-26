@@ -1,0 +1,67 @@
+// Copyright 2020 Ye Zi Jie.  All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+//
+// Author: FishGoddess
+// Email: fishgoddess@qq.com
+syntax = "proto3";
+
+// The package name is "services".
+package services;
+option go_package = ".;services";
+
+// Email struct.
+message Email {
+
+  // to is the recipient of this email.
+  string to = 1;
+
+  // subject is the title of this email.
+  string subject = 2;
+
+  // contentType is the content type of this email.
+  string contentType = 3;
+
+  // body is the body of this email.
+  string body = 4;
+}
+
+// SendOptions are some settings of sending task.
+message SendOptions {
+
+  // sync means the send task is synchronous, default is asynchronous.
+  bool sync = 1;
+}
+
+// SendTask is a task of sending email.
+message SendTask {
+  Email email = 1;
+  SendOptions options = 2;
+}
+
+// EmptyRequest is an empty request.
+message EmptyRequest {}
+
+// Result represents the result of one call.
+message Result {
+  // data is a byte array contains the message,
+  // so you only need to turn it to a string with UTF8 encoding.
+  bytes data = 1;
+}
+
+// PostarService is the main service of postar.
+service PostarService {
+
+  // Ping returns if postar is ready.
+  rpc Ping(EmptyRequest) returns (Result);
+
+  // Send does the send task and returns a result.
+  rpc Send(SendTask) returns (Result);
+}
+
+// CloseService is the closing service of postar.
+service CloseService {
+
+  // Close closes the main service.
+  rpc Close(EmptyRequest) returns (Result);
+}

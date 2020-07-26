@@ -10,10 +10,10 @@ package core
 
 // Email is the struct represents of a message including all information for sending.
 type Email struct {
-	To          string
-	Subject     string
-	ContentType string
-	Body        string
+	To          string `json:"to"`
+	Subject     string `json:"subject"`
+	ContentType string `json:"contentType"`
+	Body        string `json:"body"`
 }
 
 // NewEmail returns an Email holder with given parameters.

@@ -20,8 +20,8 @@ import (
 var (
 	// systemCommands stores all systemCommands can be executed.
 	systemCommands = map[string]func(){
-		"boot": startPostar,
-		"off":  shutdownPostar,
+		"boot": boot,
+		"off":  off,
 	}
 )
 
@@ -67,8 +67,8 @@ func printReadyInformation(timeSpent time.Duration) {
 	fmt.Printf("Postar is ready! It takes %s to boot it.\n", timeSpent)
 }
 
-// startPostar starts postar services.
-func startPostar() {
+// boot starts postar services.
+func boot() {
 
 	// Before booting.
 	printSymbol()
@@ -76,16 +76,16 @@ func startPostar() {
 
 	// Boot and record the time it takes.
 	beginTime := time.Now()
-	wg := server.RunServer()
+	wg := server.InitServer()
 	endTime := time.Now()
 
 	// After booting.
 	printReadyInformation(endTime.Sub(beginTime))
 	wg.Wait()
-	core.Logger().Debug("Exit wait status...")
+	core.Logger().Debug("After wg.Wait()...")
 }
 
-// shutdownPostar shutdowns postar services.
-func shutdownPostar() {
-	server.ShutdownServer()
+// off shutdowns postar services.
+func off() {
+	server.StopServer()
 }

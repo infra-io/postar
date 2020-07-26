@@ -8,15 +8,30 @@
 
 package models
 
+import "github.com/avino-plan/postar/src/core"
+
 // SendTask is the struct represents of all information of sending task.
 type SendTask struct {
-	To          string `json:"to"`
-	Subject     string `json:"subject"`
-	ContentType string `json:"contentType"`
-	Body        string `json:"body"`
+
+	// Email is the email which will be sent.
+	Email *core.Email `json:"email"`
+
+	// Options are some settings of sending task.
+	Options *SendOptions `json:"options"`
+}
+
+// sendOptions are some settings of sending task.
+type SendOptions struct {
+
+	// Sync means the send task is synchronous, default is asynchronous.
+	Sync bool `json:"sync"`
 }
 
 // NewEmptySendTask returns an empty SendTask holder.
-func NewEmptySendTask() *SendTask {
-	return &SendTask{}
+func NewSendTaskWithDefaultOptions() *SendTask {
+	return &SendTask{
+		Options: &SendOptions{
+			Sync: false,
+		},
+	}
 }

@@ -7,19 +7,24 @@ Content-Type: application/json
 ###
 
 # 测试 ready 界面 API
-GET http://localhost:5779
+GET http://localhost:5779/ping
 
 ###
 
 # 测试发送邮件 API
-POST http://47.102.142.158:5779/send
-Content-Type: application/json
+POST http://localhost:5779/send
+Content-Type: application/json; charset=utf-8
 
 {
-  "to": "fishgoddess@qq.com",
-  "subject": "测试 postar 运行情况",
-  "contentType": "text/html; charset=utf-8",
-  "body": "<h1>哈喽！来自 <span style=\"color: #123456;\">postar<span> 的问候！</h1>"
+  "email": {
+    "to": "fishgoddess@qq.com",
+    "subject": "测试 postar 运行情况",
+    "contentType": "text/html; charset=utf-8",
+    "body": "<h1>哈喽！来自 <span style=\"color: #123456;\">postar<span> 的问候！</h1>"
+  },
+  "options": {
+    "sync": true
+  }
 }
 
 ###
