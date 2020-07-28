@@ -38,7 +38,7 @@ func main() {
 	// Send a request to server.
 	resp, err = postarClient.Send(context.Background(), &services.SendTask{
 		Email: &services.Email{
-			To:          "fishgoddess@qq.com",
+			To:          "fishinlove@163.com",
 			Subject:     "grpc 测试 postar 运行情况",
 			ContentType: "text/html; charset=utf-8",
 			Body:        "<h1>哈喽！来自 <span style=\"color: #123456;\">postar<span> 的问候！</h1>",
