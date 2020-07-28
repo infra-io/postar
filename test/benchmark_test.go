@@ -6,35 +6,32 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"net/http"
 	"testing"
-
-	"github.com/avino-plan/postar/src/core"
-	"github.com/avino-plan/postar/src/models"
 )
 
 // Benchmark the http server.
-//
+// BenchmarkHttpServer-8               1795            668408 ns/op           16885 B/op        120 allocs/op
 func BenchmarkHttpServer(b *testing.B) {
 
-	sendTask := models.NewSendTaskWithDefaultOptions()
-	sendTask.Email = &core.Email{
-		To:          "fishinlove@163.com",
-		Subject:     "jsonrpc 测试 postar 运行情况",
-		ContentType: "text/html; charset=utf-8",
-		Body:        "<h1>哈喽！来自 <span style=\"color: #123456;\">postar<span> 的问候！</h1>",
-	}
-	sendTask.Options.Sync = true
-	bodyBytes, err := json.Marshal(sendTask)
-	if err != nil {
-		b.Fatal(err)
-	}
+	body := []byte(`
+{
+  "email": {
+    "to": "fishinlove@163.com",
+    "subject": "测试 postar 运行情况",
+    "contentType": "text/html; charset=utf-8",
+    "body": "<h1>哈喽！来自 <span style=\"color: #123456;\">postar<span> 的问候！</h1>"
+  },
+  "options": {
+    "sync": true
+  }
+}
+    `)
 
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		resp, err := http.Post("http://localhost:5779/send", "application/json; charset=utf-8", bytes.NewBuffer(bodyBytes))
+		resp, err := http.Post("http://localhost:5779/send", "application/json; charset=utf-8", bytes.NewBuffer(body))
 		if err != nil {
 			b.Fatal(err)
 		}
