@@ -47,6 +47,7 @@ func (bs *BasedServer) Init(port string, closedPort string) *sync.WaitGroup {
 		},
 		func() {
 			bs.wg.Done()
+			core.Logger().Info("Server for service has been closed! Have a good day :)")
 			core.Logger().Debug("Done with wg in initServerForService...")
 		},
 	)

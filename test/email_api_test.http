@@ -1,5 +1,5 @@
 # 测试关闭服务器 API
-POST http://localhost:5780/close
+POST http://{{close}}/close
 Content-Type: application/json
 
 {}
@@ -7,12 +7,12 @@ Content-Type: application/json
 ###
 
 # 测试 ready 界面 API
-GET http://localhost:5779/ping
+GET http://{{main}}/ping
 
 ###
 
 # 测试发送邮件 API
-POST http://localhost:5779/send
+POST http://{{main}}/send
 Content-Type: application/json; charset=utf-8
 
 {

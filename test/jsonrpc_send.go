@@ -11,6 +11,7 @@ package main
 import (
 	"fmt"
 	stdJsonRPC "net/rpc/jsonrpc"
+	"os"
 
 	"github.com/avino-plan/postar/src/core"
 	"github.com/avino-plan/postar/src/models"
@@ -20,8 +21,14 @@ import (
 // TestServerImpl_Stop tests ServerImpl.Stop.
 func main() {
 
+	// 初始化测试地址
+	ip := "127.0.0.1"
+	if len(os.Args) > 1 {
+		ip = os.Args[1]
+	}
+
 	// Connect to the remote server.
-	postarConn, err := stdJsonRPC.Dial("tcp", "127.0.0.1:5779")
+	postarConn, err := stdJsonRPC.Dial("tcp", ip+":5779")
 	if err != nil {
 		panic(err)
 	}
@@ -52,7 +59,7 @@ func main() {
 	// ============================================================
 
 	// Connect to the remote server.
-	closeConn, err := stdJsonRPC.Dial("tcp", "127.0.0.1:5780")
+	closeConn, err := stdJsonRPC.Dial("tcp", ip+":5780")
 	if err != nil {
 		panic(err)
 	}
