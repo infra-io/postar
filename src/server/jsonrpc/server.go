@@ -76,8 +76,8 @@ func (si *serverImpl) initServerForService(port string, beforeServing func(), cl
 			// Record every connection.
 			connWg.Add(1)
 			go func(conn net.Conn) {
+				defer connWg.Done()
 				server.ServeCodec(stdJsonRPC.NewServerCodec(conn))
-				connWg.Done()
 			}(conn)
 		}
 

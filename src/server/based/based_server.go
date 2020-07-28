@@ -41,13 +41,13 @@ func (bs *BasedServer) Init(port string, closedPort string) *sync.WaitGroup {
 		func() {
 			bs.wg.Add(1)
 			bs.InitServerForShutdown(closedPort, func() {
-				core.Logger().Debug("Add 1 to wg in initServerForShutdown...")
 				bs.wg.Done()
+				core.Logger().Debug("Done with wg in initServerForShutdown...")
 			})
 		},
 		func() {
-			core.Logger().Debug("Add 1 to wg in initServerForService...")
 			bs.wg.Done()
+			core.Logger().Debug("Done with wg in initServerForService...")
 		},
 	)
 
