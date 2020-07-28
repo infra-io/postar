@@ -11,6 +11,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/avino-plan/postar/src/server/grpc/services"
 	"google.golang.org/grpc"
@@ -18,8 +19,14 @@ import (
 
 func main() {
 
+	// 初始化测试地址
+	ip := "127.0.0.1"
+	if len(os.Args) > 1 {
+		ip = os.Args[1]
+	}
+
 	// Connect to the remote server.
-	conn, err := grpc.Dial("127.0.0.1:5779", grpc.WithInsecure())
+	conn, err := grpc.Dial(ip+":5779", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
@@ -53,7 +60,7 @@ func main() {
 	// =====================================================================
 
 	// Connect to the remote server.
-	conn, err = grpc.Dial("127.0.0.1:5780", grpc.WithInsecure())
+	conn, err = grpc.Dial(ip+":5780", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}

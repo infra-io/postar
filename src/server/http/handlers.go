@@ -35,7 +35,6 @@ func newCloseHandler(si *serverImpl) func(ctx iris.Context) {
 			}
 		}
 
-		core.Logger().Info("Server for service has been closed! Have a good day :)")
 		ctx.Write(models.ServerIsClosingResponse())
 		ctx.ResponseWriter().Flush()
 
