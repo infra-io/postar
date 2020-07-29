@@ -9,7 +9,9 @@
 ### 🥇 功能特性
 
 * 支持发送文本邮件和 HTML 邮件
-* 网络访问接口支持 http，后续考虑引入 websocket/quic/rpc 等多种调用方式
+* 支持异步邮件发送
+* 支持 http 请求调用接口
+* 支持 jsonrpc 和 grpc 两种跨平台远程调用接口
 
 _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新特性和计划请查看 [FUTURE.md](./FUTURE.md)。_
 
@@ -35,7 +37,15 @@ Linux 和 Mac 版本安装请看：[linux_and_mac](_examples/install/linux_and_m
 
 ### 🔥 性能测试
 
-* 敬请期待
+> 测试文件：[test/benchmark_test.go](./test/benchmark_test.go)
+
+| 服务器类型 | 单位时间内运行次数 (越大越好) |  每个操作消耗时间 (越小越好) | B/op (越小越好) | allocs/op (越小越好) |
+| -----------|--------|-------------|-------------|-------------|
+| http | &nbsp; 3165 | 386013 ns/op | 14838 B/op | 89 allocs/op |
+| **jsonrpc** | **17462** | **&nbsp; 69567 ns/op** | **&nbsp; &nbsp; 712 B/op** | **15 allocs/op** |
+| grpc | 10000 | 132845 ns/op | &nbsp; 5248 B/op | 98 allocs/op |
+
+> 测试环境：I7-6700HQ CPU @ 2.6 GHZ，16 GB RAM
 
 ### 👥 贡献者
 

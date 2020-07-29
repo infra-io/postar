@@ -9,7 +9,9 @@
 ### 🥇 Features
 
 * Plain and Html form email supports
-* HTTP api supports, websocket/quic/rpc is coming soon
+* Asynchronous send supports
+* HTTP api supports
+* JsonRPC and gRPC Supports
 
 _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about more information._
 
@@ -36,7 +38,15 @@ Installation manual:
 
 ### 🔥 Benchmarks
 
-* Coming soon
+> Test cases：[test/benchmark_test.go](./test/benchmark_test.go)
+
+| server | times ran (large is better) |  ns/op (small is better) | B/op | allocs/op |
+| -----------|--------|-------------|-------------|-------------|
+| http | &nbsp; 3165 | 386013 ns/op | 14838 B/op | 89 allocs/op |
+| **jsonrpc** | **17462** | **&nbsp; 69567 ns/op** | **&nbsp; &nbsp; 712 B/op** | **15 allocs/op** |
+| grpc | 10000 | 132845 ns/op | &nbsp; 5248 B/op | 98 allocs/op |
+
+> Environment：I7-6700HQ CPU @ 2.6 GHZ, 16 GB RAM
 
 ### 👥 Contributing
 
