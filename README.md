@@ -39,7 +39,7 @@ Linux 和 Mac 版本安装请看：[linux_and_mac](_examples/install/linux_and_m
 
 > 测试文件：[test/benchmark_test.go](./test/benchmark_test.go)
 
-| 服务器类型 | 单位时间内运行次数 (越大越好) |  每个操作消耗时间 (越小越好) | B/op (越小越好) | allocs/op (越小越好) |
+| 服务器类型 | 1 秒内运行次数 (越大越好) |  每个操作消耗时间 (越小越好) | B/op (越小越好) | allocs/op (越小越好) |
 | -----------|--------|-------------|-------------|-------------|
 | http | &nbsp; 3165 | 386013 ns/op | 14838 B/op | 89 allocs/op |
 | **jsonrpc** | **17462** | **&nbsp; 69567 ns/op** | **&nbsp; &nbsp; 712 B/op** | **15 allocs/op** |

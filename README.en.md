@@ -40,7 +40,7 @@ Installation manual:
 
 > Test cases：[test/benchmark_test.go](./test/benchmark_test.go)
 
-| server | times ran (large is better) |  ns/op (small is better) | B/op | allocs/op |
+| server | times/s (large is better) |  ns/op (small is better) | B/op | allocs/op |
 | -----------|--------|-------------|-------------|-------------|
 | http | &nbsp; 3165 | 386013 ns/op | 14838 B/op | 89 allocs/op |
 | **jsonrpc** | **17462** | **&nbsp; 69567 ns/op** | **&nbsp; &nbsp; 712 B/op** | **15 allocs/op** |

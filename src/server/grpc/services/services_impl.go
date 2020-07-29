@@ -42,6 +42,7 @@ func (psi *PostarServiceImpl) Send(ctx context.Context, sendTask *SendTask) (*Re
 	if sendTask.Options.Sync {
 		err := core.SendSync(email)
 		if err != nil {
+			core.Logger().Errorf("The error is %s. The information of sending task is {%+v, %+v}.", err.Error(), *sendTask.Email, *sendTask.Options)
 			return &Result{
 				Data: models.FailedToSendEmailResponse(),
 			}, err

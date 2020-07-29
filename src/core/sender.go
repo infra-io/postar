@@ -9,19 +9,39 @@
 package core
 
 import (
+	"sync"
+
 	"gopkg.in/gomail.v2"
 )
 
 // sender is for sending an email.
 type sender struct {
+
+	// dialer is the real sender inside.
 	dialer *gomail.Dialer
+
+	// messagePool can reuse message holders.
+	messagePool *sync.Pool
+}
+
+// getMessage returns a message for use.
+func (s *sender) getMessage() *gomail.Message {
+	return s.messagePool.Get().(*gomail.Message)
+}
+
+// putMessage resets and releases the msg.
+func (s *sender) putMessage(msg *gomail.Message) {
+	msg.Reset()
+	s.messagePool.Put(msg)
 }
 
 // Send sends the email and returns an error if failed.
 func (s *sender) Send(email *Email) error {
 
 	// Create one message including information to be sent.
-	msg := gomail.NewMessage()
+	msg := s.getMessage()
+	defer s.putMessage(msg)
+
 	msg.SetHeader("From", s.dialer.Username)
 	msg.SetHeader("To", email.To)
 	msg.SetHeader("Subject", email.Subject)
@@ -36,5 +56,10 @@ func (s *sender) Send(email *Email) error {
 func newSender(host string, port int, username string, password string) *sender {
 	return &sender{
 		dialer: gomail.NewDialer(host, port, username, password),
+		messagePool: &sync.Pool{
+			New: func() interface{} {
+				return gomail.NewMessage()
+			},
+		},
 	}
 }

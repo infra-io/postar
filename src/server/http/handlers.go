@@ -79,7 +79,7 @@ func newSendHandler() func(ctx iris.Context) {
 		if sendTask.Options.Sync {
 			err = core.SendSync(sendTask.Email)
 			if err != nil {
-				core.Logger().Errorf("The error is %s. The information of sending task is %+v.", err.Error(), sendTask)
+				core.Logger().Errorf("The error is %s. The information of sending task is {%+v, %+v}.", err.Error(), *sendTask.Email, *sendTask.Options)
 				ctx.StatusCode(500)
 				ctx.Header("Content-Type", "application/json; charset=utf-8")
 				ctx.Write(models.FailedToSendEmailResponse())
