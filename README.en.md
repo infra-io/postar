@@ -38,7 +38,7 @@ Installation manual:
 
 ### 🔥 Benchmarks
 
-> Test cases：[test/benchmark_test.go](./test/benchmark_test.go)
+> Test cases：[benchmark_test.go](_examples/test/benchmark_test.go)
 
 | server | times/s (large is better) |  ns/op (small is better) | B/op | allocs/op |
 | -----------|--------|-------------|-------------|-------------|

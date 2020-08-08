@@ -13,10 +13,10 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/avino-plan/postar/src/core"
-	"github.com/avino-plan/postar/src/server/grpc"
-	"github.com/avino-plan/postar/src/server/http"
-	"github.com/avino-plan/postar/src/server/jsonrpc"
+	"github.com/avino-plan/postar/core"
+	"github.com/avino-plan/postar/server/grpc"
+	"github.com/avino-plan/postar/server/http"
+	"github.com/avino-plan/postar/server/jsonrpc"
 )
 
 var (

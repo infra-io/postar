@@ -8,7 +8,7 @@
 
 package models
 
-import "github.com/avino-plan/postar/src/core"
+import "github.com/avino-plan/postar/core"
 
 // SendTask is the struct represents of all information of sending task.
 type SendTask struct {

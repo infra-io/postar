@@ -13,9 +13,9 @@ import (
 	stdJsonRPC "net/rpc/jsonrpc"
 	"os"
 
-	"github.com/avino-plan/postar/src/core"
-	"github.com/avino-plan/postar/src/models"
-	"github.com/avino-plan/postar/src/server/jsonrpc"
+	"github.com/avino-plan/postar/core"
+	"github.com/avino-plan/postar/models"
+	"github.com/avino-plan/postar/server/jsonrpc"
 )
 
 // TestServerImpl_Stop tests ServerImpl.Stop.

@@ -13,7 +13,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/avino-plan/postar/src/server/grpc/services"
+	"github.com/avino-plan/postar/server/grpc/services"
 	"google.golang.org/grpc"
 )
 

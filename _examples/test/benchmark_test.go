@@ -15,10 +15,10 @@ import (
 	stdJsonRPC "net/rpc/jsonrpc"
 	"testing"
 
-	"github.com/avino-plan/postar/src/core"
-	"github.com/avino-plan/postar/src/models"
-	"github.com/avino-plan/postar/src/server/grpc/services"
-	"github.com/avino-plan/postar/src/server/jsonrpc"
+	"github.com/avino-plan/postar/core"
+	"github.com/avino-plan/postar/models"
+	"github.com/avino-plan/postar/server/grpc/services"
+	"github.com/avino-plan/postar/server/jsonrpc"
 	"google.golang.org/grpc"
 )
 

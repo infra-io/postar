@@ -12,8 +12,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/avino-plan/postar/src/core"
-	"github.com/avino-plan/postar/src/models"
+	"github.com/avino-plan/postar/core"
+	"github.com/avino-plan/postar/models"
 	"google.golang.org/grpc"
 )
 

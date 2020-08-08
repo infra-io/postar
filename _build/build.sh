@@ -10,16 +10,16 @@ cd ../src || exit
 
 # Go build: windows, linux and darwin
 echo "Building windows version..."
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o ../build/postar-$VERSION-windows/postar-$VERSION.exe main.go
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o ../_build/postar-$VERSION-windows/postar-$VERSION.exe main.go
 echo "Building linux version..."
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ../build/postar-$VERSION-linux/postar-$VERSION main.go
-chmod +x ../build/postar-$VERSION-linux/postar-$VERSION
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ../_build/postar-$VERSION-linux/postar-$VERSION main.go
+chmod +x ../_build/postar-$VERSION-linux/postar-$VERSION
 echo "Building darwin version..."
-CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ../build/postar-$VERSION-darwin/postar-$VERSION main.go
-chmod +x ../build/postar-$VERSION-darwin/postar-$VERSION
+CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ../_build/postar-$VERSION-darwin/postar-$VERSION main.go
+chmod +x ../_build/postar-$VERSION-darwin/postar-$VERSION
 
 # Before packaging
-cd ../build || exit
+cd ../_build || exit
 mkdir -p ./postar-$VERSION-windows/logs/error
 mkdir -p ./postar-$VERSION-linux/logs/error
 mkdir -p ./postar-$VERSION-darwin/logs/error

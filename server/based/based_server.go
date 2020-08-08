@@ -11,7 +11,7 @@ package based
 import (
 	"sync"
 
-	"github.com/avino-plan/postar/src/core"
+	"github.com/avino-plan/postar/core"
 )
 
 // BasedServer is the based server for implements.

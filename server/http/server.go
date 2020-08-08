@@ -13,8 +13,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/avino-plan/postar/src/core"
-	"github.com/avino-plan/postar/src/server/based"
+	"github.com/avino-plan/postar/core"
+	"github.com/avino-plan/postar/server/based"
 	"github.com/kataras/iris/v12"
 )
 
