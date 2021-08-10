@@ -1,6 +1,8 @@
 # 📝 postar
 
-[![License](_icon/license.svg)](https://opensource.org/licenses/MIT)
+[![build](_icons/build.svg)](_icons/build.svg)
+[![coverage](_icons/coverage.svg)](_icons/coverage.svg)
+[![license](_icons/license.svg)](https://opensource.org/licenses/MIT)
 
 **Postar** is an easy-to-use and low-coupling email service, which can provide email functions for your applications.
 
@@ -11,7 +13,6 @@
 * Plain and Html form email supports
 * Asynchronous send supports
 * HTTP api supports
-* JsonRPC and gRPC Supports
 
 _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about more information._
 

@@ -1,6 +1,8 @@
 # 📝 postar
 
-[![License](_icon/license.svg)](https://opensource.org/licenses/MIT)
+[![build](_icons/build.svg)](_icons/build.svg)
+[![coverage](_icons/coverage.svg)](_icons/coverage.svg)
+[![license](_icons/license.svg)](https://opensource.org/licenses/MIT)
 
 **postar** 是一个简单易用且低耦合的邮件服务，可以为您的应用程序提供邮件功能。
 
@@ -11,7 +13,6 @@
 * 支持发送文本邮件和 HTML 邮件
 * 支持异步邮件发送
 * 支持 http 请求调用接口
-* 支持 jsonrpc 和 grpc 两种跨平台远程调用接口
 
 _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新特性和计划请查看 [FUTURE.md](./FUTURE.md)。_
 

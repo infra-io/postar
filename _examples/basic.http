@@ -1,0 +1,7 @@
+# 发送邮件请求
+POST http://{{address}}/
+Content-Type: application/json
+
+{}
+
+###
