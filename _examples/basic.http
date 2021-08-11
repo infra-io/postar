@@ -2,6 +2,16 @@
 POST http://{{address}}/
 Content-Type: application/json
 
-{}
+{
+    "email": {
+        "to": ["1149062639@qq.com"],
+        "subject": "42重构的第一个版本！！！",
+        "content": "你看看这样行不行？？？？"
+    },
+    "sendOptions": {
+        "async": true,
+        "sendTimeout": 100
+    }
+}
 
 ###

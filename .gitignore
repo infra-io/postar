@@ -5,7 +5,7 @@
 *.so
 *.dylib
 *.tar.gz
-build/postar-*
+target/
 
 # Test binary, built with `go test -c`
 *.test

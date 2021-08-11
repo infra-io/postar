@@ -9,39 +9,34 @@
 package main
 
 import (
-	"log"
-	"net/http"
+	"fmt"
 	"os"
-
-	"gopkg.in/gomail.v2"
+	"sync"
+	"time"
 )
 
 func main() {
 
-	host := "smtp.office365.com"
-	port := 587
-	user := os.Args[1]
-	password := os.Args[2]
+	beginTime := time.Now()
+	InitLogger()
 
-	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+	sender := NewSmtpSender("smtp.office365.com", 587, os.Args[1], os.Args[2])
+	defer sender.Close()
 
-		msg := gomail.NewMessage()
-		msg.SetHeader("From", user)
-		msg.SetHeader("To", "")
-		msg.SetHeader("Subject", "go smtp 发邮件")
-		msg.SetBody("text/plain;charset=UTF-8", "发邮件啦！！！！")
+	server := NewHttpServer(sender)
+	defer server.Close()
 
-		dialer := gomail.NewDialer(host, port, user, password)
-		err := dialer.DialAndSend(msg)
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		err := server.Serve("127.0.0.1:5897")
 		if err != nil {
-			log.Println(err)
-			writer.Write([]byte(err.Error()))
-			return
+			Logger().Error("new server failed").Error("err", err).End()
+			panic(err)
 		}
-	})
+	}()
 
-	err := http.ListenAndServe(":5897", nil)
-	if err != nil {
-		panic(err)
-	}
+	endTime := time.Now()
+	fmt.Printf("Postar started successfully! It took %dms.\n", endTime.Sub(beginTime).Milliseconds())
+	wg.Wait()
 }
