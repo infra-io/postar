@@ -6,37 +6,16 @@
 // Email: fishgoddess@qq.com
 // Created at 2021/08/11 23:34:02
 
-package main
+package sender
 
 import (
 	"errors"
 	"sync"
 	"time"
 
+	"github.com/avino-plan/postar/module"
 	"gopkg.in/gomail.v2"
 )
-
-type Email struct {
-	To      []string `json:"to"`
-	Subject string   `json:"subject"`
-	Content string   `json:"content"`
-}
-
-type SendOptions struct {
-	Async       bool `json:"async"`
-	SendTimeout int  `json:"sendTimeout"` // 发送超时，单位为 ms
-}
-
-func DefaultSendOptions() SendOptions {
-	return SendOptions{
-		Async:       false,
-		SendTimeout: 5000,
-	}
-}
-
-type Sender interface {
-	SendEmail(email *Email, options *SendOptions) error
-}
 
 type SmtpSender struct {
 	host        string
@@ -46,13 +25,8 @@ type SmtpSender struct {
 	messagePool *sync.Pool
 }
 
-func NewSmtpSender(host string, port int, user string, password string) *SmtpSender {
-
+func newSmtpSender() Sender {
 	return &SmtpSender{
-		host:   host,
-		port:   port,
-		user:   user,
-		sender: gomail.NewDialer(host, port, user, password),
 		messagePool: &sync.Pool{
 			New: func() interface{} {
 				return gomail.NewMessage()
@@ -68,6 +42,14 @@ func (sms *SmtpSender) getMessage() *gomail.Message {
 func (sms *SmtpSender) releaseMessage(msg *gomail.Message) {
 	msg.Reset()
 	sms.messagePool.Put(msg)
+}
+
+func (sms *SmtpSender) Configure(config *module.Config) error {
+	sms.host = config.Sender.Host
+	sms.port = config.Sender.Port
+	sms.user = config.Sender.User
+	sms.sender = gomail.NewDialer(sms.host, sms.port, sms.user, config.Sender.Password)
+	return nil
 }
 
 func (sms *SmtpSender) SendEmail(email *Email, options *SendOptions) error {
@@ -87,13 +69,13 @@ func (sms *SmtpSender) SendEmail(email *Email, options *SendOptions) error {
 	msg.SetHeader("To", email.To...)
 	msg.SetHeader("Subject", email.Subject)
 	msg.SetBody("text/plain;charset=utf-8", email.Content)
-	Logger().Debug("before sending email").Any("email", email).Any("options", options).End()
+	module.Logger().Debug("before sending email").Any("email", email).Any("options", options).End()
 
 	errCh := make(chan error, 1)
 	go func() {
-		Logger().Debug("1").End()
+		module.Logger().Debug("1").End()
 		errCh <- sms.sender.DialAndSend(msg)
-		Logger().Debug("2").End()
+		module.Logger().Debug("2").End()
 	}()
 
 	if options.Async {

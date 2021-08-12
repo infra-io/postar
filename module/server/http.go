@@ -6,25 +6,23 @@
 // Email: fishgoddess@qq.com
 // Created at 2021/08/12 00:26:28
 
-package main
+package server
 
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/avino-plan/postar/module"
+	"github.com/avino-plan/postar/module/sender"
 )
 
-type Server interface {
-	Serve(address string) error
-	Close() error
-}
-
 type SendRequest struct {
-	Email       *Email       `json:"email"`
-	SendOptions *SendOptions `json:"sendOptions"`
+	Email       *sender.Email       `json:"email"`
+	SendOptions *sender.SendOptions `json:"sendOptions"`
 }
 
 func newSendRequest() *SendRequest {
-	sendOptions := DefaultSendOptions()
+	sendOptions := sender.DefaultSendOptions()
 	return &SendRequest{
 		Email:       nil,
 		SendOptions: &sendOptions,
@@ -32,13 +30,12 @@ func newSendRequest() *SendRequest {
 }
 
 type HttpServer struct {
-	sender Sender
+	address string
+	sender  sender.Sender
 }
 
-func NewHttpServer(sender Sender) *HttpServer {
-	return &HttpServer{
-		sender: sender,
-	}
+func newHttpServer() Server {
+	return &HttpServer{}
 }
 
 func getSendRequestFrom(request *http.Request) (*SendRequest, error) {
@@ -51,22 +48,37 @@ func (hs *HttpServer) ServeHTTP(writer http.ResponseWriter, request *http.Reques
 
 	sendRequest, err := getSendRequestFrom(request)
 	if err != nil {
-		Logger().Error("get email from request failed").Error("err", err).End()
+		module.Logger().Error("get email from request failed").Error("err", err).End()
 		writer.Write([]byte(err.Error()))
 		return
 	}
 
 	err = hs.sender.SendEmail(sendRequest.Email, sendRequest.SendOptions)
 	if err != nil {
-		Logger().Error("send email failed").Error("err", err).Any("sendRequest.Email", sendRequest.Email).Any("sendRequest.SendOptions", sendRequest.SendOptions).End()
+		module.Logger().Error("send email failed").Error("err", err).Any("sendRequest.Email", sendRequest.Email).Any("sendRequest.SendOptions", sendRequest.SendOptions).End()
 		writer.Write([]byte(err.Error()))
 		return
 	}
 	writer.Write([]byte("ok"))
 }
 
-func (hs *HttpServer) Serve(address string) error {
-	return http.ListenAndServe(address, hs)
+func (hs *HttpServer) Configure(config *module.Config) error {
+	hs.address = config.Server.Address
+	return nil
+}
+
+func (hs *HttpServer) SetSender(sender sender.Sender) {
+	hs.sender = sender
+}
+
+func (hs *HttpServer) Serve() error {
+	go func() {
+		err := http.ListenAndServe(hs.address, hs)
+		if err != nil {
+			panic(err)
+		}
+	}()
+	return nil
 }
 
 func (hs *HttpServer) Close() error {
