@@ -60,10 +60,10 @@ func (sms *SmtpSender) releaseRequest(request *smtpRequest) {
 
 func (sms *SmtpSender) Configure(config *module.Config) error {
 
-	sms.host = config.Sender.Host
-	sms.port = config.Sender.Port
-	sms.user = config.Sender.User
-	sms.dialer = gomail.NewDialer(sms.host, sms.port, sms.user, config.Sender.Password)
+	sms.host = config.Sender.SmtpHost
+	sms.port = config.Sender.SmtpPort
+	sms.user = config.Sender.SmtpUser
+	sms.dialer = gomail.NewDialer(sms.host, sms.port, sms.user, config.Sender.SmtpPassword)
 	sms.requestCh = make(chan *smtpRequest, config.Sender.RequestChannelSize)
 
 	for i := 0; i < config.Sender.WorkerNumber; i++ {

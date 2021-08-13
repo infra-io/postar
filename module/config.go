@@ -24,10 +24,10 @@ type LoggerConfig struct {
 }
 
 type SenderConfig struct {
-	Host               string `ini:"host"`
-	Port               int    `ini:"port"`
-	User               string `ini:"user"`
-	Password           string `ini:"password"`
+	SmtpHost           string `ini:"smtp_host"`
+	SmtpPort           int    `ini:"smtp_port"`
+	SmtpUser           string `ini:"smtp_user"`
+	SmtpPassword       string `ini:"smtp_password"`
 	WorkerNumber       int    `ini:"work_number"`
 	RequestChannelSize int    `ini:"request_channel_size"`
 }
@@ -58,10 +58,10 @@ func DefaultConfig() *Config {
 			TimeFormat: "2006-01-02 15:04:05.000",
 		},
 		Sender: &SenderConfig{
-			Host:               os.Getenv("POSTAR_SENDER_HOST"),
-			Port:               587,
-			User:               os.Getenv("POSTAR_SENDER_USER"),
-			Password:           os.Getenv("POSTAR_SENDER_PASSWORD"),
+			SmtpHost:           os.Getenv("POSTAR_SENDER_HOST"),
+			SmtpPort:           587,
+			SmtpUser:           os.Getenv("POSTAR_SENDER_USER"),
+			SmtpPassword:       os.Getenv("POSTAR_SENDER_PASSWORD"),
 			WorkerNumber:       64,
 			RequestChannelSize: 65536,
 		},
