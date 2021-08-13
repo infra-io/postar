@@ -9,6 +9,8 @@
 package server
 
 import (
+	"fmt"
+
 	"github.com/avino-plan/postar/module"
 	"github.com/avino-plan/postar/module/sender"
 )
@@ -19,14 +21,33 @@ var (
 	}
 )
 
+type SendRequest struct {
+	Email       *sender.Email       `json:"email"`
+	SendOptions *sender.SendOptions `json:"sendOptions"`
+}
+
+func newSendRequest() *SendRequest {
+	sendOptions := sender.DefaultSendOptions()
+	return &SendRequest{
+		Email:       nil,
+		SendOptions: &sendOptions,
+	}
+}
+
 type Server interface {
 	module.Configurer
-	SetSender(sender sender.Sender)
+	ConfigureSender(sender sender.Sender)
 	Serve() error
 	Close() error
 }
 
 func Initialize(config *module.Config) (Server, error) {
-	server := servers[config.Global.ServerType]()
+
+	newServer, ok := servers[config.Global.ServerType]
+	if !ok {
+		return nil, fmt.Errorf("server type %s not found", config.Global.ServerType)
+	}
+
+	server := newServer()
 	return server, server.Configure(config)
 }

@@ -17,38 +17,63 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+type smtpRequest struct {
+	message *gomail.Message
+	errorCh chan error
+}
+
+func (sr *smtpRequest) reset() {
+	sr.message.Reset()
+	sr.errorCh = make(chan error, 1)
+}
+
 type SmtpSender struct {
 	host        string
 	port        int
 	user        string
-	sender      *gomail.Dialer
-	messagePool *sync.Pool
+	dialer      *gomail.Dialer
+	requestCh   chan *smtpRequest
+	requestPool *sync.Pool
 }
 
 func newSmtpSender() Sender {
 	return &SmtpSender{
-		messagePool: &sync.Pool{
+		requestPool: &sync.Pool{
 			New: func() interface{} {
-				return gomail.NewMessage()
+				return &smtpRequest{
+					message: gomail.NewMessage(),
+					errorCh: make(chan error, 1),
+				}
 			},
 		},
 	}
 }
 
-func (sms *SmtpSender) getMessage() *gomail.Message {
-	return sms.messagePool.Get().(*gomail.Message)
+func (sms *SmtpSender) newRequest() *smtpRequest {
+	return sms.requestPool.Get().(*smtpRequest)
 }
 
-func (sms *SmtpSender) releaseMessage(msg *gomail.Message) {
-	msg.Reset()
-	sms.messagePool.Put(msg)
+func (sms *SmtpSender) releaseRequest(request *smtpRequest) {
+	request.reset()
+	sms.requestPool.Put(request)
 }
 
 func (sms *SmtpSender) Configure(config *module.Config) error {
+
 	sms.host = config.Sender.Host
 	sms.port = config.Sender.Port
 	sms.user = config.Sender.User
-	sms.sender = gomail.NewDialer(sms.host, sms.port, sms.user, config.Sender.Password)
+	sms.dialer = gomail.NewDialer(sms.host, sms.port, sms.user, config.Sender.Password)
+	sms.requestCh = make(chan *smtpRequest, config.Sender.RequestChannelSize)
+
+	for i := 0; i < config.Sender.WorkerNumber; i++ {
+		go func() {
+			for request := range sms.requestCh {
+				request.errorCh <- sms.dialer.DialAndSend(request.message)
+				sms.releaseRequest(request)
+			}
+		}()
+	}
 	return nil
 }
 
@@ -63,33 +88,27 @@ func (sms *SmtpSender) SendEmail(email *Email, options *SendOptions) error {
 		options = &opts
 	}
 
-	msg := sms.getMessage()
-	defer sms.releaseMessage(msg)
-	msg.SetHeader("From", sms.user)
-	msg.SetHeader("To", email.To...)
-	msg.SetHeader("Subject", email.Subject)
-	msg.SetBody("text/plain;charset=utf-8", email.Content)
+	request := sms.newRequest()
+	request.message.SetHeader("From", sms.user)
+	request.message.SetHeader("To", email.To...)
+	request.message.SetHeader("Subject", email.Subject)
+	request.message.SetBody("text/plain;charset=utf-8", email.Content)
 	module.Logger().Debug("before sending email").Any("email", email).Any("options", options).End()
 
-	errCh := make(chan error, 1)
-	go func() {
-		module.Logger().Debug("1").End()
-		errCh <- sms.sender.DialAndSend(msg)
-		module.Logger().Debug("2").End()
-	}()
-
+	sms.requestCh <- request
 	if options.Async {
 		return nil
 	}
 
 	select {
-	case err := <-errCh:
+	case err := <-request.errorCh:
 		return err
-	case <-time.After(time.Duration(options.SendTimeout) * time.Millisecond):
+	case <-time.After(time.Duration(options.Timeout) * time.Millisecond):
 		return errors.New("send timeout")
 	}
 }
 
 func (sms *SmtpSender) Close() error {
+	close(sms.requestCh)
 	return nil
 }

@@ -16,19 +16,6 @@ import (
 	"github.com/avino-plan/postar/module/sender"
 )
 
-type SendRequest struct {
-	Email       *sender.Email       `json:"email"`
-	SendOptions *sender.SendOptions `json:"sendOptions"`
-}
-
-func newSendRequest() *SendRequest {
-	sendOptions := sender.DefaultSendOptions()
-	return &SendRequest{
-		Email:       nil,
-		SendOptions: &sendOptions,
-	}
-}
-
 type HttpServer struct {
 	address string
 	sender  sender.Sender
@@ -67,7 +54,7 @@ func (hs *HttpServer) Configure(config *module.Config) error {
 	return nil
 }
 
-func (hs *HttpServer) SetSender(sender sender.Sender) {
+func (hs *HttpServer) ConfigureSender(sender sender.Sender) {
 	hs.sender = sender
 }
 

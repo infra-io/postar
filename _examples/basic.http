@@ -5,12 +5,12 @@ Content-Type: application/json
 {
     "email": {
         "to": ["1149062639@qq.com"],
-        "subject": "超级大重构的第一个版本！！！",
-        "content": "给对方看你看？？？？"
+        "subject": "公开富兰克林！！！",
+        "content": "酒店客房你是？？？？"
     },
     "sendOptions": {
         "async": false,
-        "sendTimeout": 3000
+        "timeout": 3000
     }
 }
 

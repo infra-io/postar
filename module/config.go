@@ -14,28 +14,32 @@ import (
 )
 
 type GlobalConfig struct {
-	SenderType string
-	ServerType string
+	SenderType string `ini:"sender_type"`
+	ServerType string `ini:"server_type"`
 }
 
 type LoggerConfig struct {
+	Level      string `ini:"level"`
+	TimeFormat string `ini:"time_format"`
 }
 
 type SenderConfig struct {
-	Host     string
-	Port     int
-	User     string
-	Password string
+	Host               string `ini:"host"`
+	Port               int    `ini:"port"`
+	User               string `ini:"user"`
+	Password           string `ini:"password"`
+	WorkerNumber       int    `ini:"work_number"`
+	RequestChannelSize int    `ini:"request_channel_size"`
 }
 type ServerConfig struct {
-	Address string
+	Address string `ini:"address"`
 }
 
 type Config struct {
-	Global *GlobalConfig
-	Logger *LoggerConfig
-	Sender *SenderConfig
-	Server *ServerConfig
+	Global *GlobalConfig `ini:"global"`
+	Logger *LoggerConfig `ini:"logger"`
+	Sender *SenderConfig `ini:"sender"`
+	Server *ServerConfig `ini:"server"`
 }
 
 func (c *Config) String() string {
@@ -49,12 +53,17 @@ func DefaultConfig() *Config {
 			SenderType: "smtp",
 			ServerType: "http",
 		},
-		Logger: &LoggerConfig{},
+		Logger: &LoggerConfig{
+			Level:      "info",
+			TimeFormat: "2006-01-02 15:04:05.000",
+		},
 		Sender: &SenderConfig{
-			Host:     os.Getenv("POSTAR_SENDER_HOST"),
-			Port:     587,
-			User:     os.Getenv("POSTAR_SENDER_USER"),
-			Password: os.Getenv("POSTAR_SENDER_PASSWORD"),
+			Host:               os.Getenv("POSTAR_SENDER_HOST"),
+			Port:               587,
+			User:               os.Getenv("POSTAR_SENDER_USER"),
+			Password:           os.Getenv("POSTAR_SENDER_PASSWORD"),
+			WorkerNumber:       64,
+			RequestChannelSize: 65536,
 		},
 		Server: &ServerConfig{
 			Address: "127.0.0.1:5897",

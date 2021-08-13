@@ -8,7 +8,11 @@
 
 package sender
 
-import "github.com/avino-plan/postar/module"
+import (
+	"fmt"
+
+	"github.com/avino-plan/postar/module"
+)
 
 var (
 	senders = map[string]func() Sender{
@@ -23,14 +27,14 @@ type Email struct {
 }
 
 type SendOptions struct {
-	Async       bool `json:"async"`
-	SendTimeout int  `json:"sendTimeout"` // 发送超时，单位为 ms
+	Async   bool `json:"async"`
+	Timeout int  `json:"timeout"` // 发送超时，单位为 ms
 }
 
 func DefaultSendOptions() SendOptions {
 	return SendOptions{
-		Async:       false,
-		SendTimeout: 5000,
+		Async:   false,
+		Timeout: 10000,
 	}
 }
 
@@ -41,6 +45,12 @@ type Sender interface {
 }
 
 func Initialize(config *module.Config) (Sender, error) {
-	sender := senders[config.Global.SenderType]()
+
+	newSender, ok := senders[config.Global.SenderType]
+	if !ok {
+		return nil, fmt.Errorf("sender type %s not found", config.Global.SenderType)
+	}
+
+	sender := newSender()
 	return sender, sender.Configure(config)
 }

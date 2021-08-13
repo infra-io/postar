@@ -9,18 +9,21 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
 	"github.com/avino-plan/postar/module"
 	"github.com/avino-plan/postar/module/sender"
 	"github.com/avino-plan/postar/module/server"
+	"github.com/go-ini/ini"
 )
 
 type Postar struct {
 	svr server.Server
-	wg *sync.WaitGroup
+	wg  *sync.WaitGroup
 }
 
 func newPostar() *Postar {
@@ -30,7 +33,12 @@ func newPostar() *Postar {
 }
 
 func (p *Postar) ReadConfig(configFile string) (*module.Config, error) {
-	return module.DefaultConfig(), nil
+	config := module.DefaultConfig()
+	err := ini.MapTo(config, configFile)
+	if err != nil && !os.IsNotExist(err) {
+		return nil, err
+	}
+	return config, nil
 }
 
 func (p *Postar) Initialize(config *module.Config) error {
@@ -50,7 +58,7 @@ func (p *Postar) Initialize(config *module.Config) error {
 		return err
 	}
 
-	p.svr.SetSender(sdr)
+	p.svr.ConfigureSender(sdr)
 	return nil
 }
 
@@ -72,26 +80,37 @@ func (p *Postar) Shutdown() {
 	p.wg.Done()
 }
 
-func main() {
-
+func printTakenTime(fn func()) {
 	beginTime := time.Now()
-
-	postar := newPostar()
-	config, err := postar.ReadConfig("")
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("<Postar read config>\n%+v\n", config)
-	err = postar.Initialize(config)
-	if err != nil {
-		panic(err)
-	}
-
+	fn()
 	endTime := time.Now()
 	fmt.Printf("Postar initialized successfully! It took %dms.\n", endTime.Sub(beginTime).Milliseconds())
+}
 
-	err = postar.Run()
+func getConfigFile() string {
+	configFile := flag.String("conf", "./postar.ini", "The file path of Postar configuration.")
+	flag.Parse()
+	return *configFile
+}
+
+func main() {
+
+	postar := newPostar()
+	printTakenTime(func() {
+
+		config, err := postar.ReadConfig(getConfigFile())
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("Postar's config:\n%+v\n", config)
+
+		err = postar.Initialize(config)
+		if err != nil {
+			panic(err)
+		}
+	})
+
+	err := postar.Run()
 	if err != nil {
 		panic(err)
 	}

@@ -21,9 +21,21 @@ var (
 )
 
 func initLogger(config *Config) error {
+
 	options := logit.Options()
+	levelOpt := options.WithDebugLevel()
+
+	switch config.Logger.Level {
+	case "info":
+		levelOpt = options.WithInfoLevel()
+	case "warn":
+		levelOpt = options.WithWarnLevel()
+	case "error":
+		levelOpt = options.WithErrorLevel()
+	}
+
 	globalLogger = logit.NewLogger(
-		options.WithCaller(), options.WithTimeFormat("2006-01-02 15:04:05.000"),
+		levelOpt, options.WithTimeFormat(config.Logger.TimeFormat),
 	)
 	return nil
 }
