@@ -5,8 +5,8 @@ Content-Type: application/json
 {
     "email": {
         "to": ["1149062639@qq.com"],
-        "subject": "公开富兰克林！！！",
-        "content": "酒店客房你是？？？？"
+        "subject": "给你看就是那个富士康的！！！",
+        "content": "了但考虑？？？？"
     },
     "sendOptions": {
         "async": false,

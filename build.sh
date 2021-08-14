@@ -32,8 +32,9 @@ mkdir -p $BUILD_TARGET/log
 cp $CONFIG_FILE $BUILD_TARGET/conf/
 
 # Packaging to one
-echo "Packaging to one..."
-tar -czf $BUILD_TARGET/postar-$VERSION.tar.gz -T $BUILD_TARGET/bin/ $BUILD_TARGET/conf/ $BUILD_TARGET/log/
+echo "Packaging to one: postar-$VERSION.tar.gz"
+cd $BUILD_TARGET || exit
+tar -czf postar-$VERSION.tar.gz bin conf log
 
 # Done
 echo "Done."

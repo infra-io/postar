@@ -12,24 +12,22 @@ LABEL maintainer="fishgoddess"
 
 # The version of postar
 ENV POSTAR_VERSION v0.2.0-alpha
-ENV POSTAR_DOWNLOAD_URL https://github.com/avino-plan/postar/releases/download/$POSTAR_VERSION/postar-$POSTAR_VERSION-linux.tar.gz
+ENV POSTAR_DOWNLOAD_URL https://github.com/avino-plan/postar/releases/download/$POSTAR_VERSION/postar-$POSTAR_VERSION.tar.gz
 
-# Deploy postar to work directory
+# Download postar
 WORKDIR /opt/
 RUN set -e; \
-    wget $POSTAR_DOWNLOAD_URL; \
-    tar -xf postar-$POSTAR_VERSION-linux.tar.gz; \
-    rm postar-$POSTAR_VERSION-linux.tar.gz; \
-    mv postar-$POSTAR_VERSION-linux postar-$POSTAR_VERSION;
+    wget $POSTAR_DOWNLOAD_URL -P postar-$POSTAR_VERSION
 
-# Add executable permission
+# Deploy and add executable permission
 WORKDIR /opt/postar-$POSTAR_VERSION
 RUN set -e; \
-    mv postar-$POSTAR_VERSION postar; \
-    chmod +x ./postar
+    tar -xf postar-$POSTAR_VERSION.tar.gz; \
+    rm postar-$POSTAR_VERSION.tar.gz; \
+    chmod +x bin/postar-$POSTAR_VERSION-linux
 
 # Expose ports for services
 EXPOSE 5897
 
 # Run postar
-CMD ["./postar"]
+CMD ["bin/postar-$POSTAR_VERSION-linux"]

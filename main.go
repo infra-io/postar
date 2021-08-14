@@ -22,7 +22,7 @@ func printTakenTime(fn func()) {
 }
 
 func getConfigFile() string {
-	configFile := flag.String("conf", "./conf/postar.ini", "The file path of Postar configuration.")
+	configFile := flag.String("conf", "../conf/postar.ini", "The file path of Postar configuration.")
 	flag.Parse()
 	return *configFile
 }

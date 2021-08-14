@@ -1,0 +1,16 @@
+# Copyright 2021 Ye Zi Jie.  All rights reserved.
+# Use of this source code is governed by a MIT style
+# license that can be found in the LICENSE file.
+#
+# Postar docker-compose
+# Author: fishgoddess
+version: "3.1"
+
+services:
+  postar:
+    image: fishgoddess/postar:v0.2.0-alpha
+    ports:
+      - "5897:5897"
+    volumes:
+      - ./log:/opt/postar-v0.2.0-alpha/log
+      - ./postar.ini:/opt/postar-v0.2.0-alpha/postar.ini
