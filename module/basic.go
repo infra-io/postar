@@ -12,6 +12,10 @@ import (
 	"github.com/FishGoddess/logit"
 )
 
+const (
+	Version = "v0.2.0-alpha"
+)
+
 var (
 	globalLogger *logit.Logger
 
