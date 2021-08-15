@@ -9,12 +9,15 @@
 package sender
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/avino-plan/postar/module"
 )
 
 var (
+	timeoutErr = errors.New("timeout")
+
 	senders = map[string]func() Sender{
 		"smtp": newSmtpSender,
 	}
@@ -53,4 +56,8 @@ func Initialize(config *module.Config) (Sender, error) {
 
 	sender := newSender()
 	return sender, sender.Configure(config)
+}
+
+func IsTimeout(err error) bool {
+	return err == timeoutErr
 }

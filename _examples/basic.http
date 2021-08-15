@@ -1,14 +1,20 @@
-# 发送邮件请求
-POST http://{{address}}/
+# 获取服务信息
+GET http://{{address}}/
+Content-Type: application/json
+
+###
+
+# 发送邮件
+PUT http://{{address}}/send
 Content-Type: application/json
 
 {
     "email": {
         "to": ["1149062639@qq.com"],
-        "subject": "给你看就是那个富士康的！！！",
-        "content": "了但考虑？？？？"
+        "subject": "各门店反馈疗法你们！！！",
+        "content": "买的索马里？？？？"
     },
-    "sendOptions": {
+    "options": {
         "async": false,
         "timeout": 3000
     }

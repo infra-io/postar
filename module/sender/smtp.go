@@ -9,7 +9,6 @@
 package sender
 
 import (
-	"errors"
 	"sync"
 	"time"
 
@@ -104,7 +103,7 @@ func (sms *SmtpSender) SendEmail(email *Email, options *SendOptions) error {
 	case err := <-request.errorCh:
 		return err
 	case <-time.After(time.Duration(options.Timeout) * time.Millisecond):
-		return errors.New("send timeout")
+		return timeoutErr
 	}
 }
 

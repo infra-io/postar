@@ -22,15 +22,15 @@ var (
 )
 
 type SendRequest struct {
-	Email       *sender.Email       `json:"email"`
-	SendOptions *sender.SendOptions `json:"sendOptions"`
+	Email   *sender.Email       `json:"email"`
+	Options *sender.SendOptions `json:"options"`
 }
 
 func newSendRequest() *SendRequest {
 	sendOptions := sender.DefaultSendOptions()
 	return &SendRequest{
-		Email:       nil,
-		SendOptions: &sendOptions,
+		Email:   nil,
+		Options: &sendOptions,
 	}
 }
 
