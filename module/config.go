@@ -11,6 +11,7 @@ package module
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 type GlobalConfig struct {
@@ -19,8 +20,10 @@ type GlobalConfig struct {
 }
 
 type LoggerConfig struct {
-	Level      string `ini:"level"`
-	TimeFormat string `ini:"time_format"`
+	Level           string `ini:"level"`
+	TimeFormat      string `ini:"time_format"`
+	OutputFile      string `ini:"output_file"`
+	ErrorOutputFile string `ini:"error_output_file"`
 }
 
 type SenderConfig struct {
@@ -46,20 +49,26 @@ func (c *Config) String() string {
 	return fmt.Sprintf("- GlobalConfig is %+v\n- LoggerConfig is %+v\n- SenderConfig is %+v\n- ServerConfig is %+v\n", *c.Global, *c.Logger, *c.Sender, *c.Server)
 }
 
-// TODO 加入 os.LookupEnv 获取环境变量配置的功能
 func DefaultConfig() *Config {
+
+	port, err := strconv.Atoi(os.Getenv("POSTAR_SMTP_PORT"))
+	if err != nil {
+		port = 587
+	}
 	return &Config{
 		Global: &GlobalConfig{
 			SenderType: "smtp",
 			ServerType: "http",
 		},
 		Logger: &LoggerConfig{
-			Level:      "info",
-			TimeFormat: "2006-01-02 15:04:05.000",
+			Level:           "info",
+			TimeFormat:      "2006-01-02 15:04:05.000",
+			OutputFile:      "../log/postar.log",
+			ErrorOutputFile: "../log/postar.error.log",
 		},
 		Sender: &SenderConfig{
 			SmtpHost:           os.Getenv("POSTAR_SMTP_HOST"),
-			SmtpPort:           587,
+			SmtpPort:           port,
 			SmtpUser:           os.Getenv("POSTAR_SMTP_USER"),
 			SmtpPassword:       os.Getenv("POSTAR_SMTP_PASSWORD"),
 			WorkerNumber:       64,

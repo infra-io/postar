@@ -9,9 +9,9 @@ BUILD_TARGET=target
 CONFIG_FILE=_examples/config/postar.ini
 
 # Before building
-echo "Start building..."
+echo "Start building to: $BUILD_TARGET"
 mkdir $BUILD_TARGET
-echo "Building target directory: $BUILD_TARGET"
+rm -r ${BUILD_TARGET:?}/bin ${BUILD_TARGET:?}/conf ${BUILD_TARGET:?}/log
 
 # Go build: windows, linux and darwin
 echo "Building windows version..."

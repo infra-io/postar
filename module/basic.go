@@ -8,41 +8,15 @@
 
 package module
 
-import (
-	"github.com/FishGoddess/logit"
-)
-
 const (
 	Version = "v0.2.0-alpha"
 )
 
 var (
-	globalLogger *logit.Logger
-
 	initializations = []func(config *Config) error{
 		initLogger,
 	}
 )
-
-func initLogger(config *Config) error {
-
-	options := logit.Options()
-	levelOpt := options.WithDebugLevel()
-
-	switch config.Logger.Level {
-	case "info":
-		levelOpt = options.WithInfoLevel()
-	case "warn":
-		levelOpt = options.WithWarnLevel()
-	case "error":
-		levelOpt = options.WithErrorLevel()
-	}
-
-	globalLogger = logit.NewLogger(
-		levelOpt, options.WithTimeFormat(config.Logger.TimeFormat),
-	)
-	return nil
-}
 
 func Initialize(config *Config) error {
 
@@ -57,8 +31,4 @@ func Initialize(config *Config) error {
 		}
 	}
 	return nil
-}
-
-func Logger() *logit.Logger {
-	return globalLogger
 }
