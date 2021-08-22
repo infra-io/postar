@@ -1,0 +1,25 @@
+# 获取服务信息
+GET http://{{address}}/
+Content-Type: application/json
+
+###
+
+# 发送邮件
+PUT http://{{address}}/send
+Content-Type: application/json
+
+{
+    "email": {
+        "to": [
+            "1149062639@qq.com"
+        ],
+        "subject": "各门店反馈疗法你们！！！",
+        "content": "买的索马里？？？？"
+    },
+    "options": {
+        "async": false,
+        "timeout": 3000
+    }
+}
+
+###

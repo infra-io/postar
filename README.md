@@ -1,8 +1,10 @@
 # 📝 postar
 
-[![License](_icon/license.svg)](https://opensource.org/licenses/MIT)
+[![build](_icons/build.svg)](_icons/build.svg)
+[![coverage](_icons/coverage.svg)](_icons/coverage.svg)
+[![license](_icons/license.svg)](https://opensource.org/licenses/MIT)
 
-**postar** 是一个简单易用且低耦合的邮件服务，可以为您的应用程序提供邮件功能。
+**Postar** 是一个简单易用且低耦合的邮件服务，可以为您的应用程序提供邮件功能。
 
 [Read me in English](./README.en.md)
 
@@ -11,41 +13,26 @@
 * 支持发送文本邮件和 HTML 邮件
 * 支持异步邮件发送
 * 支持 http 请求调用接口
-* 支持 jsonrpc 和 grpc 两种跨平台远程调用接口
 
 _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新特性和计划请查看 [FUTURE.md](./FUTURE.md)。_
 
 ### 🚀 安装方式
 
-> 使用 docker 的方式（推荐）
+* 使用 Docker 的方式（推荐）
 
-Docker 版本安装请看：[docker](_examples/install/docker_installation_manual.md) 。
+Docker 版本安装请看：[https://gitee.com/avino-plan/postar-docker](https://gitee.com/avino-plan/postar-docker) 。
 
 访问 Docker Hub 上的主页：[https://hub.docker.com/r/fishgoddess/postar](https://hub.docker.com/r/fishgoddess/postar) 。
 
-> 使用安装包的方式
+* 使用源码包的方式
 
-**postar 仅提供 windows、linux 和 darwin 三种系统下 amd64 架构的二进制包。**
+Postar 的二进制执行包可以通过源码进行编译得到，一共有两种方式：
 
-Windows 版本安装请看：[windows](_examples/install/windows_installation_manual.md) 。
+1. 在源码根目录执行 `./build.sh` 会生成 target 目录，所有的二进制包都在里面
 
-Linux 和 Mac 版本安装请看：[linux_and_mac](_examples/install/linux_and_mac_installation_manual.md) 。
+2. 通过 `go` 命令构建或启动服务，参考 `go build`。
 
-### 📖 使用手册
-
-* 敬请期待
-
-### 🔥 性能测试
-
-> 测试文件：[test/benchmark_test.go](./test/benchmark_test.go)
-
-| 服务器类型 | 单位时间内运行次数 (越大越好) |  每个操作消耗时间 (越小越好) | B/op (越小越好) | allocs/op (越小越好) |
-| -----------|--------|-------------|-------------|-------------|
-| http | &nbsp; 3165 | 386013 ns/op | 14838 B/op | 89 allocs/op |
-| **jsonrpc** | **17462** | **&nbsp; 69567 ns/op** | **&nbsp; &nbsp; 712 B/op** | **15 allocs/op** |
-| grpc | 10000 | 132845 ns/op | &nbsp; 5248 B/op | 98 allocs/op |
-
-> 测试环境：I7-6700HQ CPU @ 2.6 GHZ，16 GB RAM
+> 想知道怎么使用？查看 [_examples](_examples)。
 
 ### 👥 贡献者
 
