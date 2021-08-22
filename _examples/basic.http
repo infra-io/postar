@@ -10,7 +10,9 @@ Content-Type: application/json
 
 {
     "email": {
-        "to": ["1149062639@qq.com"],
+        "to": [
+            "1149062639@qq.com"
+        ],
         "subject": "各门店反馈疗法你们！！！",
         "content": "买的索马里？？？？"
     },
