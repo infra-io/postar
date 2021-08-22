@@ -32,6 +32,8 @@ Postar has two ways to get binary:
 
 2. Build by `go` command, see `go build`.
 
+_Notice: Default config file is `/opt/postar/conf/postar.ini`, default log output directory is `/opt/postar/log/`, and you need them to start service._
+
 > Want to know how to use? See [_examples](_examples).
 
 ### 👥 Contributing

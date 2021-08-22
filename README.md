@@ -32,6 +32,8 @@ Postar 的二进制执行包可以通过源码进行编译得到，一共有两�
 
 2. 通过 `go` 命令构建或启动服务，参考 `go build`。
 
+_注意：默认的配置文件路径是 `/opt/postar/conf/postar.ini`，默认的日志输出路径是 `/opt/postar/log/`，需要有对应的文件和文件夹才可以启动。_
+
 > 想知道怎么使用？查看 [_examples](_examples)。
 
 ### 👥 贡献者

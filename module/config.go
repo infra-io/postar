@@ -63,8 +63,8 @@ func DefaultConfig() *Config {
 		Logger: &LoggerConfig{
 			Level:           "info",
 			TimeFormat:      "2006-01-02 15:04:05.000",
-			OutputFile:      "../log/postar.log",
-			ErrorOutputFile: "../log/postar.error.log",
+			OutputFile:      "/opt/postar/log/postar.log",
+			ErrorOutputFile: "/opt/postar/log/postar.error.log",
 		},
 		Sender: &SenderConfig{
 			SmtpHost:           os.Getenv("POSTAR_SMTP_HOST"),
@@ -75,7 +75,7 @@ func DefaultConfig() *Config {
 			RequestChannelSize: 65536,
 		},
 		Server: &ServerConfig{
-			Address: "127.0.0.1:5897",
+			Address: ":5897",
 		},
 	}
 }
