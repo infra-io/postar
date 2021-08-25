@@ -20,7 +20,7 @@ _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about mor
 
 1. Use Docker (recommend)
 
-Installation manual: [https://gitee.com/avino-plan/postar-docker](https://gitee.com/avino-plan/postar-docker).
+Installation manual: [Gitee](https://gitee.com/avino-plan/postar-docker) / [GitHub](https://github.com/avino-plan/postar-docker) .
 
 Docker Hub: [https://hub.docker.com/r/fishgoddess/postar](https://hub.docker.com/r/fishgoddess/postar).
 

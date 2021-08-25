@@ -20,7 +20,7 @@ _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新�
 
 * 使用 Docker 的方式（推荐）
 
-Docker 版本安装请看：[https://gitee.com/avino-plan/postar-docker](https://gitee.com/avino-plan/postar-docker) 。
+Docker 版本安装请看：[码云](https://gitee.com/avino-plan/postar-docker) / [GitHub](https://github.com/avino-plan/postar-docker) 。
 
 访问 Docker Hub 上的主页：[https://hub.docker.com/r/fishgoddess/postar](https://hub.docker.com/r/fishgoddess/postar) 。
 
