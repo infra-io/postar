@@ -9,34 +9,17 @@
 package main
 
 import (
-	"os"
-	"sync"
-	"time"
-
 	"github.com/avino-plan/postar/module"
 	"github.com/avino-plan/postar/module/sender"
 	"github.com/avino-plan/postar/module/server"
-	"github.com/go-ini/ini"
 )
 
 type Postar struct {
 	svr server.Server
-	wg  *sync.WaitGroup
 }
 
 func newPostar() *Postar {
-	return &Postar{
-		wg: &sync.WaitGroup{},
-	}
-}
-
-func (p *Postar) ReadConfig(configFile string) (*module.Config, error) {
-	config := module.DefaultConfig()
-	err := ini.MapTo(config, configFile)
-	if err != nil && !os.IsNotExist(err) {
-		return nil, err
-	}
-	return config, nil
+	return &Postar{}
 }
 
 func (p *Postar) Initialize(config *module.Config) error {
@@ -61,19 +44,9 @@ func (p *Postar) Initialize(config *module.Config) error {
 }
 
 func (p *Postar) Run() error {
-
-	err := p.svr.Serve()
-	if err != nil {
-		return err
-	}
-
-	// TODO 使用 signal 机制通知 Shutdown
-	//p.wg.Add(1)
-	//p.wg.Wait()
-	time.Sleep(time.Hour)
-	return nil
+	return p.svr.Serve()
 }
 
 func (p *Postar) Shutdown() {
-	p.wg.Done()
+	// TODO 使用 signal 机制通知 Shutdown
 }

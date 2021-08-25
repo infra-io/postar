@@ -12,39 +12,45 @@ import (
 	"flag"
 	"fmt"
 	"time"
+
+	"github.com/avino-plan/postar/module"
+	"github.com/go-ini/ini"
 )
 
-func printTakenTime(fn func()) {
-	beginTime := time.Now()
-	fn()
-	endTime := time.Now()
-	fmt.Printf("Postar initialized successfully! It took %dms.\n", endTime.Sub(beginTime).Milliseconds())
-}
+func configFile() *module.Config {
 
-func getConfigFile() string {
 	configFile := flag.String("conf", "/opt/postar/conf/postar.ini", "The file path of Postar configuration.")
 	flag.Parse()
-	return *configFile
+	fmt.Printf("Postar got config file: %s\n", *configFile)
+
+	config := module.DefaultConfig()
+	if *configFile == "" {
+		return config
+	}
+
+	err := ini.MapTo(config, *configFile)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Postar's config:\n%+v\n", config)
+	return config
 }
 
 func main() {
 
+	beginTime := time.Now()
+
 	postar := newPostar()
-	printTakenTime(func() {
+	err := postar.Initialize(configFile())
+	if err != nil {
+		panic(err)
+	}
 
-		config, err := postar.ReadConfig(getConfigFile())
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("Postar's config:\n%+v\n", config)
+	endTime := time.Now()
+	fmt.Printf("Postar initialized successfully! It took %dms.\n", endTime.Sub(beginTime).Milliseconds())
 
-		err = postar.Initialize(config)
-		if err != nil {
-			panic(err)
-		}
-	})
-
-	err := postar.Run()
+	err = postar.Run()
 	if err != nil {
 		panic(err)
 	}

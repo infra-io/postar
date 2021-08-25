@@ -106,13 +106,7 @@ func (hs *HttpServer) Serve() error {
 	handlers := http.NewServeMux()
 	handlers.HandleFunc("/", hs.rootHandler)
 	handlers.HandleFunc("/send", hs.sendEmailHandler)
-	go func() {
-		err := http.ListenAndServe(hs.address, handlers)
-		if err != nil {
-			panic(err)
-		}
-	}()
-	return nil
+	return http.ListenAndServe(hs.address, handlers)
 }
 
 func (hs *HttpServer) Close() error {
