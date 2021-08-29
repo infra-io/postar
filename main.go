@@ -11,6 +11,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"runtime"
+	"strings"
 	"time"
 
 	"github.com/avino-plan/postar/module"
@@ -19,7 +22,12 @@ import (
 
 func configFile() *module.Config {
 
-	configFile := flag.String("conf", "/opt/postar/conf/postar.ini", "The file path of Postar configuration.")
+	defaultConfigFile := "/opt/postar/conf/postar.ini"
+	if strings.Contains(runtime.GOOS, "windows") {
+		defaultConfigFile = "../conf/postar.ini"
+	}
+
+	configFile := flag.String("conf", defaultConfigFile, "The file path of Postar configuration.")
 	flag.Parse()
 	fmt.Printf("Postar got config file: %s\n", *configFile)
 
@@ -37,6 +45,11 @@ func configFile() *module.Config {
 	return config
 }
 
+func recordStartError(msg string, err error) {
+	msg = fmt.Sprintf("[%s] [%s] %+v\n", time.Now().Format("2006-01-02 15:04:05.000"), msg, err)
+	ioutil.WriteFile("./start_error.log", []byte(msg), 0644)
+}
+
 func main() {
 
 	beginTime := time.Now()
@@ -44,6 +57,7 @@ func main() {
 	postar := newPostar()
 	err := postar.Initialize(configFile())
 	if err != nil {
+		recordStartError("Initialize error", err)
 		panic(err)
 	}
 
@@ -52,6 +66,7 @@ func main() {
 
 	err = postar.Run()
 	if err != nil {
+		recordStartError("Run error", err)
 		panic(err)
 	}
 }

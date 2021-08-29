@@ -11,7 +11,9 @@ package module
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strconv"
+	"strings"
 )
 
 type GlobalConfig struct {
@@ -34,6 +36,7 @@ type SenderConfig struct {
 	WorkerNumber       int    `ini:"worker_number"`
 	RequestChannelSize int    `ini:"request_channel_size"`
 }
+
 type ServerConfig struct {
 	Address string `ini:"address"`
 }
@@ -51,6 +54,13 @@ func (c *Config) String() string {
 
 func DefaultConfig() *Config {
 
+	logFile := "/opt/postar/log/postar.log"
+	errorLogFile := "/opt/postar/log/postar.error.log"
+	if strings.Contains(runtime.GOOS, "windows") {
+		logFile = "../log/postar.log"
+		errorLogFile = "../log/postar.error.log"
+	}
+
 	port, err := strconv.Atoi(os.Getenv("POSTAR_SMTP_PORT"))
 	if err != nil {
 		port = 587
@@ -63,8 +73,8 @@ func DefaultConfig() *Config {
 		Logger: &LoggerConfig{
 			Level:           "info",
 			TimeFormat:      "2006-01-02 15:04:05.000",
-			OutputFile:      "/opt/postar/log/postar.log",
-			ErrorOutputFile: "/opt/postar/log/postar.error.log",
+			OutputFile:      logFile,
+			ErrorOutputFile: errorLogFile,
 		},
 		Sender: &SenderConfig{
 			SmtpHost:           os.Getenv("POSTAR_SMTP_HOST"),
