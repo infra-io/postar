@@ -11,8 +11,9 @@
 ### 🥇 Features
 
 * Plain and Html form email supports
-* Asynchronous send supports
-* HTTP api supports
+* Synchronous/Asynchronous mode supports, and timeout is available in synchronous mode
+* HTTP api supports, and use http2 is ok
+* Gracefully shutdown with signal mechanism supports
 
 _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about more information._
 
