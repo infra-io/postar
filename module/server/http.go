@@ -9,8 +9,10 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/avino-plan/postar/base/model"
 	"github.com/avino-plan/postar/module"
@@ -18,8 +20,13 @@ import (
 )
 
 type HttpServer struct {
-	address string
-	sender  sender.Sender
+	address        string
+	useHttp2       bool
+	tlsCert        string
+	tlsCertKey     string
+	waitForClosing int
+	sender         sender.Sender
+	server         *http.Server
 }
 
 func newHttpServer() Server {
@@ -28,6 +35,10 @@ func newHttpServer() Server {
 
 func (hs *HttpServer) Configure(config *module.Config) error {
 	hs.address = config.Server.Address
+	hs.useHttp2 = config.Server.UseHttp2
+	hs.waitForClosing = config.Server.WaitForClosing
+	hs.tlsCert = config.Server.TLSCert
+	hs.tlsCertKey = config.Server.TLSCertKey
 	return nil
 }
 
@@ -62,6 +73,7 @@ func (hs *HttpServer) rootHandler(writer http.ResponseWriter, request *http.Requ
 		"service":      "postar",
 		"introduction": "You know, for sending emails!",
 		"version":      module.Version,
+		"protocol":     request.Proto,
 	}))
 }
 
@@ -103,12 +115,33 @@ func (hs *HttpServer) sendEmailHandler(writer http.ResponseWriter, request *http
 }
 
 func (hs *HttpServer) Serve() error {
+
 	handlers := http.NewServeMux()
 	handlers.HandleFunc("/", hs.rootHandler)
 	handlers.HandleFunc("/send", hs.sendEmailHandler)
-	return http.ListenAndServe(hs.address, handlers)
+	hs.server = &http.Server{Addr: hs.address, Handler: handlers}
+
+	var err error
+	if hs.useHttp2 {
+		err = hs.server.ListenAndServeTLS(hs.tlsCert, hs.tlsCertKey)
+	} else {
+		err = hs.server.ListenAndServe()
+	}
+
+	if err == http.ErrServerClosed {
+		return nil
+	}
+	return err
 }
 
 func (hs *HttpServer) Close() error {
-	return nil
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(hs.waitForClosing)*time.Second)
+	defer cancel()
+
+	err := hs.server.Shutdown(ctx)
+	if err != nil {
+		return err
+	}
+	return hs.sender.Close()
 }

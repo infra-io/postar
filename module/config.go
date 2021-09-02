@@ -38,7 +38,11 @@ type SenderConfig struct {
 }
 
 type ServerConfig struct {
-	Address string `ini:"address"`
+	Address        string `ini:"address"`
+	UseHttp2       bool   `ini:"use_http2"`
+	TLSCert        string `ini:"tls_cert"`
+	TLSCertKey     string `ini:"tls_cert_key"`
+	WaitForClosing int    `int:"wait_for_closing"`
 }
 
 type Config struct {
@@ -59,6 +63,13 @@ func DefaultConfig() *Config {
 	if strings.Contains(runtime.GOOS, "windows") {
 		logFile = "../log/postar.log"
 		errorLogFile = "../log/postar.error.log"
+	}
+
+	tlsCert := "/opt/postar/conf/postar_cert.pem"
+	tlsCertKey := "/opt/postar/conf/postar_cert.key"
+	if strings.Contains(runtime.GOOS, "windows") {
+		tlsCert = "../conf/postar_cert.pem"
+		tlsCertKey = "../conf/postar_cert.key"
 	}
 
 	port, err := strconv.Atoi(os.Getenv("POSTAR_SMTP_PORT"))
@@ -85,7 +96,11 @@ func DefaultConfig() *Config {
 			RequestChannelSize: 65536,
 		},
 		Server: &ServerConfig{
-			Address: ":5897",
+			Address:        ":5897",
+			UseHttp2:       false,
+			TLSCert:        tlsCert,
+			TLSCertKey:     tlsCertKey,
+			WaitForClosing: 30, // 30s
 		},
 	}
 }

@@ -9,6 +9,11 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/avino-plan/postar/module"
 	"github.com/avino-plan/postar/module/sender"
 	"github.com/avino-plan/postar/module/server"
@@ -47,6 +52,10 @@ func (p *Postar) Run() error {
 	return p.svr.Serve()
 }
 
-func (p *Postar) Shutdown() {
-	// TODO 使用 signal 机制通知 Shutdown
+func (p *Postar) WaitForShutdown() error {
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
+	<-signalCh
+	fmt.Println("Postar is shutdown gracefully...")
+	return p.svr.Close()
 }
