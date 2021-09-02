@@ -9,7 +9,7 @@
 package module
 
 const (
-	Version = "v0.2.2-alpha"
+	Version = "v0.2.3-alpha"
 )
 
 var (

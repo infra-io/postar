@@ -64,9 +64,17 @@ func main() {
 	endTime := time.Now()
 	fmt.Printf("Postar initialized successfully! It took %dms.\n", endTime.Sub(beginTime).Milliseconds())
 
-	err = postar.Run()
+	go func() {
+		err = postar.Run()
+		if err != nil {
+			recordStartError("Run error", err)
+			panic(err)
+		}
+	}()
+
+	err = postar.WaitForShutdown()
 	if err != nil {
-		recordStartError("Run error", err)
+		recordStartError("Shutdown error", err)
 		panic(err)
 	}
 }

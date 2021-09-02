@@ -4,7 +4,7 @@
 #
 # Postar build script
 # Author: fishgoddess
-VERSION=v0.2.2-alpha
+VERSION=v0.2.3-alpha
 BUILD_TARGET=target
 CONFIG_FILE=_examples/config/postar.ini
 

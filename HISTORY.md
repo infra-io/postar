@@ -1,5 +1,12 @@
 ## ✒ 历史版本的特性介绍 (Features in old versions)
 
+### v0.2.3-alpha
+
+> 此版本发布于 2021-09-03
+
+* 加入 signal 平滑下线机制
+* 支持 TLS 加密的 http2 通信协议
+
 ### v0.2.2-alpha
 
 > 此版本发布于 2021-08-29

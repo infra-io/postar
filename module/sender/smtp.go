@@ -108,6 +108,9 @@ func (sms *SmtpSender) SendEmail(email *Email, options *SendOptions) error {
 }
 
 func (sms *SmtpSender) Close() error {
+	for len(sms.requestCh) > 0 {
+		time.Sleep(100 * time.Millisecond)
+	}
 	close(sms.requestCh)
 	return nil
 }
