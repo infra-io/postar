@@ -7,12 +7,3 @@
 // Created at 2021/09/17 00:15:34
 
 package server
-
-import "github.com/avino-plan/postar/internal/postard/service"
-
-func DefaultSendOptions() *service.SendEmailOptions {
-	return &service.SendEmailOptions{
-		Async:   false,
-		Timeout: 10000,
-	}
-}
