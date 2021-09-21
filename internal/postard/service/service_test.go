@@ -4,6 +4,13 @@
 //
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
-// Created at 2021/09/17 01:38:30
+// Created at 2021/09/22 00:22:39
 
 package service
+
+import "testing"
+
+// go test -v -cover -run=^TestSmtpService$
+func TestSmtpService(t *testing.T) {
+	// do nothing...
+}

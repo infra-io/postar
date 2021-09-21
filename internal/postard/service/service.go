@@ -27,6 +27,14 @@ type SendEmailOptions struct {
 	Timeout time.Duration // The timeout of sending one email.
 }
 
+// DefaultSendEmailOptions returns a default options for sending emails.
+func DefaultSendEmailOptions() *SendEmailOptions {
+	return &SendEmailOptions{
+		Async:   false,
+		Timeout: 5 * time.Second,
+	}
+}
+
 // SmtpService is the service of smtp.
 type SmtpService interface {
 	// SendEmail sends email with options and returns an error if something wrong happens.

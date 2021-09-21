@@ -12,12 +12,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/avino-plan/postar/pkg/concurrency"
+	"github.com/avino-plan/postar/internal/pkg/concurrency"
+	"github.com/pkg/errors"
 	"gopkg.in/gomail.v2"
 )
 
-// smtpService is the service of smtp.
-type smtpService struct {
+// SmtpServiceImpl is the service of smtp.
+type SmtpServiceImpl struct {
 	host     string            // The host of smtp server.
 	port     int               // The port of smtp server.
 	user     string            // The user of smtp server.
@@ -27,7 +28,7 @@ type smtpService struct {
 
 // NewSmtpService returns a new SmtpServer.
 func NewSmtpService(host string, port int, user string, password string, pool *concurrency.Pool) SmtpService {
-	return &smtpService{
+	return &SmtpServiceImpl{
 		host:     host,
 		port:     port,
 		user:     user,
@@ -37,7 +38,7 @@ func NewSmtpService(host string, port int, user string, password string, pool *c
 }
 
 // sendEmail sends email and returns an error if something wrong happens.
-func (ss *smtpService) sendEmail(email *Email) error {
+func (ss *SmtpServiceImpl) sendEmail(email *Email) error {
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", ss.user)
 	msg.SetHeader("To", email.To...)
@@ -46,28 +47,25 @@ func (ss *smtpService) sendEmail(email *Email) error {
 	return gomail.NewDialer(ss.host, ss.port, ss.user, ss.password).DialAndSend(msg)
 }
 
-// SendEmail send
-func (ss *smtpService) SendEmail(ctx context.Context, email *Email, options *SendEmailOptions) error {
-
-	done := make(chan error, 1)
-	err := ss.pool.Go(ctx, func(ctx context.Context) {
-		done <- ss.sendEmail(email)
-	})
-	if err != nil && concurrency.IsEnqueueTimeout(err) {
-		// TODO wraps err
-		return err
+// SendEmail sends email to somewhere.
+func (ss *SmtpServiceImpl) SendEmail(ctx context.Context, email *Email, options *SendEmailOptions) error {
+	if options == nil {
+		options = DefaultSendEmailOptions()
 	}
 
+	errorCh := ss.pool.Go(ctx, func(ctx context.Context) error {
+		return ss.sendEmail(email)
+	})
 	if options.Async {
 		return nil
 	}
 
 	timer := time.NewTimer(options.Timeout)
 	select {
-	case err = <-done:
-		return err
+	case err := <-errorCh:
+		timer.Stop()
+		return errors.Wrap(err, "send email failed")
 	case <-timer.C:
-		// TODO timeout error
-		return nil
+		return errors.New("send email timeout")
 	}
 }

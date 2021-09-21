@@ -105,27 +105,30 @@ func (p *Pool) nextTaskQueue() chan<- func() {
 }
 
 // wrapTask wraps task to a complete task of pool.
-func (p *Pool) wrapTask(ctx context.Context, task func(ctx context.Context)) func() {
+func (p *Pool) wrapTask(ctx context.Context, fn func(ctx context.Context) error, errorCh chan<- error) func() {
 	return func() {
+		var err error
 		defer func() {
+			errorCh <- err
 			if cause := recover(); p.onRecover != nil {
 				p.onRecover(cause) // Notice: Just do some simple records which don't panic...
 			}
 		}()
-		task(ctx)
+		err = fn(ctx)
 	}
 }
 
 // Go sends the task to task queue and waits for executing.
-func (p *Pool) Go(ctx context.Context, task func(ctx context.Context)) error {
+func (p *Pool) Go(ctx context.Context, fn func(ctx context.Context) error) <-chan error {
+	errorCh := make(chan error, 1)
+
 	taskQueue := p.nextTaskQueue()
 	select {
-	case taskQueue <- p.wrapTask(ctx, task):
-		return nil
+	case taskQueue <- p.wrapTask(ctx, fn, errorCh):
 	case <-ctx.Done():
-		// TODO wraps ctx.Err()
-		return ErrEnqueueTimeout
+		errorCh <- ctx.Err()
 	}
+	return errorCh
 }
 
 // Stop closes all task queues and waits for all workers to be shutdown.

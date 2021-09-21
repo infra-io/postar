@@ -16,16 +16,19 @@ import (
 
 // go test -v -cover -run=^TestNewPool$
 func TestNewPool(t *testing.T) {
-
 	ctx := context.Background()
 	pool := NewPool(WithMaxWorkers(4), WithMaxWorkerTasks(16)).Start()
 
 	numbers := [1000]int{}
 	for i := 0; i < 1000; i++ {
 		no := i
-		pool.Go(ctx, func(ctx context.Context) {
+		errorCh := pool.Go(ctx, func(ctx context.Context) error {
 			numbers[no] = no
+			return nil
 		})
+		if err := <-errorCh; err != nil {
+			t.Error(err)
+		}
 	}
 
 	time.Sleep(time.Second)
