@@ -31,7 +31,7 @@ func NewPostardClient(cc grpc.ClientConnInterface) PostardClient {
 
 func (c *postardClient) SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*SendEmailResponse, error) {
 	out := new(SendEmailResponse)
-	err := c.cc.Invoke(ctx, "/postard.Postard/SendEmail", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.avinoplan.postar.api.postard.Postard/SendEmail", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func _Postard_SendEmail_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/postard.Postard/SendEmail",
+		FullMethod: "/github.com.avinoplan.postar.api.postard.Postard/SendEmail",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PostardServer).SendEmail(ctx, req.(*SendEmailRequest))
@@ -88,7 +88,7 @@ func _Postard_SendEmail_Handler(srv interface{}, ctx context.Context, dec func(i
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Postard_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "postard.Postard",
+	ServiceName: "github.com.avinoplan.postar.api.postard.Postard",
 	HandlerType: (*PostardServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

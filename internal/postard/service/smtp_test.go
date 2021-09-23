@@ -36,7 +36,7 @@ func TestNewSmtpService(t *testing.T) {
 	pool := concurrency.NewPool().Start()
 	defer pool.Stop()
 
-	smtpService := NewSmtpService(host, int(port), user, password, pool)
+	smtpService := NewSmtpService(pool, host, int(port), user, password)
 	err = smtpService.SendEmail(context.Background(), &Email{
 		To:       []string{to},
 		Subject:  t.Name(),

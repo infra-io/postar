@@ -10,7 +10,6 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"github.com/avino-plan/postar/internal/pkg/concurrency"
 	"github.com/pkg/errors"
@@ -19,21 +18,21 @@ import (
 
 // SmtpServiceImpl is the service of smtp.
 type SmtpServiceImpl struct {
+	pool     *concurrency.Pool // The pool of workers.
 	host     string            // The host of smtp server.
 	port     int               // The port of smtp server.
 	user     string            // The user of smtp server.
 	password string            // The password of smtp server.
-	pool     *concurrency.Pool // The pool of workers.
 }
 
 // NewSmtpService returns a new SmtpServer.
-func NewSmtpService(host string, port int, user string, password string, pool *concurrency.Pool) SmtpService {
+func NewSmtpService(pool *concurrency.Pool, host string, port int, user string, password string) SmtpService {
 	return &SmtpServiceImpl{
+		pool:     pool,
 		host:     host,
 		port:     port,
 		user:     user,
 		password: password,
-		pool:     pool,
 	}
 }
 
@@ -48,24 +47,24 @@ func (ss *SmtpServiceImpl) sendEmail(email *Email) error {
 }
 
 // SendEmail sends email to somewhere.
-func (ss *SmtpServiceImpl) SendEmail(ctx context.Context, email *Email, options *SendEmailOptions) error {
+func (ss *SmtpServiceImpl) SendEmail(pCtx context.Context, email *Email, options *SendEmailOptions) error {
 	if options == nil {
 		options = DefaultSendEmailOptions()
 	}
 
-	errorCh := ss.pool.Go(ctx, func(ctx context.Context) error {
-		return ss.sendEmail(email)
-	})
+	ctx, cancel := context.WithTimeout(pCtx, options.Timeout)
+	defer cancel()
+
+	errorCh := ss.pool.Go(ctx, func(ctx context.Context) error { return ss.sendEmail(email) })
 	if options.Async {
 		return nil
 	}
 
-	timer := time.NewTimer(options.Timeout)
+	var err error
 	select {
-	case err := <-errorCh:
-		timer.Stop()
-		return errors.Wrap(err, "send email failed")
-	case <-timer.C:
-		return errors.New("send email timeout")
+	case err = <-errorCh:
+	case <-ctx.Done():
+		err = ctx.Err()
 	}
+	return errors.Wrap(err, "send email failed")
 }
