@@ -12,7 +12,6 @@ import (
 	"context"
 
 	"github.com/avino-plan/postar/internal/pkg/concurrency"
-	"github.com/pkg/errors"
 	"gopkg.in/gomail.v2"
 )
 
@@ -60,11 +59,16 @@ func (ss *SmtpServiceImpl) SendEmail(pCtx context.Context, email *Email, options
 		return nil
 	}
 
-	var err error
 	select {
-	case err = <-errorCh:
+	case e := <-errorCh:
+		if e != nil {
+			return errSendEmailFailed
+		}
 	case <-ctx.Done():
-		err = ctx.Err()
+		e := ctx.Err()
+		if e != nil {
+			return errSendTimeout
+		}
 	}
-	return errors.Wrap(err, "send email failed")
+	return nil
 }

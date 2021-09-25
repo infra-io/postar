@@ -7,17 +7,16 @@
 // Created at 2021/09/16 01:42:33
 syntax = "proto3";
 package github.com.avinoplan.postar.api.postard;
-import "status.proto";
 
-// protoc -I=../pkg -I=. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative postard.proto
+// protoc -I=. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative postard.proto
 option go_package = "github.com/avino-plan/postar/api/postard";
 
 // Email wraps all information of using smtp service.
 message Email {
   repeated string to = 1; // The receivers of one email.
   string    subject = 2;   // The subject of one email.
-  string    BodyType = 3;   // The content type of body.
-  string    Body = 4;   // The body of one email.
+  string    bodyType = 3;   // The content type of body.
+  string    body = 4;   // The body of one email.
 }
 
 // SendEmailOptions is the options of sending emails.
@@ -34,7 +33,7 @@ message SendEmailRequest {
 
 // SendEmailResponse is the response of SendEmail.
 message SendEmailResponse {
-  pkg.Status status = 1; // The status of response.
+  string traceId = 1; // For tracing.
 }
 
 // Postard is the core service of postar.
