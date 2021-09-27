@@ -11,12 +11,13 @@ package service
 import (
 	"context"
 
+	"github.com/FishGoddess/logit"
 	"github.com/avino-plan/postar/internal/pkg/concurrency"
 	"gopkg.in/gomail.v2"
 )
 
-// SmtpServiceImpl is the service of smtp.
-type SmtpServiceImpl struct {
+// smtpServiceImpl is the service of smtp.
+type smtpServiceImpl struct {
 	pool     *concurrency.Pool // The pool of workers.
 	host     string            // The host of smtp server.
 	port     int               // The port of smtp server.
@@ -24,9 +25,9 @@ type SmtpServiceImpl struct {
 	password string            // The password of smtp server.
 }
 
-// NewSmtpService returns a new SmtpServer.
+// NewSmtpService returns a new SmtpService.
 func NewSmtpService(pool *concurrency.Pool, host string, port int, user string, password string) SmtpService {
-	return &SmtpServiceImpl{
+	return &smtpServiceImpl{
 		pool:     pool,
 		host:     host,
 		port:     port,
@@ -36,7 +37,7 @@ func NewSmtpService(pool *concurrency.Pool, host string, port int, user string, 
 }
 
 // sendEmail sends email and returns an error if something wrong happens.
-func (ss *SmtpServiceImpl) sendEmail(email *Email) error {
+func (ss *smtpServiceImpl) sendEmail(email *Email) error {
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", ss.user)
 	msg.SetHeader("To", email.To...)
@@ -46,12 +47,15 @@ func (ss *SmtpServiceImpl) sendEmail(email *Email) error {
 }
 
 // SendEmail sends email to somewhere.
-func (ss *SmtpServiceImpl) SendEmail(pCtx context.Context, email *Email, options *SendEmailOptions) error {
+func (ss *smtpServiceImpl) SendEmail(ctx context.Context, email *Email, options *SendEmailOptions) error {
+	logger := logit.FromContext(ctx)
+
 	if options == nil {
 		options = DefaultSendEmailOptions()
+		logger.Debug("options is nil, using DefaultSendEmailOptions()").Any("options", options).End()
 	}
 
-	ctx, cancel := context.WithTimeout(pCtx, options.Timeout)
+	ctx, cancel := context.WithTimeout(ctx, options.Timeout)
 	defer cancel()
 
 	errorCh := ss.pool.Go(ctx, func(ctx context.Context) error { return ss.sendEmail(email) })
@@ -62,11 +66,13 @@ func (ss *SmtpServiceImpl) SendEmail(pCtx context.Context, email *Email, options
 	select {
 	case e := <-errorCh:
 		if e != nil {
+			logger.Error("send email failed").Error("e", e).End()
 			return errSendEmailFailed
 		}
 	case <-ctx.Done():
 		e := ctx.Err()
 		if e != nil {
+			logger.Error("send email timeout").Error("e", e).End()
 			return errSendTimeout
 		}
 	}

@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PostardClient interface {
-	SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*SendEmailResponse, error)
+	SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*PostardResponse, error)
 }
 
 type postardClient struct {
@@ -29,8 +29,8 @@ func NewPostardClient(cc grpc.ClientConnInterface) PostardClient {
 	return &postardClient{cc}
 }
 
-func (c *postardClient) SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*SendEmailResponse, error) {
-	out := new(SendEmailResponse)
+func (c *postardClient) SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*PostardResponse, error) {
+	out := new(PostardResponse)
 	err := c.cc.Invoke(ctx, "/github.com.avinoplan.postar.api.postard.Postard/SendEmail", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (c *postardClient) SendEmail(ctx context.Context, in *SendEmailRequest, opt
 // All implementations must embed UnimplementedPostardServer
 // for forward compatibility
 type PostardServer interface {
-	SendEmail(context.Context, *SendEmailRequest) (*SendEmailResponse, error)
+	SendEmail(context.Context, *SendEmailRequest) (*PostardResponse, error)
 	mustEmbedUnimplementedPostardServer()
 }
 
@@ -50,7 +50,7 @@ type PostardServer interface {
 type UnimplementedPostardServer struct {
 }
 
-func (UnimplementedPostardServer) SendEmail(context.Context, *SendEmailRequest) (*SendEmailResponse, error) {
+func (UnimplementedPostardServer) SendEmail(context.Context, *SendEmailRequest) (*PostardResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendEmail not implemented")
 }
 func (UnimplementedPostardServer) mustEmbedUnimplementedPostardServer() {}

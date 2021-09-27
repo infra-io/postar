@@ -10,6 +10,11 @@ package service
 
 import "testing"
 
+// go test -v -cover -run=^TestContextService$
+func TestContextService(t *testing.T) {
+	// do nothing...
+}
+
 // go test -v -cover -run=^TestSmtpService$
 func TestSmtpService(t *testing.T) {
 	// do nothing...

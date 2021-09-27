@@ -27,16 +27,22 @@ type SendEmailOptions struct {
 	Timeout time.Duration // The timeout of sending one email.
 }
 
-// DefaultSendEmailOptions returns a default options for sending emails.
-func DefaultSendEmailOptions() *SendEmailOptions {
-	return &SendEmailOptions{
-		Async:   false,
-		Timeout: 5 * time.Second,
-	}
+// ContextService is the service of context
+type ContextService interface {
+	// WrapContext wraps context with something and returns a new context.
+	WrapContext(ctx context.Context) context.Context
 }
 
 // SmtpService is the service of smtp.
 type SmtpService interface {
 	// SendEmail sends email with options and returns an error if something wrong happens.
 	SendEmail(ctx context.Context, email *Email, options *SendEmailOptions) error
+}
+
+// DefaultSendEmailOptions returns a default options for sending emails.
+func DefaultSendEmailOptions() *SendEmailOptions {
+	return &SendEmailOptions{
+		Async:   false,
+		Timeout: 5 * time.Second,
+	}
 }

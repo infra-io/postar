@@ -10,33 +10,66 @@ package server
 
 import (
 	"context"
+	"net"
 
 	"github.com/avino-plan/postar/api/postard"
 	"github.com/avino-plan/postar/internal/pkg/trace"
 	"github.com/avino-plan/postar/internal/postard/service"
+	"google.golang.org/grpc"
 )
 
-type PostardServerGrpcImpl struct {
+// PostardGrpcServer is a grpc implement of PostardServer.
+type PostardGrpcServer struct {
 	postard.UnimplementedPostardServer
-	service service.SmtpService
+	server         *grpc.Server
+	contextService service.ContextService
+	smtpService    service.SmtpService
 }
 
-func NewPostardServerGrpcImpl(service service.SmtpService) *PostardServerGrpcImpl {
-	return &PostardServerGrpcImpl{
-		service: service,
+// NewPostardGrpcServer returns a new PostardGrpcServer.
+func NewPostardGrpcServer(contextService service.ContextService, smtpService service.SmtpService) *PostardGrpcServer {
+	return &PostardGrpcServer{
+		contextService: contextService,
+		smtpService:    smtpService,
 	}
 }
 
-func (psgi *PostardServerGrpcImpl) SendEmail(pCtx context.Context, request *postard.SendEmailRequest) (*postard.SendEmailResponse, error) {
-	ctx := trace.WithContext(pCtx)
+// SendEmail sends emails.
+func (pgs *PostardGrpcServer) SendEmail(ctx context.Context, request *postard.SendEmailRequest) (*postard.PostardResponse, error) {
+	ctx = pgs.contextService.WrapContext(ctx)
+	traceId := trace.FromContext(ctx)
 
-	err := psgi.service.SendEmail(ctx, nil, nil)
+	err := pgs.smtpService.SendEmail(ctx, nil, nil)
 	if service.IsSendTimeout(err) {
-
+		return &postard.PostardResponse{
+			Code:    postard.ResponseCodes_TimeoutError,
+			Msg:     "send email timeout",
+			TraceId: traceId,
+		}, nil
 	}
 
 	if err != nil {
-
+		return &postard.PostardResponse{
+			Code:    postard.ResponseCodes_InternalServerError,
+			Msg:     "send email failed",
+			TraceId: traceId,
+		}, nil
 	}
-	return &postard.SendEmailResponse{TraceId: trace.FromContext(ctx)}, nil
+
+	return &postard.PostardResponse{
+		Code:    postard.ResponseCodes_OK,
+		TraceId: traceId,
+	}, nil
+}
+
+// Run runs PostardGrpcServer with listener.
+func (pgs *PostardGrpcServer) Run(listener net.Listener) error {
+	pgs.server = grpc.NewServer()
+	postard.RegisterPostardServer(pgs.server, pgs)
+	return pgs.server.Serve(listener)
+}
+
+// Shutdown shutdowns PostardGrpcServer gracefully.
+func (pgs *PostardGrpcServer) Shutdown() {
+	pgs.server.GracefulStop()
 }

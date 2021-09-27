@@ -11,6 +11,23 @@ package github.com.avinoplan.postar.api.postard;
 // protoc -I=. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative postard.proto
 option go_package = "github.com/avino-plan/postar/api/postard";
 
+import "google/protobuf/any.proto";
+
+// ResponseCodes is all codes of response.
+enum ResponseCodes {
+  OK = 0;
+  InternalServerError = 50000;
+  TimeoutError = 50001;
+}
+
+// PostardResponse is the response of Postard.
+message PostardResponse {
+  ResponseCodes code = 1; // 0 is ok.
+  string msg = 2; // For messaging.
+  string traceId = 3; // For tracing.
+  google.protobuf.Any data = 4; // Any data.
+}
+
 // Email wraps all information of using smtp service.
 message Email {
   repeated string to = 1; // The receivers of one email.
@@ -31,12 +48,7 @@ message SendEmailRequest {
   SendEmailOptions options = 2; // Sending options.
 }
 
-// SendEmailResponse is the response of SendEmail.
-message SendEmailResponse {
-  string traceId = 1; // For tracing.
-}
-
 // Postard is the core service of postar.
 service Postard {
-  rpc SendEmail(SendEmailRequest) returns (SendEmailResponse); // For sending emails.
+  rpc SendEmail(SendEmailRequest) returns (PostardResponse); // For sending emails.
 }
