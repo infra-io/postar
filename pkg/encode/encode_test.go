@@ -6,13 +6,13 @@
 // Email: fishgoddess@qq.com
 // Created at 2021/09/25 22:58:39
 
-package trace
+package encode
 
 import "testing"
 
-// go test -v -cover -run=^TestTimeHex$
-func TestTimeHex(t *testing.T) {
-	timeHex := TimeHex()
+// go test -v -cover -run=^NowTimeHex$
+func TestNowTimeHex(t *testing.T) {
+	timeHex := Now()
 	if len(timeHex) != 8 {
 		t.Errorf("length of TimeHex is wrong with %s, %d", timeHex, len(timeHex))
 	}
@@ -20,9 +20,9 @@ func TestTimeHex(t *testing.T) {
 
 // go test -v -cover -run=^TestPidHex$
 func TestPidHex(t *testing.T) {
-	pidHex := PidHex()
+	pidHex := PID()
 	if len(pidHex) != 8 {
-		t.Errorf("length of PidHex is wrong with %s, %d", pidHex, len(pidHex))
+		t.Errorf("length of PID is wrong with %s, %d", pidHex, len(pidHex))
 	}
 }
 

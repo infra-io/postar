@@ -6,7 +6,7 @@
 // Email: fishgoddess@qq.com
 // Created at 2021/09/22 00:24:19
 
-package service
+package biz
 
 import (
 	"context"
@@ -15,11 +15,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/avino-plan/postar/internal/pkg/concurrency"
+	"github.com/avino-plan/postar/internal/postard/model"
+	"github.com/avino-plan/postar/pkg/concurrency"
 )
 
-// go test -v -cover -run=^TestNewSmtpService$
-func TestNewSmtpService(t *testing.T) {
+// go test -v -cover -run=^TestSmtpBiz$
+func TestSmtpBiz(t *testing.T) {
 	host := os.Getenv("POSTAR_SMTP_HOST")
 	user := os.Getenv("POSTAR_SMTP_USER")
 	password := os.Getenv("POSTAR_SMTP_PASSWORD")
@@ -37,12 +38,12 @@ func TestNewSmtpService(t *testing.T) {
 	defer pool.Stop()
 
 	smtpService := NewSmtpService(pool, host, int(port), user, password)
-	err = smtpService.SendEmail(context.Background(), &Email{
+	err = smtpService.SendEmail(context.Background(), &model.Email{
 		To:       []string{to},
 		Subject:  t.Name(),
 		BodyType: "text/html;charset=utf-8",
 		Body:     t.Name() + time.Now().Format("20060102150405.000"),
-	}, DefaultSendEmailOptions())
+	}, model.DefaultSendEmailOptions())
 	if err != nil {
 		t.Error(err)
 	}

@@ -6,7 +6,7 @@
 // Email: fishgoddess@qq.com
 // Created at 2021/09/25 22:06:36
 
-package service
+package errors
 
 import (
 	"errors"

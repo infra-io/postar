@@ -12,19 +12,17 @@ import (
 	"net"
 
 	"github.com/FishGoddess/logit"
-	"github.com/avino-plan/postar/internal/pkg/concurrency"
+	"github.com/avino-plan/postar/internal/postard/biz"
 	"github.com/avino-plan/postar/internal/postard/server"
-	"github.com/avino-plan/postar/internal/postard/service"
+	"github.com/avino-plan/postar/pkg/concurrency"
 )
 
 func main() {
 	logger := logit.NewLogger()
-	contextService := service.NewContextService(logger)
-
 	pool := concurrency.NewPool()
-	smtpService := service.NewSmtpService(pool, "", 0, "", "")
-
-	svr := server.NewPostardGrpcServer(contextService, smtpService)
+	
+	smtpBiz := biz.NewSmtpBiz(pool, "", 0, "", "")
+	svr := server.NewGrpcServer(logger, smtpBiz)
 
 	listener, err := net.Listen("tcp", ":5897")
 	if err != nil {

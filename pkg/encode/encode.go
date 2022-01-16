@@ -6,18 +6,19 @@
 // Email: fishgoddess@qq.com
 // Created at 2021/09/25 22:39:17
 
-package trace
+package encode
 
 import (
 	"encoding/binary"
 	"fmt"
 	"math/rand"
 	"os"
+	"strconv"
 	"time"
 )
 
 var (
-	// letters includes 0-9 a-z A-Z.
+	// letters includes 0-9, a-z, A-Z.
 	letters = [62]byte{
 		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -26,25 +27,35 @@ var (
 		'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 	}
 
-	// random 用于生成随机数
+	pid    = strconv.Itoa(os.Getpid())
 	random = rand.New(rand.NewSource(time.Now().Unix()))
-
-	// pid 是程序的 pid
-	pid = uint64(os.Getpid())
 )
 
-// TimeHex returns now time in hex.
-func TimeHex() string {
-	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, uint64(time.Now().Unix()))
-	return fmt.Sprintf("%x", b[4:])
+// numberHex returns num in hex string.
+// The hex string will be cut with start and end.
+func numberHex(num uint64, start int, end int) string {
+	size := 8
+	if start < 0 || start > size {
+		start = 0
+	}
+
+	if end <= 0 || end > size {
+		end = size
+	}
+
+	b := make([]byte, size)
+	binary.BigEndian.PutUint64(b, num)
+	return fmt.Sprintf("%x", b[start:end])
 }
 
-// PidHex returns pid in hex.
-func PidHex() string {
-	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, pid)
-	return fmt.Sprintf("%x", b[4:])
+// Now returns in current time in hex string.
+func Now() string {
+	return numberHex(uint64(time.Now().Unix()), 4, 0)
+}
+
+// PID returns pid in string.
+func PID() string {
+	return pid
 }
 
 // RandomString returns a string including 0-9/a-z/A-Z not longer than length.

@@ -6,12 +6,9 @@
 // Email: fishgoddess@qq.com
 // Created at 2021/09/17 00:06:09
 
-package service
+package model
 
-import (
-	"context"
-	"time"
-)
+import "time"
 
 // Email is an email.
 type Email struct {
@@ -25,18 +22,6 @@ type Email struct {
 type SendEmailOptions struct {
 	Async   bool          // The mode of sending one email.
 	Timeout time.Duration // The timeout of sending one email.
-}
-
-// ContextService is the service of context
-type ContextService interface {
-	// WrapContext wraps context with something and returns a new context.
-	WrapContext(ctx context.Context) context.Context
-}
-
-// SmtpService is the service of smtp.
-type SmtpService interface {
-	// SendEmail sends email with options and returns an error if something wrong happens.
-	SendEmail(ctx context.Context, email *Email, options *SendEmailOptions) error
 }
 
 // DefaultSendEmailOptions returns a default options for sending emails.

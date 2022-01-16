@@ -12,64 +12,67 @@ import (
 	"context"
 	"net"
 
-	"github.com/avino-plan/postar/api/postard"
-	"github.com/avino-plan/postar/internal/pkg/trace"
-	"github.com/avino-plan/postar/internal/postard/service"
+	"github.com/FishGoddess/logit"
+	"github.com/avino-plan/postar/api"
+	"github.com/avino-plan/postar/internal/postard/biz"
+	"github.com/avino-plan/postar/pkg/errors"
+	"github.com/avino-plan/postar/pkg/trace"
 	"google.golang.org/grpc"
 )
 
-// PostardGrpcServer is a grpc implement of PostardServer.
-type PostardGrpcServer struct {
-	postard.UnimplementedPostardServer
-	server         *grpc.Server
-	contextService service.ContextService
-	smtpService    service.SmtpService
+// GRPCServer is a grpc implement of PostardServer.
+type GRPCServer struct {
+	api.UnimplementedPostardServer
+	server  *grpc.Server
+	logger  *logit.Logger
+	smtpBiz *biz.SmtpBiz
 }
 
-// NewPostardGrpcServer returns a new PostardGrpcServer.
-func NewPostardGrpcServer(contextService service.ContextService, smtpService service.SmtpService) *PostardGrpcServer {
-	return &PostardGrpcServer{
-		contextService: contextService,
-		smtpService:    smtpService,
+// NewGrpcServer returns a new GRPCServer.
+func NewGrpcServer(logger *logit.Logger, smtpBiz *biz.SmtpBiz) *GRPCServer {
+	return &GRPCServer{
+		logger:  logger,
+		smtpBiz: smtpBiz,
 	}
 }
 
 // SendEmail sends emails.
-func (pgs *PostardGrpcServer) SendEmail(ctx context.Context, request *postard.SendEmailRequest) (*postard.PostardResponse, error) {
-	ctx = pgs.contextService.WrapContext(ctx)
-	traceId := trace.FromContext(ctx)
+func (gs *GRPCServer) SendEmail(ctx context.Context, request *api.SendEmailRequest) (*api.PostardResponse, error) {
+	traceID := trace.NewTraceID()
+	ctx = trace.NewContext(ctx, traceID)
+	ctx = logit.NewContext(ctx, gs.logger)
 
-	err := pgs.smtpService.SendEmail(ctx, nil, nil)
-	if service.IsSendTimeout(err) {
-		return &postard.PostardResponse{
-			Code:    postard.ResponseCodes_TimeoutError,
+	err := gs.smtpBiz.SendEmail(ctx, nil, nil)
+	if errors.IsSendTimeout(err) {
+		return &api.PostardResponse{
+			Code:    api.ResponseCodes_TimeoutError,
 			Msg:     "send email timeout",
-			TraceId: traceId,
+			TraceId: traceID,
 		}, nil
 	}
 
 	if err != nil {
-		return &postard.PostardResponse{
-			Code:    postard.ResponseCodes_InternalServerError,
+		return &api.PostardResponse{
+			Code:    api.ResponseCodes_InternalServerError,
 			Msg:     "send email failed",
-			TraceId: traceId,
+			TraceId: traceID,
 		}, nil
 	}
 
-	return &postard.PostardResponse{
-		Code:    postard.ResponseCodes_OK,
-		TraceId: traceId,
+	return &api.PostardResponse{
+		Code:    api.ResponseCodes_OK,
+		TraceId: traceID,
 	}, nil
 }
 
-// Run runs PostardGrpcServer with listener.
-func (pgs *PostardGrpcServer) Run(listener net.Listener) error {
-	pgs.server = grpc.NewServer()
-	postard.RegisterPostardServer(pgs.server, pgs)
-	return pgs.server.Serve(listener)
+// Run runs GRPCServer with listener.
+func (gs *GRPCServer) Run(listener net.Listener) error {
+	gs.server = grpc.NewServer()
+	api.RegisterPostardServer(gs.server, gs)
+	return gs.server.Serve(listener)
 }
 
-// Shutdown shutdowns PostardGrpcServer gracefully.
-func (pgs *PostardGrpcServer) Shutdown() {
-	pgs.server.GracefulStop()
+// Shutdown shutdowns GRPCServer gracefully.
+func (gs *GRPCServer) Shutdown() {
+	gs.server.GracefulStop()
 }
