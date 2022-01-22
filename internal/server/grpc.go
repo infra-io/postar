@@ -13,10 +13,10 @@ import (
 	"net"
 
 	"github.com/FishGoddess/logit"
-	"github.com/avino-plan/postar/api"
-	"github.com/avino-plan/postar/internal/postard/biz"
-	"github.com/avino-plan/postar/pkg/errors"
-	"github.com/avino-plan/postar/pkg/trace"
+	"github.com/avinoplan/postar/api"
+	"github.com/avinoplan/postar/internal/biz"
+	"github.com/avinoplan/postar/pkg/errors"
+	"github.com/avinoplan/postar/pkg/trace"
 	"google.golang.org/grpc"
 )
 
@@ -37,30 +37,30 @@ func NewGrpcServer(logger *logit.Logger, smtpBiz *biz.SmtpBiz) *GRPCServer {
 }
 
 // SendEmail sends emails.
-func (gs *GRPCServer) SendEmail(ctx context.Context, request *api.SendEmailRequest) (*api.PostardResponse, error) {
+func (gs *GRPCServer) SendEmail(ctx context.Context, request *api.SendEmailRequest) (*api.SendEmailResponse, error) {
 	traceID := trace.NewTraceID()
 	ctx = trace.NewContext(ctx, traceID)
 	ctx = logit.NewContext(ctx, gs.logger)
 
 	err := gs.smtpBiz.SendEmail(ctx, nil, nil)
-	if errors.IsSendTimeout(err) {
-		return &api.PostardResponse{
-			Code:    api.ResponseCodes_TimeoutError,
+	if errors.IsTimeout(err) {
+		return &api.SendEmailResponse{
+			Code:    api.ServerCode_TIMEOUT,
 			Msg:     "send email timeout",
 			TraceId: traceID,
 		}, nil
 	}
 
 	if err != nil {
-		return &api.PostardResponse{
-			Code:    api.ResponseCodes_InternalServerError,
+		return &api.SendEmailResponse{
+			Code:    api.ServerCode_SEND_EMAIL_FAILED,
 			Msg:     "send email failed",
 			TraceId: traceID,
 		}, nil
 	}
 
-	return &api.PostardResponse{
-		Code:    api.ResponseCodes_OK,
+	return &api.SendEmailResponse{
+		Code:    api.ServerCode_OK,
 		TraceId: traceID,
 	}, nil
 }

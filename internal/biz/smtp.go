@@ -12,23 +12,23 @@ import (
 	"context"
 
 	"github.com/FishGoddess/logit"
-	"github.com/avino-plan/postar/internal/postard/model"
-	"github.com/avino-plan/postar/pkg/concurrency"
-	"github.com/avino-plan/postar/pkg/errors"
+	"github.com/avinoplan/postar/internal/model"
+	"github.com/avinoplan/postar/pkg/errors"
+	"github.com/panjf2000/ants/v2"
 	"gopkg.in/gomail.v2"
 )
 
 // SmtpBiz is the biz of smtp.
 type SmtpBiz struct {
-	pool     *concurrency.Pool // The pool of workers.
-	host     string            // The host of smtp server.
-	port     int               // The port of smtp server.
-	user     string            // The user of smtp server.
-	password string            // The password of smtp server.
+	pool     *ants.Pool // The pool of workers.
+	host     string     // The host of smtp server.
+	port     int        // The port of smtp server.
+	user     string     // The user of smtp server.
+	password string     // The password of smtp server.
 }
 
 // NewSmtpBiz returns a new SmtpBiz.
-func NewSmtpBiz(pool *concurrency.Pool, host string, port int, user string, password string) *SmtpBiz {
+func NewSmtpBiz(pool *ants.Pool, host string, port int, user string, password string) *SmtpBiz {
 	return &SmtpBiz{
 		pool:     pool,
 		host:     host,
@@ -54,29 +54,40 @@ func (sb *SmtpBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 
 	if options == nil {
 		options = model.DefaultSendEmailOptions()
-		logger.Debug("options is nil, using DefaultSendEmailOptions()").Any("options", options).End()
+		logger.Debug("options is nil, using default options").Any("options", options).End()
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, options.Timeout)
 	defer cancel()
 
-	errorCh := sb.pool.Go(ctx, func(ctx context.Context) error { return sb.sendEmail(email) })
+	errorCh := make(chan error, 1)
+	err := sb.pool.Submit(func() {
+		defer close(errorCh)
+		errorCh <- sb.sendEmail(email)
+	})
+
+	if err != nil {
+		logger.Error("submit email sending task to pool failed").Error("err", err).End()
+		return errors.SendEmailFailedErr(err)
+	}
+
 	if options.Async {
 		return nil
 	}
 
 	select {
-	case e := <-errorCh:
-		if e != nil {
-			logger.Error("send email failed").Error("e", e).End()
-			return errors.SendEmailFailedErr(e)
+	case err = <-errorCh:
+		if err != nil {
+			logger.Error("send email failed").Error("err", err).End()
+			return errors.SendEmailFailedErr(err)
 		}
 	case <-ctx.Done():
-		e := ctx.Err()
-		if e != nil {
-			logger.Error("send email timeout").Error("e", e).End()
-			return errors.SendTimeoutErr(e)
+		err = ctx.Err()
+		if err != nil {
+			logger.Error("send email timeout").Error("err", err).End()
+			return errors.TimeoutErr(err)
 		}
 	}
+
 	return nil
 }

@@ -43,6 +43,6 @@ If you find that something is not working as expected please open an _**issue**_
 
 ### 📦 Projects postar used
 
-| Project | Author | Description | link |
-| -----------|--------|-------------|------------------|
-| logit | FishGoddess | A high-performance and easy-to-use logging foundation | [Gitee](https://gitee.com/FishGoddess/logit) / [GitHub](https://github.com/FishGoddess/logit) |
+| Project | Author      | Description                                           | link                                                                                          |
+|---------|-------------|-------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| logit   | FishGoddess | A high-performance and easy-to-use logging foundation | [Gitee](https://gitee.com/FishGoddess/logit) / [GitHub](https://github.com/FishGoddess/logit) |

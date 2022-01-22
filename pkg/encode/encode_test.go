@@ -12,7 +12,7 @@ import "testing"
 
 // go test -v -cover -run=^NowTimeHex$
 func TestNowTimeHex(t *testing.T) {
-	timeHex := Now()
+	timeHex := NowHex()
 	if len(timeHex) != 8 {
 		t.Errorf("length of TimeHex is wrong with %s, %d", timeHex, len(timeHex))
 	}

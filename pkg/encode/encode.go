@@ -31,6 +31,11 @@ var (
 	random = rand.New(rand.NewSource(time.Now().Unix()))
 )
 
+// PID returns pid in string.
+func PID() string {
+	return pid
+}
+
 // numberHex returns num in hex string.
 // The hex string will be cut with start and end.
 func numberHex(num uint64, start int, end int) string {
@@ -48,14 +53,9 @@ func numberHex(num uint64, start int, end int) string {
 	return fmt.Sprintf("%x", b[start:end])
 }
 
-// Now returns in current time in hex string.
-func Now() string {
+// NowHex returns in current time in hex string.
+func NowHex() string {
 	return numberHex(uint64(time.Now().Unix()), 4, 0)
-}
-
-// PID returns pid in string.
-func PID() string {
-	return pid
 }
 
 // RandomString returns a string including 0-9/a-z/A-Z not longer than length.

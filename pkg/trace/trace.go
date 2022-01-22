@@ -11,7 +11,7 @@ package trace
 import (
 	"context"
 
-	"github.com/avino-plan/postar/pkg/encode"
+	"github.com/avinoplan/postar/pkg/encode"
 )
 
 var (
@@ -21,7 +21,7 @@ var (
 // NewTraceID returns a new trace id.
 func NewTraceID() string {
 	salt := encode.RandomString(6)
-	return encode.Now() + salt[:3] + encode.PID() + salt[3:]
+	return encode.NowHex() + salt[:3] + encode.PID() + salt[3:]
 }
 
 // NewContext wraps ctx with a trace id.

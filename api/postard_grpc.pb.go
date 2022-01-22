@@ -14,11 +14,12 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// PostardClient is the client API for Postard biz.
+// PostardClient is the client API for Postard service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PostardClient interface {
-	SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*PostardResponse, error)
+	// SendEmail send one email.
+	SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*SendEmailResponse, error)
 }
 
 type postardClient struct {
@@ -29,8 +30,8 @@ func NewPostardClient(cc grpc.ClientConnInterface) PostardClient {
 	return &postardClient{cc}
 }
 
-func (c *postardClient) SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*PostardResponse, error) {
-	out := new(PostardResponse)
+func (c *postardClient) SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*SendEmailResponse, error) {
+	out := new(SendEmailResponse)
 	err := c.cc.Invoke(ctx, "/github.com.avinoplan.postar.api.Postard/SendEmail", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -38,11 +39,12 @@ func (c *postardClient) SendEmail(ctx context.Context, in *SendEmailRequest, opt
 	return out, nil
 }
 
-// PostardServer is the server API for Postard biz.
+// PostardServer is the server API for Postard service.
 // All implementations must embed UnimplementedPostardServer
 // for forward compatibility
 type PostardServer interface {
-	SendEmail(context.Context, *SendEmailRequest) (*PostardResponse, error)
+	// SendEmail send one email.
+	SendEmail(context.Context, *SendEmailRequest) (*SendEmailResponse, error)
 	mustEmbedUnimplementedPostardServer()
 }
 
@@ -50,12 +52,12 @@ type PostardServer interface {
 type UnimplementedPostardServer struct {
 }
 
-func (UnimplementedPostardServer) SendEmail(context.Context, *SendEmailRequest) (*PostardResponse, error) {
+func (UnimplementedPostardServer) SendEmail(context.Context, *SendEmailRequest) (*SendEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendEmail not implemented")
 }
 func (UnimplementedPostardServer) mustEmbedUnimplementedPostardServer() {}
 
-// UnsafePostardServer may be embedded to opt out of forward compatibility for this biz.
+// UnsafePostardServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to PostardServer will
 // result in compilation errors.
 type UnsafePostardServer interface {
@@ -84,7 +86,7 @@ func _Postard_SendEmail_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-// Postard_ServiceDesc is the grpc.ServiceDesc for Postard biz.
+// Postard_ServiceDesc is the grpc.ServiceDesc for Postard service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Postard_ServiceDesc = grpc.ServiceDesc{

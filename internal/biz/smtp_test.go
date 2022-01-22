@@ -15,8 +15,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/avino-plan/postar/internal/postard/model"
-	"github.com/avino-plan/postar/pkg/concurrency"
+	"github.com/avinoplan/postar/internal/model"
+	"github.com/panjf2000/ants/v2"
 )
 
 // go test -v -cover -run=^TestSmtpBiz$
@@ -34,10 +34,10 @@ func TestSmtpBiz(t *testing.T) {
 		port = 587
 	}
 
-	pool := concurrency.NewPool().Start()
-	defer pool.Stop()
+	pool, _ := ants.NewPool(64)
+	defer pool.Release()
 
-	smtpService := NewSmtpService(pool, host, int(port), user, password)
+	smtpService := NewSmtpBiz(pool, host, int(port), user, password)
 	err = smtpService.SendEmail(context.Background(), &model.Email{
 		To:       []string{to},
 		Subject:  t.Name(),

@@ -12,15 +12,19 @@ import (
 	"net"
 
 	"github.com/FishGoddess/logit"
-	"github.com/avino-plan/postar/internal/postard/biz"
-	"github.com/avino-plan/postar/internal/postard/server"
-	"github.com/avino-plan/postar/pkg/concurrency"
+	"github.com/avinoplan/postar/internal/biz"
+	"github.com/avinoplan/postar/internal/server"
+	"github.com/panjf2000/ants/v2"
 )
 
 func main() {
 	logger := logit.NewLogger()
-	pool := concurrency.NewPool()
-	
+	pool, err := ants.NewPool(64)
+	if err != nil {
+		panic(err)
+	}
+	defer pool.Release()
+
 	smtpBiz := biz.NewSmtpBiz(pool, "", 0, "", "")
 	svr := server.NewGrpcServer(logger, smtpBiz)
 

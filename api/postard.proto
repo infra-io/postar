@@ -5,41 +5,28 @@
 // Author: FishGoddess
 // Email: fishgoddess@qq.com
 // Created at 2021/09/16 01:42:33
+
 syntax = "proto3";
+
 package github.com.avinoplan.postar.api;
 
+import "api.proto";
+
 // protoc -I=. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative postard.proto
-option go_package = "github.com/avino-plan/postar/api";
-
-import "google/protobuf/any.proto";
-
-// ResponseCodes is all codes of response.
-enum ResponseCodes {
-  OK = 0;
-  InternalServerError = 50000;
-  TimeoutError = 50001;
-}
-
-// PostardResponse is the response of Postard.
-message PostardResponse {
-  ResponseCodes code = 1; // 0 is ok.
-  string msg = 2; // For messaging.
-  string traceId = 3; // For tracing.
-  google.protobuf.Any data = 4; // Any data.
-}
+option go_package = "github.com/avinoplan/postar/api";
 
 // Email wraps all information of using smtp service.
 message Email {
-  repeated string to = 1; // The receivers of one email.
-  string    subject = 2;   // The subject of one email.
-  string    bodyType = 3;   // The content type of body.
-  string    body = 4;   // The body of one email.
+  repeated string receivers = 1; // Receivers.
+  string    subject = 2;   // Subject.
+  string    body_type = 3;   // Body type.
+  string    body = 4;   // Body.
 }
 
 // SendEmailOptions is the options of sending emails.
 message SendEmailOptions {
-  bool async = 1; // If need sending emails asynchronously.
-  int64 timeout = 2; // Sending timeout.
+  bool async = 1; // Sending this email asynchronously.
+  int32 timeout = 2; // Sending timeout in seconds.
 }
 
 // SendEmailRequest is the request of SendEmail.
@@ -48,7 +35,15 @@ message SendEmailRequest {
   SendEmailOptions options = 2; // Sending options.
 }
 
+// SendEmailResponse is the response of SendEmail.
+message SendEmailResponse {
+  ServerCode code = 1; // 0 is ok.
+  string msg = 2; // For messaging.
+  string trace_id = 3; // For tracing.
+}
+
 // Postard is the core service of postar.
 service Postard {
-  rpc SendEmail(SendEmailRequest) returns (PostardResponse); // For sending emails.
+  // SendEmail send one email.
+  rpc SendEmail(SendEmailRequest) returns (SendEmailResponse);
 }
