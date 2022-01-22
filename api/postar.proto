@@ -12,7 +12,7 @@ package github.com.avinoplan.postar.api;
 
 import "api.proto";
 
-// protoc -I=. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative postard.proto
+// protoc -I=. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative postar.proto
 option go_package = "github.com/avinoplan/postar/api";
 
 // Email wraps all information of using smtp service.
@@ -42,8 +42,8 @@ message SendEmailResponse {
   string trace_id = 3; // For tracing.
 }
 
-// Postard is the core service of postar.
-service Postard {
+// PostarService is the service of postar.
+service PostarService {
   // SendEmail send one email.
   rpc SendEmail(SendEmailRequest) returns (SendEmailResponse);
 }

@@ -14,6 +14,7 @@ import (
 
 	"github.com/FishGoddess/logit"
 	"github.com/avinoplan/postar/api"
+	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
 	"github.com/avinoplan/postar/pkg/errors"
 	"github.com/avinoplan/postar/pkg/trace"
@@ -22,15 +23,17 @@ import (
 
 // GRPCServer is a grpc implement of PostardServer.
 type GRPCServer struct {
-	api.UnimplementedPostardServer
+	api.UnimplementedPostarServiceServer
 	server  *grpc.Server
+	c       *configs.Config
 	logger  *logit.Logger
-	smtpBiz *biz.SmtpBiz
+	smtpBiz *biz.SMTPBiz
 }
 
-// NewGrpcServer returns a new GRPCServer.
-func NewGrpcServer(logger *logit.Logger, smtpBiz *biz.SmtpBiz) *GRPCServer {
+// NewGRPCServer returns a new GRPCServer.
+func NewGRPCServer(c *configs.Config, logger *logit.Logger, smtpBiz *biz.SMTPBiz) Server {
 	return &GRPCServer{
+		c:       c,
 		logger:  logger,
 		smtpBiz: smtpBiz,
 	}
@@ -65,14 +68,20 @@ func (gs *GRPCServer) SendEmail(ctx context.Context, request *api.SendEmailReque
 	}, nil
 }
 
-// Run runs GRPCServer with listener.
-func (gs *GRPCServer) Run(listener net.Listener) error {
+// Start starts GRPCServer.
+func (gs *GRPCServer) Start() error {
+	listener, err := net.Listen("tcp", gs.c.Server.Address)
+	if err != nil {
+		return err
+	}
+
 	gs.server = grpc.NewServer()
-	api.RegisterPostardServer(gs.server, gs)
+	api.RegisterPostarServiceServer(gs.server, gs)
 	return gs.server.Serve(listener)
 }
 
-// Shutdown shutdowns GRPCServer gracefully.
-func (gs *GRPCServer) Shutdown() {
+// Stop stops GRPCServer gracefully.
+func (gs *GRPCServer) Stop() error {
 	gs.server.GracefulStop()
+	return nil
 }

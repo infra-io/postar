@@ -12,44 +12,41 @@ import (
 	"context"
 
 	"github.com/FishGoddess/logit"
+	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/model"
 	"github.com/avinoplan/postar/pkg/errors"
 	"github.com/panjf2000/ants/v2"
 	"gopkg.in/gomail.v2"
 )
 
-// SmtpBiz is the biz of smtp.
-type SmtpBiz struct {
-	pool     *ants.Pool // The pool of workers.
-	host     string     // The host of smtp server.
-	port     int        // The port of smtp server.
-	user     string     // The user of smtp server.
-	password string     // The password of smtp server.
+// SMTPBiz is the biz of smtp.
+type SMTPBiz struct {
+	c      *configs.Config
+	logger *logit.Logger
+	pool   *ants.Pool // The pool of workers.
 }
 
-// NewSmtpBiz returns a new SmtpBiz.
-func NewSmtpBiz(pool *ants.Pool, host string, port int, user string, password string) *SmtpBiz {
-	return &SmtpBiz{
-		pool:     pool,
-		host:     host,
-		port:     port,
-		user:     user,
-		password: password,
+// NewSMTPBiz returns a new SMTPBiz.
+func NewSMTPBiz(c *configs.Config, logger *logit.Logger, pool *ants.Pool) *SMTPBiz {
+	return &SMTPBiz{
+		c:      c,
+		logger: logger,
+		pool:   pool,
 	}
 }
 
 // sendEmail sends email and returns an error if something wrong happens.
-func (sb *SmtpBiz) sendEmail(email *model.Email) error {
+func (sb *SMTPBiz) sendEmail(email *model.Email) error {
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", sb.user)
-	msg.SetHeader("To", email.To...)
 	msg.SetHeader("Subject", email.Subject)
+	msg.SetHeader("From", sb.c.SMTP.User)
+	msg.SetHeader("To", email.Receivers...)
 	msg.SetBody(email.BodyType, email.Body)
-	return gomail.NewDialer(sb.host, sb.port, sb.user, sb.password).DialAndSend(msg)
+	return gomail.NewDialer(sb.c.SMTP.Host, sb.c.SMTP.Port, sb.c.SMTP.User, sb.c.SMTP.Password).DialAndSend(msg)
 }
 
 // SendEmail sends email to somewhere.
-func (sb *SmtpBiz) SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) error {
+func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) error {
 	logger := logit.FromContext(ctx)
 
 	if options == nil {

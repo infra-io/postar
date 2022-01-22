@@ -9,31 +9,42 @@
 package main
 
 import (
-	"net"
-
 	"github.com/FishGoddess/logit"
+	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
 	"github.com/avinoplan/postar/internal/server"
 	"github.com/panjf2000/ants/v2"
 )
 
-func main() {
-	logger := logit.NewLogger()
+func loadConfig() (*configs.Config, error) {
+	// TODO 加载配置文件初始化配置
+	return configs.NewDefaultConfig(), nil
+}
+
+func initLogger(c *configs.Config) *logit.Logger {
+	return logit.NewLogger()
+}
+
+func initPool(c *configs.Config) *ants.Pool {
 	pool, err := ants.NewPool(64)
 	if err != nil {
 		panic(err)
 	}
-	defer pool.Release()
+	return pool
+}
 
-	smtpBiz := biz.NewSmtpBiz(pool, "", 0, "", "")
-	svr := server.NewGrpcServer(logger, smtpBiz)
-
-	listener, err := net.Listen("tcp", ":5897")
+func main() {
+	c, err := loadConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	err = svr.Run(listener)
+	logger := initLogger(c)
+	pool := initPool(c)
+	defer pool.Release()
+
+	smtpBiz := biz.NewSMTPBiz(c, logger, pool)
+	err = server.NewGRPCServer(c, logger, smtpBiz).Start()
 	if err != nil {
 		panic(err)
 	}

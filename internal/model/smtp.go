@@ -12,10 +12,10 @@ import "time"
 
 // Email is an email.
 type Email struct {
-	To       []string // Receivers.
-	Subject  string   // Subject.
-	BodyType string   // Body type.
-	Body     string   // Body.
+	Subject   string   // Subject.
+	Receivers []string // Receivers.
+	BodyType  string   // Body type.
+	Body      string   // Body.
 }
 
 // SendEmailOptions is the options of sending one email.
