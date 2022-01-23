@@ -9,16 +9,38 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"os"
+	"os/signal"
+	"runtime"
+	"syscall"
+
 	"github.com/FishGoddess/logit"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
 	"github.com/avinoplan/postar/internal/server"
+	"github.com/go-ini/ini"
 	"github.com/panjf2000/ants/v2"
 )
 
+const (
+	version = "postar-v0.3.0-alpha"
+)
+
 func loadConfig() (*configs.Config, error) {
-	// TODO 加载配置文件初始化配置
-	return configs.NewDefaultConfig(), nil
+	configFile := flag.String("config.file", "postar.ini", "The configuration file of postar.")
+	showVersion := flag.Bool("version", false, "Check version of postar.")
+	flag.Parse()
+
+	if *showVersion {
+		fmt.Printf("%s (%s, %s, %s)\n", version, runtime.GOOS, runtime.GOARCH, runtime.Version())
+		os.Exit(0)
+	}
+
+	c := configs.NewDefaultConfig()
+	err := ini.MapTo(c, *configFile)
+	return c, err
 }
 
 func initLogger(c *configs.Config) *logit.Logger {
@@ -33,6 +55,23 @@ func initPool(c *configs.Config) *ants.Pool {
 	return pool
 }
 
+func runServer(c *configs.Config, logger *logit.Logger, smtpBiz *biz.SMTPBiz) {
+	svr := server.NewServer(c, logger, smtpBiz)
+
+	go func() {
+		err := svr.Start()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
+	<-signalCh
+	fmt.Println("Postar is shutdown gracefully...")
+	svr.Stop()
+}
+
 func main() {
 	c, err := loadConfig()
 	if err != nil {
@@ -40,12 +79,11 @@ func main() {
 	}
 
 	logger := initLogger(c)
+	defer logger.Close()
+
 	pool := initPool(c)
 	defer pool.Release()
 
 	smtpBiz := biz.NewSMTPBiz(c, logger, pool)
-	err = server.NewGRPCServer(c, logger, smtpBiz).Start()
-	if err != nil {
-		panic(err)
-	}
+	runServer(c, logger, smtpBiz)
 }

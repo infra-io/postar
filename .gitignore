@@ -1,22 +1,18 @@
-# Binaries for programs and plugins
+# OS
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
-*.tar.gz
-target/
 
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# logs
-*.log
-
-# ide
+# IDE
 .idea/
 *.iml
-.vscode/*
+.vscode/
+
+# Program
+*.test
+*.out
+target/
+*.tar.gz
+*.log

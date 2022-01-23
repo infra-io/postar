@@ -9,6 +9,8 @@
 package server
 
 import (
+	"fmt"
+
 	"github.com/FishGoddess/logit"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
@@ -23,4 +25,12 @@ var (
 type Server interface {
 	Start() error
 	Stop() error
+}
+
+func NewServer(c *configs.Config, logger *logit.Logger, smtpBiz *biz.SMTPBiz) Server {
+	newServer, ok := servers[c.Server.Type]
+	if !ok {
+		panic(fmt.Errorf("server: type %s not found", c.Server.Type))
+	}
+	return newServer(c, logger, smtpBiz)
 }
