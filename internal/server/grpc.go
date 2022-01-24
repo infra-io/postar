@@ -70,7 +70,7 @@ func (gs *GRPCServer) SendEmail(ctx context.Context, request *api.SendEmailReque
 
 // Start starts GRPCServer.
 func (gs *GRPCServer) Start() error {
-	listener, err := net.Listen("tcp", gs.c.Server.Address)
+	listener, err := net.Listen("tcp", gs.c.ServerAddress())
 	if err != nil {
 		return err
 	}

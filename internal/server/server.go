@@ -28,9 +28,9 @@ type Server interface {
 }
 
 func NewServer(c *configs.Config, logger *logit.Logger, smtpBiz *biz.SMTPBiz) Server {
-	newServer, ok := servers[c.Server.Type]
+	newServer, ok := servers[c.ServerType()]
 	if !ok {
-		panic(fmt.Errorf("server: type %s not found", c.Server.Type))
+		panic(fmt.Errorf("server: type %s not found", c.ServerType()))
 	}
 	return newServer(c, logger, smtpBiz)
 }

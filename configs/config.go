@@ -8,10 +8,15 @@
 
 package configs
 
+type WorkerConfig struct {
+	Number int `int:"number"` // The number of worker.
+}
+
 type ServerConfig struct {
 	Type    string `int:"type"`    // The type of server.
 	Address string `ini:"address"` // The address(including ip and port) of server.
 }
+
 type SMTPConfig struct {
 	Host     string `int:"host"`     // The host of smtp server.
 	Port     int    `int:"port"`     // The port of smtp server.
@@ -21,6 +26,7 @@ type SMTPConfig struct {
 
 // Config stores all configurations of postar.
 type Config struct {
+	Worker WorkerConfig `ini:"worker"`
 	Server ServerConfig `int:"server"`
 	SMTP   SMTPConfig   `int:"smtp"`
 }
@@ -28,6 +34,9 @@ type Config struct {
 // NewDefaultConfig returns a new config.
 func NewDefaultConfig() *Config {
 	return &Config{
+		Worker: WorkerConfig{
+			Number: 64,
+		},
 		Server: ServerConfig{
 			Type:    "http",
 			Address: ":5897",
@@ -38,4 +47,30 @@ func NewDefaultConfig() *Config {
 	}
 }
 
-// TODO 封装配置查询方法
+func (c *Config) WorkerNumber() int {
+	return c.Worker.Number
+}
+
+func (c *Config) ServerType() string {
+	return c.Server.Type
+}
+
+func (c *Config) ServerAddress() string {
+	return c.Server.Address
+}
+
+func (c *Config) SMTPHost() string {
+	return c.SMTP.Host
+}
+
+func (c *Config) SMTPPort() int {
+	return c.SMTP.Port
+}
+
+func (c *Config) SMTPUser() string {
+	return c.SMTP.User
+}
+
+func (c *Config) SMTPPassword() string {
+	return c.SMTP.Password
+}

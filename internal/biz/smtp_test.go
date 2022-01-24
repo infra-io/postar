@@ -45,7 +45,7 @@ func TestSMTPBiz(t *testing.T) {
 
 	pool, _ := ants.NewPool(64)
 	defer pool.Release()
-	
+
 	smtpService := NewSMTPBiz(c, logit.NewLogger(), pool)
 	err := smtpService.SendEmail(context.Background(), &model.Email{
 		Subject:   t.Name(),

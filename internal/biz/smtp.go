@@ -39,10 +39,10 @@ func NewSMTPBiz(c *configs.Config, logger *logit.Logger, pool *ants.Pool) *SMTPB
 func (sb *SMTPBiz) sendEmail(email *model.Email) error {
 	msg := gomail.NewMessage()
 	msg.SetHeader("Subject", email.Subject)
-	msg.SetHeader("From", sb.c.SMTP.User)
+	msg.SetHeader("From", sb.c.SMTPUser())
 	msg.SetHeader("To", email.Receivers...)
 	msg.SetBody(email.BodyType, email.Body)
-	return gomail.NewDialer(sb.c.SMTP.Host, sb.c.SMTP.Port, sb.c.SMTP.User, sb.c.SMTP.Password).DialAndSend(msg)
+	return gomail.NewDialer(sb.c.SMTPHost(), sb.c.SMTPPort(), sb.c.SMTPUser(), sb.c.SMTPPassword()).DialAndSend(msg)
 }
 
 // SendEmail sends email to somewhere.
