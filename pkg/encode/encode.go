@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -27,14 +26,9 @@ var (
 		'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 	}
 
-	pid    = strconv.Itoa(os.Getpid())
+	pidHex = numberHex(uint64(os.Getpid()), 6, 0)
 	random = rand.New(rand.NewSource(time.Now().Unix()))
 )
-
-// PID returns pid in string.
-func PID() string {
-	return pid
-}
 
 // numberHex returns num in hex string.
 // The hex string will be cut with start and end.
@@ -53,13 +47,18 @@ func numberHex(num uint64, start int, end int) string {
 	return fmt.Sprintf("%x", b[start:end])
 }
 
+// PIDHex returns pid in string.
+func PIDHex() string {
+	return pidHex
+}
+
 // NowHex returns in current time in hex string.
 func NowHex() string {
 	return numberHex(uint64(time.Now().Unix()), 4, 0)
 }
 
-// RandomString returns a string including 0-9/a-z/A-Z not longer than length.
-func RandomString(length int) string {
+// StringHex returns a string including 0-9/a-z/A-Z not longer than length.
+func StringHex(length int) string {
 	b := make([]byte, length)
 	for i := 0; i < length; i++ {
 		b[i] = letters[random.Intn(62)]

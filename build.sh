@@ -15,7 +15,7 @@ LICENSE_FILE=$WORKDIR/LICENSE
 echo "LICENSE_FILE: $LICENSE_FILE"
 echo "----------------------------------------------------------------------"
 
-echo "Please check the paths above! It's right? (y/n)"
+echo "Want to continue? (y/n)"
 read -r right
 if [ -z "$right" ]; then
   echo "Input y or n to continue..."
@@ -23,40 +23,37 @@ if [ -z "$right" ]; then
 fi
 
 if [ "$right" == "n" ]; then
-  echo "Fix the wrong paths to continue..."
+  echo "Fix the problems to continue..."
   exit
 fi
 echo "----------------------------------------------------------------------"
 
-# Start building
-echo "Start building..."
-rm -r "${TARGET:?}" && mkdir -p "$TARGET"
+# Prepare
+echo "Preparing..."
+mkdir -p "$TARGET" && rm -rf "${TARGET:?}"/*.tar.gz
 cd "$WORKDIR"/cmd/postar || exit
 
-# Go build: windows, linux and darwin
-echo "Building windows version..."
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o "$TARGET"/postar-windows.exe
+# build builds the target os and arch version package
+function build() {
+  local GOOS=$1
+  local GOARCH=$2
+  local BINARY_FILE=$3
+  local PKG_FILE="$TARGET"/postar-$VERSION-$GOOS-$GOARCH.tar.gz
 
-echo "Building linux version..."
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o "$TARGET"/postar-linux
-chmod +x "$TARGET"/postar-linux
+  CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$BINARY_FILE"
+  tar -czPf "$PKG_FILE" "$BINARY_FILE" "$CONFIG_FILE" "$LICENSE_FILE"
+  echo "The $GOOS-$GOARCH package can be found in $PKG_FILE"
+  rm "$BINARY_FILE"
+}
 
-echo "Building darwin version..."
-CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o "$TARGET"/postar-darwin
-chmod +x "$TARGET"/postar-darwin
+echo "Building windows-amd64 version..."
+build windows amd64 "$TARGET"/postar.exe
 
-# Before packaging
-echo "Start packaging..."
-cd "$TARGET" || exit
-cp "$CONFIG_FILE" "$TARGET"/
-cp "$LICENSE_FILE" "$TARGET"/
+echo "Building linux-amd64 version..."
+build linux amd64 "$TARGET"/postar
 
-# Start Packaging
-echo "Packaging windows version..."
-tar -czf postar-$VERSION-windows.tar.gz "$TARGET"/postar-windows.exe "$CONFIG_FILE" "$LICENSE_FILE"
-tar -czf postar-$VERSION-linux.tar.gz "$TARGET"/postar-linux "$CONFIG_FILE" "$LICENSE_FILE"
-tar -czf postar-$VERSION-darwin.tar.gz "$TARGET"/postar-darwin "$CONFIG_FILE" "$LICENSE_FILE"
+echo "Building darwin-amd64 version..."
+build darwin amd64 "$TARGET"/postar
 
 # Done
 echo "Done."
-rm "$TARGET"/postar-windows.exe "$TARGET"/postar-linux "$TARGET"/postar-darwin "$CONFIG_FILE" "$LICENSE_FILE"

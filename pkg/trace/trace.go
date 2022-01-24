@@ -20,8 +20,8 @@ var (
 
 // NewTraceID returns a new trace id.
 func NewTraceID() string {
-	salt := encode.RandomString(6)
-	return encode.NowHex() + salt[:3] + encode.PID() + salt[3:]
+	salt := encode.StringHex(6)
+	return encode.NowHex() + salt[:3] + encode.PIDHex() + salt[3:]
 }
 
 // NewContext wraps ctx with a trace id.
