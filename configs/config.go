@@ -8,8 +8,12 @@
 
 package configs
 
+import "time"
+
 type WorkerConfig struct {
-	Number int `int:"number"` // The number of worker.
+	Number  int  `int:"number"`  // The number of worker.
+	Async   bool `int:"async"`   // The sending mode of worker.
+	Timeout int  `int:"timeout"` // The sending timeout of worker.
 }
 
 type ServerConfig struct {
@@ -35,7 +39,9 @@ type Config struct {
 func NewDefaultConfig() *Config {
 	return &Config{
 		Worker: WorkerConfig{
-			Number: 64,
+			Number:  64,
+			Async:   false,
+			Timeout: 10000,
 		},
 		Server: ServerConfig{
 			Type:    "http",
@@ -49,6 +55,14 @@ func NewDefaultConfig() *Config {
 
 func (c *Config) WorkerNumber() int {
 	return c.Worker.Number
+}
+
+func (c *Config) WorkerAsync() bool {
+	return c.Worker.Async
+}
+
+func (c *Config) WorkerTimeout() time.Duration {
+	return time.Duration(c.Worker.Timeout) * time.Millisecond
 }
 
 func (c *Config) ServerType() string {

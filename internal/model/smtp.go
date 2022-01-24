@@ -8,14 +8,21 @@
 
 package model
 
-import "time"
+import (
+	"time"
 
-// Email is an email.
+	"github.com/avinoplan/postar/configs"
+)
+
 type Email struct {
 	Subject   string   // Subject.
 	Receivers []string // Receivers.
 	BodyType  string   // Body type.
 	Body      string   // Body.
+}
+
+func NewEmail() *Email {
+	return new(Email)
 }
 
 // SendEmailOptions is the options of sending one email.
@@ -25,9 +32,16 @@ type SendEmailOptions struct {
 }
 
 // DefaultSendEmailOptions returns a default options for sending emails.
-func DefaultSendEmailOptions() *SendEmailOptions {
+func DefaultSendEmailOptions(c *configs.Config) *SendEmailOptions {
+	if c == nil {
+		return &SendEmailOptions{
+			Async:   false,
+			Timeout: 10 * time.Second,
+		}
+	}
+
 	return &SendEmailOptions{
-		Async:   false,
-		Timeout: 5 * time.Second,
+		Async:   c.WorkerAsync(),
+		Timeout: c.WorkerTimeout(),
 	}
 }

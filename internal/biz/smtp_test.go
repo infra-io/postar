@@ -43,7 +43,7 @@ func TestSMTPBiz(t *testing.T) {
 		t.Skipf("smtp host %s or user %s or password %s or receiver %s is empty", c.SMTP.Host, c.SMTP.User, c.SMTP.Password, receiver)
 	}
 
-	pool, _ := ants.NewPool(64)
+	pool, _ := ants.NewPool(c.WorkerNumber())
 	defer pool.Release()
 
 	smtpService := NewSMTPBiz(c, logit.NewLogger(), pool)
@@ -52,7 +52,7 @@ func TestSMTPBiz(t *testing.T) {
 		Receivers: []string{receiver},
 		BodyType:  "text/html;charset=utf-8",
 		Body:      t.Name() + time.Now().Format("20060102150405.000"),
-	}, model.DefaultSendEmailOptions())
+	}, model.DefaultSendEmailOptions(c))
 
 	if err != nil {
 		t.Error(err)

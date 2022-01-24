@@ -10,10 +10,13 @@ package server
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/FishGoddess/logit"
+	"github.com/avinoplan/postar/api"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
+	"github.com/avinoplan/postar/internal/model"
 )
 
 var (
@@ -33,4 +36,30 @@ func NewServer(c *configs.Config, logger *logit.Logger, smtpBiz *biz.SMTPBiz) Se
 		panic(fmt.Errorf("server: type %s not found", c.ServerType()))
 	}
 	return newServer(c, logger, smtpBiz)
+}
+
+func toModelEmail(email *api.Email) *model.Email {
+	if email == nil {
+		return nil
+	}
+
+	result := model.NewEmail()
+	result.Subject = email.Subject
+	result.Receivers = email.Receivers
+	result.BodyType = email.BodyType
+	result.Body = email.Body
+	return result
+}
+
+func toModelSendEmailOptions(c *configs.Config, opts *api.SendEmailOptions) *model.SendEmailOptions {
+	if opts == nil {
+		return nil
+	}
+
+	result := model.DefaultSendEmailOptions(c)
+	result.Async = opts.Async
+	if opts.Timeout > 0 {
+		result.Timeout = time.Duration(opts.Timeout) * time.Millisecond
+	}
+	return result
 }

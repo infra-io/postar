@@ -45,7 +45,7 @@ func (gs *GRPCServer) SendEmail(ctx context.Context, request *api.SendEmailReque
 	ctx = trace.NewContext(ctx, traceID)
 	ctx = logit.NewContext(ctx, gs.logger)
 
-	err := gs.smtpBiz.SendEmail(ctx, nil, nil)
+	err := gs.smtpBiz.SendEmail(ctx, toModelEmail(request.Email), toModelSendEmailOptions(gs.c, request.Options))
 	if errors.IsTimeout(err) {
 		return &api.SendEmailResponse{
 			Code:    api.ServerCode_TIMEOUT,

@@ -50,7 +50,7 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 	logger := logit.FromContext(ctx)
 
 	if options == nil {
-		options = model.DefaultSendEmailOptions()
+		options = model.DefaultSendEmailOptions(sb.c)
 		logger.Debug("options is nil, using default options").Any("options", options).End()
 	}
 
