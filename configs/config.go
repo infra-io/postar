@@ -11,30 +11,30 @@ package configs
 import "time"
 
 type TaskConfig struct {
-	WorkerNumber int  `int:"worker_number"` // The number of task worker.
-	QueueSize    int  `int:"queue_size"`    // The max size of task queue.
-	Async        bool `int:"async"`         // The sending mode of task.
-	Timeout      int  `int:"timeout"`       // The sending timeout in millisecond of task.
+	WorkerNumber int  `ini:"worker_number"` // The number of task worker.
+	QueueSize    int  `ini:"queue_size"`    // The max size of task queue.
+	Async        bool `ini:"async"`         // The sending mode of task.
+	Timeout      int  `ini:"timeout"`       // The sending timeout in millisecond of task.
 }
 
 type ServerConfig struct {
-	Network string `int:"network"` // The network of server, see net.Listen.
-	Type    string `int:"type"`    // The type of server.
+	Network string `ini:"network"` // The network of server, see net.Listen.
+	Type    string `ini:"type"`    // The type of server.
 	Address string `ini:"address"` // The address(including ip and port) of server.
 }
 
 type SMTPConfig struct {
-	Host     string `int:"host"`     // The host of smtp server.
-	Port     int    `int:"port"`     // The port of smtp server.
-	User     string `int:"user"`     // The user of smtp server.
-	Password string `int:"password"` // The password of smtp server.
+	Host     string `ini:"host"`     // The host of smtp server.
+	Port     int    `ini:"port"`     // The port of smtp server.
+	User     string `ini:"user"`     // The user of smtp server.
+	Password string `ini:"password"` // The password of smtp server.
 }
 
 // Config stores all configurations of postar.
 type Config struct {
 	Task   TaskConfig   `ini:"task"`
-	Server ServerConfig `int:"server"`
-	SMTP   SMTPConfig   `int:"smtp"`
+	Server ServerConfig `ini:"server"`
+	SMTP   SMTPConfig   `ini:"smtp"`
 }
 
 // NewDefaultConfig returns a new config.

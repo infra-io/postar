@@ -11,6 +11,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"runtime"
@@ -40,7 +41,12 @@ func loadConfig() (*configs.Config, error) {
 
 	c := configs.NewDefaultConfig()
 	err := ini.MapTo(c, *configFile)
-	return c, err
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("Load config %+v\n", *c)
+	return c, nil
 }
 
 func initLogger(c *configs.Config) *logit.Logger {
