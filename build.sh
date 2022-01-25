@@ -31,7 +31,7 @@ echo "----------------------------------------------------------------------"
 
 # Prepare
 echo "Preparing..."
-mkdir -p "$TARGET" && rm -rf "${TARGET:?}"/*.tar.gz
+mkdir -p "$TARGET" && rm -rf "${TARGET:?}"/*.tar.gz || exit
 cd "$WORKDIR"/cmd/postar || exit
 
 # build builds the target os and arch version package
@@ -41,10 +41,10 @@ function build() {
   local BINARY_FILE=$3
   local PKG_FILE="$TARGET"/postar-$VERSION-$GOOS-$GOARCH.tar.gz
 
-  CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$TARGET"/"$BINARY_FILE"
-  tar -czf "$PKG_FILE" -C "$TARGET" "$BINARY_FILE" -C "$CONFIG_DIR" "$CONFIG_FILE" -C "$WORKDIR" "$LICENSE_FILE"
-  echo "The $GOOS-$GOARCH package can be found in $PKG_FILE"
-  rm "$TARGET"/"$BINARY_FILE"
+  CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$TARGET"/"$BINARY_FILE" || exit
+  tar -czf "$PKG_FILE" -C "$TARGET" "$BINARY_FILE" -C "$CONFIG_DIR" "$CONFIG_FILE" -C "$WORKDIR" "$LICENSE_FILE" || exit
+  echo "The $GOOS-$GOARCH package can be found in $PKG_FILE" || exit
+  rm "$TARGET"/"$BINARY_FILE" || exit
 }
 
 echo "Building windows-amd64 version..."

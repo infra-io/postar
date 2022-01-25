@@ -10,13 +10,15 @@ package configs
 
 import "time"
 
-type WorkerConfig struct {
-	Number  int  `int:"number"`  // The number of worker.
-	Async   bool `int:"async"`   // The sending mode of worker.
-	Timeout int  `int:"timeout"` // The sending timeout of worker.
+type TaskConfig struct {
+	WorkerNumber int  `int:"worker_number"` // The number of task worker.
+	QueueSize    int  `int:"queue_size"`    // The max size of task queue.
+	Async        bool `int:"async"`         // The sending mode of task.
+	Timeout      int  `int:"timeout"`       // The sending timeout in millisecond of task.
 }
 
 type ServerConfig struct {
+	Network string `int:"network"` // The network of server, see net.Listen.
 	Type    string `int:"type"`    // The type of server.
 	Address string `ini:"address"` // The address(including ip and port) of server.
 }
@@ -30,7 +32,7 @@ type SMTPConfig struct {
 
 // Config stores all configurations of postar.
 type Config struct {
-	Worker WorkerConfig `ini:"worker"`
+	Task   TaskConfig   `ini:"task"`
 	Server ServerConfig `int:"server"`
 	SMTP   SMTPConfig   `int:"smtp"`
 }
@@ -38,12 +40,14 @@ type Config struct {
 // NewDefaultConfig returns a new config.
 func NewDefaultConfig() *Config {
 	return &Config{
-		Worker: WorkerConfig{
-			Number:  64,
-			Async:   false,
-			Timeout: 10000,
+		Task: TaskConfig{
+			WorkerNumber: 64,
+			QueueSize:    0,
+			Async:        false,
+			Timeout:      10000, // 10s
 		},
 		Server: ServerConfig{
+			Network: "tcp",
 			Type:    "http",
 			Address: ":5897",
 		},
@@ -53,16 +57,24 @@ func NewDefaultConfig() *Config {
 	}
 }
 
-func (c *Config) WorkerNumber() int {
-	return c.Worker.Number
+func (c *Config) TaskWorkerNumber() int {
+	return c.Task.WorkerNumber
 }
 
-func (c *Config) WorkerAsync() bool {
-	return c.Worker.Async
+func (c *Config) TaskQueueSize() int {
+	return c.Task.QueueSize
 }
 
-func (c *Config) WorkerTimeout() time.Duration {
-	return time.Duration(c.Worker.Timeout) * time.Millisecond
+func (c *Config) TaskAsync() bool {
+	return c.Task.Async
+}
+
+func (c *Config) TaskTimeout() time.Duration {
+	return time.Duration(c.Task.Timeout) * time.Millisecond
+}
+
+func (c *Config) ServerNetwork() string {
+	return c.Server.Network
 }
 
 func (c *Config) ServerType() string {

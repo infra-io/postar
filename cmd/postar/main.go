@@ -48,7 +48,7 @@ func initLogger(c *configs.Config) *logit.Logger {
 }
 
 func initPool(c *configs.Config) *ants.Pool {
-	pool, err := ants.NewPool(c.WorkerNumber())
+	pool, err := ants.NewPool(c.TaskWorkerNumber(), ants.WithMaxBlockingTasks(c.TaskQueueSize()))
 	if err != nil {
 		panic(err)
 	}

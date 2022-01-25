@@ -43,7 +43,7 @@ func TestSMTPBiz(t *testing.T) {
 		t.Skipf("smtp host %s or user %s or password %s or receiver %s is empty", c.SMTP.Host, c.SMTP.User, c.SMTP.Password, receiver)
 	}
 
-	pool, _ := ants.NewPool(c.WorkerNumber())
+	pool, _ := ants.NewPool(c.TaskWorkerNumber())
 	defer pool.Release()
 
 	smtpService := NewSMTPBiz(c, logit.NewLogger(), pool)

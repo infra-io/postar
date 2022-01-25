@@ -41,7 +41,7 @@ func DefaultSendEmailOptions(c *configs.Config) *SendEmailOptions {
 	}
 
 	return &SendEmailOptions{
-		Async:   c.WorkerAsync(),
-		Timeout: c.WorkerTimeout(),
+		Async:   c.TaskAsync(),
+		Timeout: c.TaskTimeout(),
 	}
 }
