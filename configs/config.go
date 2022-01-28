@@ -18,7 +18,6 @@ type TaskConfig struct {
 }
 
 type ServerConfig struct {
-	Network string `ini:"network"` // The network of server, see net.Listen.
 	Type    string `ini:"type"`    // The type of server.
 	Address string `ini:"address"` // The address(including ip and port) of server.
 }
@@ -47,7 +46,6 @@ func NewDefaultConfig() *Config {
 			Timeout:      10000, // 10s
 		},
 		Server: ServerConfig{
-			Network: "tcp",
 			Type:    "http",
 			Address: ":5897",
 		},
@@ -71,10 +69,6 @@ func (c *Config) TaskAsync() bool {
 
 func (c *Config) TaskTimeout() time.Duration {
 	return time.Duration(c.Task.Timeout) * time.Millisecond
-}
-
-func (c *Config) ServerNetwork() string {
-	return c.Server.Network
 }
 
 func (c *Config) ServerType() string {
