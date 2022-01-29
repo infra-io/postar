@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/FishGoddess/logit"
 	"github.com/avinoplan/postar/api"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
@@ -20,7 +19,7 @@ import (
 )
 
 var (
-	servers = map[string]func(c *configs.Config, logger *logit.Logger, smtpBiz *biz.SMTPBiz) Server{
+	servers = map[string]func(c *configs.Config, smtpBiz *biz.SMTPBiz) Server{
 		"grpc": NewGRPCServer,
 	}
 )
@@ -30,12 +29,12 @@ type Server interface {
 	Stop() error
 }
 
-func NewServer(c *configs.Config, logger *logit.Logger, smtpBiz *biz.SMTPBiz) Server {
+func NewServer(c *configs.Config, smtpBiz *biz.SMTPBiz) Server {
 	newServer, ok := servers[c.ServerType()]
 	if !ok {
 		panic(fmt.Errorf("server: type %s not found", c.ServerType()))
 	}
-	return newServer(c, logger, smtpBiz)
+	return newServer(c, smtpBiz)
 }
 
 func toModelEmail(email *api.Email) *model.Email {

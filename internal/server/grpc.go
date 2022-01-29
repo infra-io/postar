@@ -12,7 +12,6 @@ import (
 	"context"
 	"net"
 
-	"github.com/FishGoddess/logit"
 	"github.com/avinoplan/postar/api"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
@@ -26,15 +25,13 @@ type GRPCServer struct {
 	api.UnimplementedPostarServiceServer
 	server  *grpc.Server
 	c       *configs.Config
-	logger  *logit.Logger
 	smtpBiz *biz.SMTPBiz
 }
 
 // NewGRPCServer returns a new GRPCServer.
-func NewGRPCServer(c *configs.Config, logger *logit.Logger, smtpBiz *biz.SMTPBiz) Server {
+func NewGRPCServer(c *configs.Config, smtpBiz *biz.SMTPBiz) Server {
 	return &GRPCServer{
 		c:       c,
-		logger:  logger,
 		smtpBiz: smtpBiz,
 	}
 }
@@ -43,7 +40,6 @@ func NewGRPCServer(c *configs.Config, logger *logit.Logger, smtpBiz *biz.SMTPBiz
 func (gs *GRPCServer) SendEmail(ctx context.Context, request *api.SendEmailRequest) (*api.SendEmailResponse, error) {
 	traceID := trace.NewTraceID()
 	ctx = trace.NewContext(ctx, traceID)
-	ctx = logit.NewContext(ctx, gs.logger)
 
 	err := gs.smtpBiz.SendEmail(ctx, toModelEmail(request.Email), toModelSendEmailOptions(gs.c, request.Options))
 	if errors.IsTimeout(err) {

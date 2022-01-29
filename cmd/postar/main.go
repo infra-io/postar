@@ -11,13 +11,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
+	"github.com/avinoplan/postar/pkg/log"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
 
-	"github.com/FishGoddess/logit"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
 	"github.com/avinoplan/postar/internal/server"
@@ -41,16 +40,7 @@ func loadConfig() (*configs.Config, error) {
 
 	c := configs.NewDefaultConfig()
 	err := ini.MapTo(c, *configFile)
-	if err != nil {
-		return nil, err
-	}
-
-	log.Printf("Load config %+v\n", *c)
-	return c, nil
-}
-
-func initLogger(c *configs.Config) *logit.Logger {
-	return logit.NewLogger()
+	return c, err
 }
 
 func initPool(c *configs.Config) *ants.Pool {
@@ -61,8 +51,8 @@ func initPool(c *configs.Config) *ants.Pool {
 	return pool
 }
 
-func runServer(c *configs.Config, logger *logit.Logger, smtpBiz *biz.SMTPBiz) {
-	svr := server.NewServer(c, logger, smtpBiz)
+func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) {
+	svr := server.NewServer(c, smtpBiz)
 
 	go func() {
 		err := svr.Start()
@@ -84,12 +74,15 @@ func main() {
 		panic(err)
 	}
 
-	logger := initLogger(c)
-	defer logger.Close()
+	err = log.Initialize(c)
+	if err != nil {
+		panic(err)
+	}
+	defer log.Close()
 
 	pool := initPool(c)
 	defer pool.Release()
 
-	smtpBiz := biz.NewSMTPBiz(c, logger, pool)
-	runServer(c, logger, smtpBiz)
+	smtpBiz := biz.NewSMTPBiz(c, pool)
+	runServer(c, smtpBiz)
 }

@@ -10,8 +10,8 @@ package biz
 
 import (
 	"context"
+	"github.com/avinoplan/postar/pkg/log"
 
-	"github.com/FishGoddess/logit"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/model"
 	"github.com/avinoplan/postar/pkg/errors"
@@ -22,15 +22,13 @@ import (
 // SMTPBiz is the biz of smtp.
 type SMTPBiz struct {
 	c      *configs.Config
-	logger *logit.Logger
 	pool   *ants.Pool // The pool of workers.
 }
 
 // NewSMTPBiz returns a new SMTPBiz.
-func NewSMTPBiz(c *configs.Config, logger *logit.Logger, pool *ants.Pool) *SMTPBiz {
+func NewSMTPBiz(c *configs.Config, pool *ants.Pool) *SMTPBiz {
 	return &SMTPBiz{
 		c:      c,
-		logger: logger,
 		pool:   pool,
 	}
 }
@@ -47,11 +45,9 @@ func (sb *SMTPBiz) sendEmail(email *model.Email) error {
 
 // SendEmail sends email to somewhere.
 func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) error {
-	logger := logit.FromContext(ctx)
-
 	if options == nil {
 		options = model.DefaultSendEmailOptions(sb.c)
-		logger.Debug("options is nil, using default options").Any("options", options).End()
+		log.Debug("options is nil, using default options").Any("options", options).End()
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, options.Timeout)
@@ -64,7 +60,7 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 	})
 
 	if err != nil {
-		logger.Error("submit email sending task to pool failed").Error("err", err).End()
+		log.Error(err, "submit email sending task to pool failed").End()
 		return errors.SendEmailFailedErr(err)
 	}
 
@@ -75,13 +71,13 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 	select {
 	case err = <-errorCh:
 		if err != nil {
-			logger.Error("send email failed").Error("err", err).End()
+			log.Error(err, "send email failed").End()
 			return errors.SendEmailFailedErr(err)
 		}
 	case <-ctx.Done():
 		err = ctx.Err()
 		if err != nil {
-			logger.Error("send email timeout").Error("err", err).End()
+			log.Error(err, "send email timeout").End()
 			return errors.TimeoutErr(err)
 		}
 	}
