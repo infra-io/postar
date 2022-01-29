@@ -4,15 +4,15 @@
 *.dll
 *.so
 *.dylib
+.DS_Store
 
 # IDE
 .idea/
-*.iml
 .vscode/
+*.iml
 
 # Program
+target/
 *.test
 *.out
-target/
-*.tar.gz
 *.log
