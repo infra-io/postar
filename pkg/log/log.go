@@ -21,24 +21,25 @@ func Initialize(c *configs.Config) error {
 
 // Debug returns a Log with debug level if debug level is enabled.
 func Debug(msg string, args ...interface{}) *logit.Log {
-	return globalLogger.Debug(msg, args)
+	return globalLogger.Debug(msg, args...)
 }
 
 // Info returns a Log with info level if info level is enabled.
 func Info(msg string, args ...interface{}) *logit.Log {
-	return globalLogger.Info(msg, args)
+	return globalLogger.Info(msg, args...)
 }
 
 // Warn returns a Log with warn level if warn level is enabled.
 func Warn(msg string, args ...interface{}) *logit.Log {
-	return globalLogger.Warn(msg, args)
+	return globalLogger.Warn(msg, args...)
 }
 
 // Error adds an entry which key is string and value is error type to l.
 func Error(err error, msg string, args ...interface{}) *logit.Log {
-	return globalLogger.Error(msg, args).Error("err", err)
+	return globalLogger.Error(msg, args...).Error("err", err).WithCaller()
 }
 
+// Close closes logger in log.
 func Close() error {
 	return globalLogger.Close()
 }

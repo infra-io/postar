@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/FishGoddess/errors v0.0.2
-	github.com/FishGoddess/logit v0.4.12-alpha
+	github.com/FishGoddess/logit v0.4.13-alpha
 	github.com/go-ini/ini v1.66.3
 	github.com/panjf2000/ants/v2 v2.4.7
 	google.golang.org/grpc v1.40.0

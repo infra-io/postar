@@ -15,7 +15,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/FishGoddess/logit"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/model"
 	"github.com/panjf2000/ants/v2"
@@ -46,7 +45,7 @@ func TestSMTPBiz(t *testing.T) {
 	pool, _ := ants.NewPool(c.TaskWorkerNumber())
 	defer pool.Release()
 
-	smtpService := NewSMTPBiz(c, logit.NewLogger(), pool)
+	smtpService := NewSMTPBiz(c, pool)
 	err := smtpService.SendEmail(context.Background(), &model.Email{
 		Subject:   t.Name(),
 		Receivers: []string{receiver},

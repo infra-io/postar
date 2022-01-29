@@ -26,6 +26,17 @@ import (
 
 const (
 	version = "postar-v0.3.0-alpha"
+
+	// You know, for cool.
+	banner = `.______     ______        _______.___________.    ___      .______      
+|   _  \   /  __  \      /       |           |   /   \     |   _  \     
+|  |_)  | |  |  |  |    |   (--- '---|  |----'  /  ^  \    |  |_)  |    
+|   ___/  |  |  |  |     \   \       |  |      /  /_\  \   |      /     
+|  |      |  '--'  | .----)   |      |  |     /  _____  \  |  |\  \----.
+| _|       \______/  |_______/       |__|    /__/     \__\ | _| '._____|
+
+Postar is running...
+`
 )
 
 func loadConfig() (*configs.Config, error) {
@@ -83,6 +94,7 @@ func main() {
 	pool := initPool(c)
 	defer pool.Release()
 
-	smtpBiz := biz.NewSMTPBiz(c, pool)
-	runServer(c, smtpBiz)
+	fmt.Print(banner)
+	log.Info("run server with config").Any("config", c).End()
+	runServer(c, biz.NewSMTPBiz(c, pool))
 }
