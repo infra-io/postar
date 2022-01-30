@@ -10,7 +10,6 @@ package server
 
 import (
 	"context"
-	liberrors "github.com/FishGoddess/errors"
 	"github.com/avinoplan/postar/api"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
@@ -57,10 +56,6 @@ func (hs *HTTPServer) unmarshalSendEmailRequest(reader io.Reader) (*api.SendEmai
 	if err != nil {
 		return nil, err
 	}
-
-	if request.Email == nil {
-		return nil, errors.BadRequestErr(liberrors.New("request.Email == nil"))
-	}
 	return request, nil
 }
 
@@ -86,15 +81,6 @@ func (hs *HTTPServer) sendEmail(writer http.ResponseWriter, request *http.Reques
 	ctx := trace.NewContext(request.Context(), traceID)
 
 	req, err := hs.unmarshalSendEmailRequest(request.Body)
-	if errors.IsBadRequest(err) {
-		hs.writeSendEmailResponse(writer, http.StatusBadRequest, &api.SendEmailResponse{
-			Code:    api.ServerCode_BAD_REQUEST,
-			Msg:     err.Error(),
-			TraceId: traceID,
-		})
-		return
-	}
-
 	if err != nil {
 		hs.writeSendEmailResponse(writer, http.StatusBadRequest, &api.SendEmailResponse{
 			Code:    api.ServerCode_BAD_REQUEST,
@@ -105,6 +91,15 @@ func (hs *HTTPServer) sendEmail(writer http.ResponseWriter, request *http.Reques
 	}
 
 	err = hs.smtpBiz.SendEmail(ctx, toModelEmail(req.Email), toModelSendEmailOptions(hs.c, req.Options))
+	if errors.IsBadRequest(err) {
+		hs.writeSendEmailResponse(writer, http.StatusBadRequest, &api.SendEmailResponse{
+			Code:    api.ServerCode_BAD_REQUEST,
+			Msg:     err.Error(),
+			TraceId: traceID,
+		})
+		return
+	}
+
 	if errors.IsTimeout(err) {
 		hs.writeSendEmailResponse(writer, http.StatusRequestTimeout, &api.SendEmailResponse{
 			Code:    api.ServerCode_TIMEOUT,

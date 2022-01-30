@@ -17,7 +17,6 @@ import (
 	"github.com/avinoplan/postar/pkg/trace"
 	"google.golang.org/grpc"
 	"net"
-	"time"
 )
 
 // GRPCServer is a grpc implement of PostardServer.
@@ -46,6 +45,14 @@ func (gs *GRPCServer) SendEmail(ctx context.Context, request *api.SendEmailReque
 	ctx = trace.NewContext(ctx, traceID)
 
 	err := gs.smtpBiz.SendEmail(ctx, toModelEmail(request.Email), toModelSendEmailOptions(gs.c, request.Options))
+	if errors.IsBadRequest(err) {
+		return &api.SendEmailResponse{
+			Code:    api.ServerCode_BAD_REQUEST,
+			Msg:     err.Error(),
+			TraceId: traceID,
+		}, nil
+	}
+
 	if errors.IsTimeout(err) {
 		return &api.SendEmailResponse{
 			Code:    api.ServerCode_TIMEOUT,
@@ -84,7 +91,6 @@ func (gs *GRPCServer) Stop() error {
 
 	go func() {
 		gs.server.GracefulStop()
-		time.Sleep(time.Minute)
 		stopCh <- struct{}{}
 	}()
 

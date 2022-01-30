@@ -15,8 +15,8 @@ const (
 	codeSendEmailFailed = 11000
 )
 
-// TimeoutErr returns a timeout error.
-func TimeoutErr(err error) error {
+// Timeout returns a timeout error.
+func Timeout(err error) error {
 	return errors.Timeout(err)
 }
 
@@ -25,8 +25,8 @@ func IsTimeout(err error) bool {
 	return errors.IsTimeout(err)
 }
 
-// BadRequestErr returns a bad request error.
-func BadRequestErr(err error) error {
+// BadRequest returns a bad request error.
+func BadRequest(err error) error {
 	return errors.Wrap(err, codeBadRequest)
 }
 

@@ -19,7 +19,7 @@ func TestIsBadRequest(t *testing.T) {
 		err    error
 		result bool
 	}{
-		{BadRequestErr(errors.New("bad request")), true},
+		{BadRequest(errors.New("bad request")), true},
 		{errors.New("unknown error"), false},
 	}
 

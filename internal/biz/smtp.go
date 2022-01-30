@@ -11,6 +11,7 @@ package biz
 import (
 	"context"
 	"github.com/avinoplan/postar/pkg/log"
+	"github.com/avinoplan/postar/pkg/trace"
 
 	liberrors "github.com/FishGoddess/errors"
 	"github.com/avinoplan/postar/configs"
@@ -46,13 +47,17 @@ func (sb *SMTPBiz) sendEmail(email *model.Email) error {
 
 // SendEmail sends email to somewhere.
 func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) error {
+	traceID := trace.FromContext(ctx)
+
 	if email == nil {
-		return errors.BadRequestErr(liberrors.New("email == nil"))
+		err := liberrors.New("email is nil")
+		log.Error(err, "email is nil").String("traceID", traceID).End()
+		return errors.BadRequest(err)
 	}
 
 	if options == nil {
 		options = model.DefaultSendEmailOptions(sb.c)
-		log.Debug("options is nil, using default options").Any("options", options).End()
+		log.Debug("options is nil, using default options").String("traceID", traceID).Any("options", options).End()
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, options.Timeout)
@@ -65,7 +70,7 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 	})
 
 	if err != nil {
-		log.Error(err, "submit email sending task to pool failed").End()
+		log.Error(err, "submit email sending task to pool failed").String("traceID", traceID).Any("email", email).End()
 		return errors.SendEmailFailedErr(err)
 	}
 
@@ -76,14 +81,14 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 	select {
 	case err = <-errorCh:
 		if err != nil {
-			log.Error(err, "send email failed").End()
+			log.Error(err, "send email failed").String("traceID", traceID).Any("email", email).End()
 			return errors.SendEmailFailedErr(err)
 		}
 	case <-ctx.Done():
 		err = ctx.Err()
 		if err != nil {
-			log.Error(err, "send email timeout").End()
-			return errors.TimeoutErr(err)
+			log.Error(err, "send email timeout").String("traceID", traceID).Any("email", email).End()
+			return errors.Timeout(err)
 		}
 	}
 
