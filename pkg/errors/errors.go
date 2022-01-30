@@ -11,6 +11,7 @@ package errors
 import "github.com/FishGoddess/errors"
 
 const (
+	codeBadRequest      = 400
 	codeSendEmailFailed = 11000
 )
 
@@ -22,6 +23,16 @@ func TimeoutErr(err error) error {
 // IsTimeout returns if err is timeout.
 func IsTimeout(err error) bool {
 	return errors.IsTimeout(err)
+}
+
+// BadRequestErr returns a bad request error.
+func BadRequestErr(err error) error {
+	return errors.Wrap(err, codeBadRequest)
+}
+
+// IsBadRequest returns if err is bad request.
+func IsBadRequest(err error) bool {
+	return errors.Is(err, codeBadRequest)
 }
 
 // SendEmailFailedErr returns a send email failed error.

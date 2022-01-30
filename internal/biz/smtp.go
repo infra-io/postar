@@ -12,6 +12,7 @@ import (
 	"context"
 	"github.com/avinoplan/postar/pkg/log"
 
+	liberrors "github.com/FishGoddess/errors"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/model"
 	"github.com/avinoplan/postar/pkg/errors"
@@ -21,15 +22,15 @@ import (
 
 // SMTPBiz is the biz of smtp.
 type SMTPBiz struct {
-	c      *configs.Config
-	pool   *ants.Pool // The pool of workers.
+	c    *configs.Config
+	pool *ants.Pool // The pool of workers.
 }
 
 // NewSMTPBiz returns a new SMTPBiz.
 func NewSMTPBiz(c *configs.Config, pool *ants.Pool) *SMTPBiz {
 	return &SMTPBiz{
-		c:      c,
-		pool:   pool,
+		c:    c,
+		pool: pool,
 	}
 }
 
@@ -45,6 +46,10 @@ func (sb *SMTPBiz) sendEmail(email *model.Email) error {
 
 // SendEmail sends email to somewhere.
 func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) error {
+	if email == nil {
+		return errors.BadRequestErr(liberrors.New("email == nil"))
+	}
+
 	if options == nil {
 		options = model.DefaultSendEmailOptions(sb.c)
 		log.Debug("options is nil, using default options").Any("options", options).End()

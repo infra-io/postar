@@ -13,6 +13,23 @@ import (
 	"testing"
 )
 
+// go test -v -cover -run=^TestIsBadRequest$
+func TestIsBadRequest(t *testing.T) {
+	testCases := []struct {
+		err    error
+		result bool
+	}{
+		{BadRequestErr(errors.New("bad request")), true},
+		{errors.New("unknown error"), false},
+	}
+
+	for i, testCase := range testCases {
+		if IsBadRequest(testCase.err) != testCase.result {
+			t.Errorf("testCase %d failed with err %+v, result %+v", i, testCase.err, testCase.result)
+		}
+	}
+}
+
 // go test -v -cover -run=^TestIsSendEmailFailed$
 func TestIsSendEmailFailed(t *testing.T) {
 	testCases := []struct {

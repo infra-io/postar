@@ -15,6 +15,7 @@ option go_package = "github.com/avinoplan/postar/api";
 // ResponseCodes is all codes of response.
 enum ServerCode {
   OK = 0;
-  TIMEOUT = 429;
+  BAD_REQUEST = 400;
+  TIMEOUT = 408;
   SEND_EMAIL_FAILED = 11000;
 }
