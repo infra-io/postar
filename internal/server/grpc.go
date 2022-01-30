@@ -23,17 +23,21 @@ import (
 // GRPCServer is a grpc implement of PostardServer.
 type GRPCServer struct {
 	api.UnimplementedPostarServiceServer
-	server  *grpc.Server
 	c       *configs.Config
 	smtpBiz *biz.SMTPBiz
+	server  *grpc.Server
 }
 
 // NewGRPCServer returns a new GRPCServer.
 func NewGRPCServer(c *configs.Config, smtpBiz *biz.SMTPBiz) Server {
-	return &GRPCServer{
+	gs := &GRPCServer{
 		c:       c,
 		smtpBiz: smtpBiz,
+		server:  grpc.NewServer(),
 	}
+
+	api.RegisterPostarServiceServer(gs.server, gs)
+	return gs
 }
 
 // SendEmail sends emails.
@@ -70,9 +74,7 @@ func (gs *GRPCServer) Start() error {
 	if err != nil {
 		return err
 	}
-
-	gs.server = grpc.NewServer()
-	api.RegisterPostarServiceServer(gs.server, gs)
+	defer listener.Close()
 	return gs.server.Serve(listener)
 }
 
