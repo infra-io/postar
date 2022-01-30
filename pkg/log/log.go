@@ -36,7 +36,12 @@ func Warn(msg string, args ...interface{}) *logit.Log {
 
 // Error adds an entry which key is string and value is error type to l.
 func Error(err error, msg string, args ...interface{}) *logit.Log {
-	return globalLogger.Error(msg, args...).Error("err", err).WithCaller()
+	return globalLogger.Error(msg, args...).Error("err", err)
+}
+
+// Printf prints a log as info level.
+func Printf(msg string, args ...interface{}) {
+	globalLogger.Info(msg, args...).End()
 }
 
 // Close closes logger in log.

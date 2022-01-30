@@ -14,7 +14,6 @@ import (
 	"github.com/avinoplan/postar/internal/biz"
 	"net"
 	"net/http"
-	"time"
 )
 
 type HTTPServer struct {
@@ -48,12 +47,17 @@ func (hs *HTTPServer) Start() error {
 		return err
 	}
 	defer listener.Close()
-	return hs.server.Serve(listener)
+
+	err = hs.server.Serve(listener)
+	if err != nil && err != http.ErrServerClosed {
+		return err
+	}
+	return nil
 }
 
 // Stop stops HTTPServer gracefully.
 func (hs *HTTPServer) Stop() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), hs.c.ServerStopTimeout())
 	defer cancel()
 	return hs.server.Shutdown(ctx)
 }

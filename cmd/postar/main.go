@@ -12,6 +12,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/avinoplan/postar/pkg/log"
+	"go.uber.org/automaxprocs/maxprocs"
 	"os"
 	"os/signal"
 	"runtime"
@@ -27,7 +28,7 @@ import (
 const (
 	version = "postar-v0.3.0-alpha"
 
-	// You know, for cool.
+	// You know, for funny.
 	banner = `.______     ______        _______.___________.    ___      .______      
 |   _  \   /  __  \      /       |           |   /   \     |   _  \     
 |  |_)  | |  |  |  |    |   (--- '---|  |----'  /  ^  \    |  |_)  |    
@@ -38,6 +39,10 @@ const (
 Postar is running...
 `
 )
+
+func funnyFunnyChickenHomie() {
+	fmt.Print(banner)
+}
 
 func loadConfig() (*configs.Config, error) {
 	configFile := flag.String("config.file", "postar.ini", "The configuration file of postar.")
@@ -62,9 +67,13 @@ func initPool(c *configs.Config) *ants.Pool {
 	return pool
 }
 
-func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) {
-	svr := server.NewServer(c, smtpBiz)
+func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) error {
+	cc := *c
+	cc.SMTP.User = "*"
+	cc.SMTP.Password = "*"
+	log.Info("run server with config").Any("config", cc).End()
 
+	svr := server.NewServer(c, smtpBiz)
 	go func() {
 		err := svr.Start()
 		if err != nil {
@@ -75,11 +84,14 @@ func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) {
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
 	<-signalCh
+
 	fmt.Println("Postar is shutdown gracefully...")
-	svr.Stop()
+	return svr.Stop()
 }
 
 func main() {
+	funnyFunnyChickenHomie()
+
 	c, err := loadConfig()
 	if err != nil {
 		panic(err)
@@ -91,10 +103,17 @@ func main() {
 	}
 	defer log.Close()
 
+	undo, err := maxprocs.Set(maxprocs.Logger(log.Printf))
+	if err != nil {
+		undo()
+		log.Error(err, "set maxprocs failed").End()
+	}
+
 	pool := initPool(c)
 	defer pool.Release()
 
-	fmt.Print(banner)
-	log.Info("run server with config").Any("config", c).End()
-	runServer(c, biz.NewSMTPBiz(c, pool))
+	err = runServer(c, biz.NewSMTPBiz(c, pool))
+	if err != nil {
+		log.Error(err, "stop server failed").End()
+	}
 }

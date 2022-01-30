@@ -18,8 +18,9 @@ type TaskConfig struct {
 }
 
 type ServerConfig struct {
-	Type    string `ini:"type"`    // The type of server.
-	Address string `ini:"address"` // The address(including ip and port) of server.
+	Type        string `ini:"type"`         // The type of server.
+	Address     string `ini:"address"`      // The address(including ip and port) of server.
+	StopTimeout int    `ini:"stop_timeout"` // The closing timeout in second of server.
 }
 
 type SMTPConfig struct {
@@ -46,8 +47,9 @@ func NewDefaultConfig() *Config {
 			Timeout:      10000, // 10s
 		},
 		Server: ServerConfig{
-			Type:    "http",
-			Address: ":5897",
+			Type:        "http",
+			Address:     ":5897",
+			StopTimeout: 30, // 30s
 		},
 		SMTP: SMTPConfig{
 			Port: 587,
@@ -77,6 +79,10 @@ func (c *Config) ServerType() string {
 
 func (c *Config) ServerAddress() string {
 	return c.Server.Address
+}
+
+func (c *Config) ServerStopTimeout() time.Duration {
+	return time.Duration(c.Server.StopTimeout) * time.Second
 }
 
 func (c *Config) SMTPHost() string {

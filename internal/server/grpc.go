@@ -10,14 +10,14 @@ package server
 
 import (
 	"context"
-	"net"
-
 	"github.com/avinoplan/postar/api"
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
 	"github.com/avinoplan/postar/pkg/errors"
 	"github.com/avinoplan/postar/pkg/trace"
 	"google.golang.org/grpc"
+	"net"
+	"time"
 )
 
 // GRPCServer is a grpc implement of PostardServer.
@@ -80,6 +80,21 @@ func (gs *GRPCServer) Start() error {
 
 // Stop stops GRPCServer gracefully.
 func (gs *GRPCServer) Stop() error {
-	gs.server.GracefulStop()
-	return nil
+	stopCh := make(chan struct{}, 1)
+
+	go func() {
+		gs.server.GracefulStop()
+		time.Sleep(time.Minute)
+		stopCh <- struct{}{}
+	}()
+
+	ctx, cancel := context.WithTimeout(context.Background(), gs.c.ServerStopTimeout())
+	defer cancel()
+
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-stopCh:
+		return nil
+	}
 }

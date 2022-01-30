@@ -20,6 +20,7 @@ import (
 
 var (
 	servers = map[string]func(c *configs.Config, smtpBiz *biz.SMTPBiz) Server{
+		"http": NewHTTPServer,
 		"grpc": NewGRPCServer,
 	}
 )
