@@ -7,6 +7,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 
 	emailReq := &api.SendEmailRequest{
 		Email:   &api.Email{
-			Receivers: nil,
+			Receivers: []string{os.Getenv("POSTAR_RECEIVER")},
 			Subject:   "测试邮件",
 			BodyType:  "text/html",
 			Body:      "<p>邮件内容</p>",

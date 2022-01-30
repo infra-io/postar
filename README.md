@@ -41,9 +41,13 @@ _注意：默认的配置文件路径是 `./postar.ini`，默认的日志输出�
 
 如果您觉得 **postar** 缺少您需要的功能，请不要犹豫，马上参与进来，发起一个 _**issue**_。
 
-### 📦 postar 使用的技术
+### 📦 Postar 使用的技术
 
 | 项目     | 作者          | 描述                  | 链接                                                                                           |
 |--------|-------------|---------------------|----------------------------------------------------------------------------------------------|
 | logit  | FishGoddess | 一个高性能、功能强大且极易上手的日志库 | [码云](https://gitee.com/FishGoddess/logit) / [GitHub](https://github.com/FishGoddess/logit)   |
 | errors | FishGoddess | 一个用于优雅地处理 Go 中错误的库  | [码云](https://gitee.com/FishGoddess/errors) / [GitHub](https://github.com/FishGoddess/errors) |
+| ants | panjf2000 | 一个高性能且低损耗的 goroutine 池  | [GitHub](https://github.com/panjf2000/ants) |
+| gomail | alexcesaro | 一个用于在 Go 中发送邮件的库  | [GitHub](https://github.com/go-gomail/gomail/tree/v2) |
+| ini | unknwon | 一个操作 ini 配置的库  | [GitHub](https://github.com/go-ini/ini) |
+| httprouter | julienschmidt | 一个高性能的 http 路由库  | [GitHub](https://github.com/julienschmidt/httprouter) |

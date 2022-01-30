@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/avinoplan/postar/api"
 	"google.golang.org/grpc"
+	"os"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func main() {
 
 	req := &api.SendEmailRequest{
 		Email: &api.Email{
-			Receivers: nil,
+			Receivers: []string{os.Getenv("POSTAR_RECEIVER")},
 			Subject:   "测试邮件",
 			BodyType:  "text/html",
 			Body:      "<p>邮件内容</p>",
