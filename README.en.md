@@ -12,8 +12,8 @@
 
 * Plain and Html form email supports
 * Synchronous/Asynchronous mode supports, and timeout is available in synchronous mode
-* HTTP api supports, and use http2 is ok
-* Gracefully shutdown with signal mechanism supports
+* Support http/http2/grpc/vex/udp protocol
+* Gracefully shutdown with signal mechanism
 
 _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about more information._
 
@@ -31,9 +31,9 @@ Postar has two ways to get binary:
 
 1. Invoking `./build.sh` in the root of source code will generate target directory, which contains all binary files.
 
-2. Build by `go` command, see `go build`.
+2. Building by `go build` (or running by `go run`) in `cmd/postar`, see `go`.
 
-_Notice: Default config file is `/opt/postar/conf/postar.ini`, default log output directory is `/opt/postar/log/`, and you need them to start service._
+_Notice: Default config file is `./postar.ini`, default log output directory is `./log/service.log`._
 
 > Want to know how to use? See [_examples](_examples).
 
@@ -43,6 +43,11 @@ If you find that something is not working as expected please open an _**issue**_
 
 ### 📦 Projects postar used
 
-| Project | Author | Description | link |
-| -----------|--------|-------------|------------------|
-| logit | FishGoddess | A high-performance and easy-to-use logging foundation | [Gitee](https://gitee.com/FishGoddess/logit) / [GitHub](https://github.com/FishGoddess/logit) |
+| Project | Author      | Description                                           | link                                                                                            |
+|---------|-------------|-------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| logit   | FishGoddess | A high-performance and easy-to-use logging foundation | [Gitee](https://gitee.com/FishGoddess/logit) / [GitHub](https://github.com/FishGoddess/logit)   |
+| errors  | FishGoddess | A lib for handling error gracefully in Go             | [Gitee](https://gitee.com/FishGoddess/errors) / [GitHub](https://github.com/FishGoddess/errors) |
+| ants | panjf2000 | A high-performance and low-cost goroutine pool   | [GitHub](https://github.com/panjf2000/ants) |
+| gomail | alexcesaro | The best way to send emails in Go  | [GitHub](https://github.com/go-gomail/gomail/tree/v2) |
+| ini | unknwon | Provides INI file read and write functionality in Go  | [GitHub](https://github.com/go-ini/ini) |
+| httprouter | julienschmidt | A high performance HTTP request router  | [GitHub](https://github.com/julienschmidt/httprouter) |

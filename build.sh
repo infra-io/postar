@@ -1,40 +1,60 @@
-# Copyright 2021 Ye Zi Jie.  All rights reserved.
-# Use of this source code is governed by a MIT style
-# license that can be found in the LICENSE file.
-#
-# Postar build script
-# Author: fishgoddess
-VERSION=v0.2.3-alpha
-BUILD_TARGET=target
-CONFIG_FILE=_examples/config/postar.ini
+#!/bin/bash
 
-# Before building
-echo "Start building to: $BUILD_TARGET"
-mkdir $BUILD_TARGET
-rm -r ${BUILD_TARGET:?}/bin ${BUILD_TARGET:?}/conf ${BUILD_TARGET:?}/log
+VERSION=v0.3.0-alpha
+echo "VERSION: $VERSION"
+echo "----------------------------------------------------------------------"
 
-# Go build: windows, linux and darwin
-echo "Building windows version..."
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o $BUILD_TARGET/bin/postar-$VERSION-windows.exe
+# Check
+WORKDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+echo "WORKDIR: $WORKDIR"
+CONFIG_DIR=$WORKDIR/_examples/config
+CONFIG_FILE=postar.ini
+echo "CONFIG: $CONFIG_DIR/$CONFIG_FILE"
+LICENSE_FILE=LICENSE
+echo "LICENSE: $WORKDIR/$LICENSE"
+TARGET=$WORKDIR/target
+echo "TARGET: $TARGET"
+echo "----------------------------------------------------------------------"
 
-echo "Building linux version..."
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $BUILD_TARGET/bin/postar-$VERSION-linux
-chmod +x $BUILD_TARGET/bin/postar-$VERSION-linux
+echo "Want to continue? (y/n)"
+read -r right
+if [ -z "$right" ]; then
+  echo "Input y or n to continue..."
+  exit
+fi
 
-echo "Building darwin version..."
-CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o $BUILD_TARGET/bin/postar-$VERSION-darwin
-chmod +x $BUILD_TARGET/bin/postar-$VERSION-darwin
+if [ "$right" == "n" ]; then
+  echo "Fix the problems to continue..."
+  exit
+fi
+echo "----------------------------------------------------------------------"
 
-# Before packaging
-echo "Before packaging..."
-mkdir -p $BUILD_TARGET/conf
-mkdir -p $BUILD_TARGET/log
-cp $CONFIG_FILE $BUILD_TARGET/conf/
+# Prepare
+echo "Preparing..."
+mkdir -p "$TARGET" && rm -rf "${TARGET:?}"/*.tar.gz || exit
+cd "$WORKDIR"/cmd/postar || exit
 
-# Packaging to one
-echo "Packaging to one: postar-$VERSION.tar.gz"
-cd $BUILD_TARGET || exit
-tar -czf postar-$VERSION.tar.gz bin conf log
+# build builds the target os and arch version package
+function build() {
+  local GOOS=$1
+  local GOARCH=$2
+  local BINARY_FILE=$3
+  local PKG_FILE="$TARGET"/postar-$VERSION-$GOOS-$GOARCH.tar.gz
+
+  CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$TARGET"/"$BINARY_FILE" || exit
+  tar -czf "$PKG_FILE" -C "$TARGET" "$BINARY_FILE" -C "$CONFIG_DIR" "$CONFIG_FILE" -C "$WORKDIR" "$LICENSE_FILE" || exit
+  echo "The $GOOS-$GOARCH package can be found in $PKG_FILE" || exit
+  rm "$TARGET"/"$BINARY_FILE" || exit
+}
+
+echo "Building windows-amd64 version..."
+build windows amd64 postar.exe
+
+echo "Building linux-amd64 version..."
+build linux amd64 postar
+
+echo "Building darwin-amd64 version..."
+build darwin amd64 postar
 
 # Done
 echo "Done."
