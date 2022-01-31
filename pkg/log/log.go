@@ -27,6 +27,11 @@ func Initialize(c *configs.Config) error {
 	return nil
 }
 
+// Logger returns the global logger.
+func Logger() *logit.Logger {
+	return globalLogger
+}
+
 // Debug returns a Log with debug level if debug level is enabled.
 func Debug(msg string, args ...interface{}) *logit.Log {
 	return globalLogger.Debug(msg, args...)

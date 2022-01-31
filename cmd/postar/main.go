@@ -60,7 +60,7 @@ func loadConfig() (*configs.Config, error) {
 }
 
 func initPool(c *configs.Config) *ants.Pool {
-	pool, err := ants.NewPool(c.TaskWorkerNumber(), ants.WithMaxBlockingTasks(c.TaskQueueSize()))
+	pool, err := ants.NewPool(c.TaskWorkerNumber(), ants.WithMaxBlockingTasks(c.TaskQueueSize()), ants.WithLogger(log.Logger()))
 	if err != nil {
 		panic(err)
 	}
@@ -69,8 +69,8 @@ func initPool(c *configs.Config) *ants.Pool {
 
 func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) error {
 	cc := *c
-	cc.SMTP.User = "*"
-	cc.SMTP.Password = "*"
+	cc.SMTP.User = "*"     // User is sensitive
+	cc.SMTP.Password = "*" // Password is sensitive
 	log.Info("run server with config").Any("config", cc).End()
 
 	svr := server.NewServer(c, smtpBiz)
