@@ -9,8 +9,8 @@
 package log
 
 import (
-	"github.com/go-logit/logit"
 	"github.com/avinoplan/postar/configs"
+	"github.com/go-logit/logit"
 )
 
 var (
