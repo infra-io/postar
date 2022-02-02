@@ -45,7 +45,7 @@ If you find that something is not working as expected please open an _**issue**_
 
 | Project | Author      | Description                                           | link                                                                                            |
 |---------|-------------|-------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| logit   | FishGoddess | A high-performance and easy-to-use logging foundation | [Gitee](https://gitee.com/FishGoddess/logit) / [GitHub](https://github.com/FishGoddess/logit)   |
+| logit   | FishGoddess | A high-performance and easy-to-use logging foundation | [Gitee](https://gitee.com/go-logit/logit) / [GitHub](https://github.com/go-logit/logit)   |
 | errors  | FishGoddess | A lib for handling error gracefully in Go             | [Gitee](https://gitee.com/FishGoddess/errors) / [GitHub](https://github.com/FishGoddess/errors) |
 | ants | panjf2000 | A high-performance and low-cost goroutine pool   | [GitHub](https://github.com/panjf2000/ants) |
 | gomail | alexcesaro | The best way to send emails in Go  | [GitHub](https://github.com/go-gomail/gomail/tree/v2) |

@@ -9,7 +9,7 @@
 package log
 
 import (
-	"github.com/FishGoddess/logit"
+	"github.com/go-logit/logit"
 	"github.com/avinoplan/postar/configs"
 )
 
