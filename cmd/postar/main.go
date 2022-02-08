@@ -11,12 +11,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/avinoplan/postar/pkg/log"
-	"go.uber.org/automaxprocs/maxprocs"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
+
+	"github.com/avinoplan/postar/pkg/log"
+	"go.uber.org/automaxprocs/maxprocs"
 
 	"github.com/avinoplan/postar/configs"
 	"github.com/avinoplan/postar/internal/biz"
