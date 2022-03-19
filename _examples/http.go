@@ -1,28 +1,25 @@
-// Copyright 2022 Ye Zi Jie.  All rights reserved.
+// Copyright 2022 FishGoddess.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-//
-// Author: FishGoddess
-// Email: fishgoddess@qq.com
-// Created at 2021/09/16 02:05:02
 
 package main
 
 import (
 	"bytes"
 	"fmt"
-	"github.com/avinoplan/postar/api"
-	"google.golang.org/protobuf/proto"
 	"io/ioutil"
 	"net/http"
 	"os"
+
+	"github.com/avinoplan/postar/api"
+	"google.golang.org/protobuf/proto"
 )
 
 func main() {
 	url := "http://127.0.0.1:5897/sendEmail"
 
 	emailReq := &api.SendEmailRequest{
-		Email:   &api.Email{
+		Email: &api.Email{
 			Receivers: []string{os.Getenv("POSTAR_RECEIVER")},
 			Subject:   "测试邮件",
 			BodyType:  "text/html",

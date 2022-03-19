@@ -1,10 +1,6 @@
-// Copyright 2021 Ye Zi Jie.  All rights reserved.
+// Copyright 2021 FishGoddess.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-//
-// Author: FishGoddess
-// Email: fishgoddess@qq.com
-// Created at 2021/09/25 22:44:59
 
 package trace
 
@@ -33,7 +29,7 @@ func NewContext(ctx context.Context, traceID string) context.Context {
 func FromContext(ctx context.Context) string {
 	traceID, ok := ctx.Value(traceIDKey).(string)
 	if !ok && traceID == "" {
-		return NewTraceID()
+		return ""
 	}
 	return traceID
 }

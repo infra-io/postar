@@ -3,9 +3,9 @@ module github.com/avinoplan/postar
 go 1.15
 
 require (
-	github.com/FishGoddess/errors v0.0.2
+	github.com/FishGoddess/errors v0.0.3
 	github.com/go-ini/ini v1.66.3
-	github.com/go-logit/logit v0.4.18
+	github.com/go-logit/logit v0.4.22
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/panjf2000/ants/v2 v2.4.7
 	go.uber.org/automaxprocs v1.4.0

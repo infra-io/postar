@@ -1,27 +1,24 @@
-// Copyright 2021 Ye Zi Jie.  All rights reserved.
+// Copyright 2021 FishGoddess.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-//
-// Author: FishGoddess
-// Email: fishgoddess@qq.com
-// Created at 2021/09/16 02:04:54
 
 package server
 
 import (
 	"context"
-	"github.com/avinoplan/postar/api"
-	"github.com/avinoplan/postar/configs"
-	"github.com/avinoplan/postar/internal/biz"
-	"github.com/avinoplan/postar/pkg/errors"
-	"github.com/avinoplan/postar/pkg/log"
-	"github.com/avinoplan/postar/pkg/trace"
-	"github.com/julienschmidt/httprouter"
-	"google.golang.org/protobuf/proto"
 	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
+
+	"github.com/FishGoddess/errors"
+	"github.com/avinoplan/postar/api"
+	"github.com/avinoplan/postar/configs"
+	"github.com/avinoplan/postar/internal/biz"
+	"github.com/avinoplan/postar/pkg/trace"
+	"github.com/go-logit/logit"
+	"github.com/julienschmidt/httprouter"
+	"google.golang.org/protobuf/proto"
 )
 
 type HTTPServer struct {
@@ -62,7 +59,7 @@ func (hs *HTTPServer) unmarshalSendEmailRequest(reader io.Reader) (*api.SendEmai
 func (hs *HTTPServer) marshalSendEmailResponse(response *api.SendEmailResponse) []byte {
 	marshaled, err := proto.Marshal(response)
 	if err != nil {
-		log.Error(err, "proto.Marshal(response) failed").Stringer("response", response).End()
+		logit.Error("proto.Marshal(response) failed").Error("err", err).Stringer("response", response).End()
 		return nil // should never happen...
 	}
 	return marshaled
@@ -72,7 +69,7 @@ func (hs *HTTPServer) writeSendEmailResponse(writer http.ResponseWriter, statusC
 	writer.WriteHeader(statusCode)
 	_, err := writer.Write(hs.marshalSendEmailResponse(response))
 	if err != nil {
-		log.Error(err, "write send email response failed").Int("statusCode", statusCode).Stringer("response", response).End()
+		logit.Error("write send email response failed").Error("err", err).Int("statusCode", statusCode).Stringer("response", response).End()
 	}
 }
 

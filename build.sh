@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=v0.3.0-alpha
+VERSION=v0.3.1-alpha
 echo "VERSION: $VERSION"
 echo "----------------------------------------------------------------------"
 
