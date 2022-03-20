@@ -29,11 +29,11 @@ Docker 版本安装请看：[码云](https://gitee.com/avino-plan/postar-docker)
 
 Postar 的二进制执行包可以通过源码进行编译得到，一共有两种方式：
 
-1. 在源码根目录执行 `./build.sh` 会生成 target 目录，所有的二进制包都在里面
+1. 在源码根目录执行 `make build` 会生成 target 目录，所有的二进制包都在里面。
 
 2. 在 `cmd/postar` 目录下使用 `go build` 构建服务（或 `go run` 启动服务），参考 `go` 命令。
 
-_注意：默认的配置文件路径是 `./postar.ini`，默认的日志输出是 `./log/service.log`。_
+_注意：默认的配置文件路径是 `./postar.ini`，默认的日志输出是 `./log/postar.log`。_
 
 > 想知道怎么使用？查看 [_examples](_examples)。
 

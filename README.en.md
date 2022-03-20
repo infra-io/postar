@@ -30,11 +30,11 @@ Docker Hub: [https://hub.docker.com/r/fishgoddess/postar](https://hub.docker.com
 
 Postar has two ways to get binary:
 
-1. Invoking `./build.sh` in the root of source code will generate target directory, which contains all binary files.
+1. Invoking `make build` in the root of source code will generate target directory, which contains all binary files.
 
 2. Building by `go build` (or running by `go run`) in `cmd/postar`, see `go`.
 
-_Notice: Default config file is `./postar.ini`, default log output directory is `./log/service.log`._
+_Notice: Default config file is `./postar.ini`, default log output directory is `./log/postar.log`._
 
 > Want to know how to use? See [_examples](_examples).
 
