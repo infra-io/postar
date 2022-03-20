@@ -16,8 +16,14 @@ import (
 )
 
 func main() {
+	// We recommend you to use client in:
+	//
+	// [Gitee](https://gitee.com/avino-plan/postar-client)
+	// or
+	// [Github](https://github.com/avino-plan/postar-client)
+	//
+	// However, you can use postar service directly in this way below.
 	url := "http://127.0.0.1:5897/sendEmail"
-
 	emailReq := &postarapi.SendEmailRequest{
 		Email: &postarapi.Email{
 			Receivers: []string{os.Getenv("POSTAR_RECEIVER")},

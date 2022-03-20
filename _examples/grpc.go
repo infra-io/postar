@@ -14,6 +14,13 @@ import (
 )
 
 func main() {
+	// We recommend you to use client in:
+	//
+	// [Gitee](https://gitee.com/avino-plan/postar-client)
+	// or
+	// [Github](https://github.com/avino-plan/postar-client)
+	//
+	// However, you can use postar service directly in this way below.
 	conn, err := grpc.Dial("127.0.0.1:5897", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
