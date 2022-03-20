@@ -7,7 +7,7 @@ package trace
 import (
 	"context"
 
-	"github.com/avinoplan/postar/pkg/encode"
+	"github.com/avino-plan/postar/pkg/encode"
 )
 
 var (

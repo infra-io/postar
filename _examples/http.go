@@ -11,15 +11,15 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/avinoplan/postar/api"
+	postarapi "github.com/avino-plan/api/go-out/postar"
 	"google.golang.org/protobuf/proto"
 )
 
 func main() {
 	url := "http://127.0.0.1:5897/sendEmail"
 
-	emailReq := &api.SendEmailRequest{
-		Email: &api.Email{
+	emailReq := &postarapi.SendEmailRequest{
+		Email: &postarapi.Email{
 			Receivers: []string{os.Getenv("POSTAR_RECEIVER")},
 			Subject:   "测试邮件",
 			BodyType:  "text/html",
@@ -45,7 +45,7 @@ func main() {
 		panic(err)
 	}
 
-	emailRsp := new(api.SendEmailResponse)
+	emailRsp := new(postarapi.SendEmailResponse)
 	err = proto.Unmarshal(body, emailRsp)
 	if err != nil {
 		panic(err)

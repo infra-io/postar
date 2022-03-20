@@ -10,9 +10,9 @@ import (
 	"github.com/go-logit/logit"
 
 	"github.com/FishGoddess/errors"
-	"github.com/avinoplan/postar/configs"
-	"github.com/avinoplan/postar/internal/model"
-	pkgerrors "github.com/avinoplan/postar/pkg/errors"
+	"github.com/avino-plan/postar/configs"
+	"github.com/avino-plan/postar/internal/model"
+	pkgerrors "github.com/avino-plan/postar/pkg/errors"
 	"github.com/panjf2000/ants/v2"
 	"gopkg.in/gomail.v2"
 )

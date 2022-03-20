@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/avinoplan/postar/configs"
-	"github.com/avinoplan/postar/internal/model"
+	"github.com/avino-plan/postar/configs"
+	"github.com/avino-plan/postar/internal/model"
 	"github.com/panjf2000/ants/v2"
 )
 

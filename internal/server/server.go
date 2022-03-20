@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/avinoplan/postar/api"
-	"github.com/avinoplan/postar/configs"
-	"github.com/avinoplan/postar/internal/biz"
-	"github.com/avinoplan/postar/internal/model"
+	postarapi "github.com/avino-plan/api/go-out/postar"
+	"github.com/avino-plan/postar/configs"
+	"github.com/avino-plan/postar/internal/biz"
+	"github.com/avino-plan/postar/internal/model"
 )
 
 var (
@@ -34,7 +34,7 @@ func NewServer(c *configs.Config, smtpBiz *biz.SMTPBiz) Server {
 	return newServer(c, smtpBiz)
 }
 
-func toModelEmail(email *api.Email) *model.Email {
+func toModelEmail(email *postarapi.Email) *model.Email {
 	if email == nil {
 		return nil
 	}
@@ -47,7 +47,7 @@ func toModelEmail(email *api.Email) *model.Email {
 	return result
 }
 
-func toModelSendEmailOptions(c *configs.Config, opts *api.SendEmailOptions) *model.SendEmailOptions {
+func toModelSendEmailOptions(c *configs.Config, opts *postarapi.SendEmailOptions) *model.SendEmailOptions {
 	if opts == nil {
 		return nil
 	}

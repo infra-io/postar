@@ -7,7 +7,7 @@ package model
 import (
 	"time"
 
-	"github.com/avinoplan/postar/configs"
+	"github.com/avino-plan/postar/configs"
 )
 
 type Email struct {

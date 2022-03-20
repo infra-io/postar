@@ -13,19 +13,19 @@ import (
 	"runtime"
 	"syscall"
 
-	"github.com/avinoplan/postar/pkg/trace"
+	"github.com/avino-plan/postar/pkg/trace"
 	"github.com/go-logit/logit"
 	"go.uber.org/automaxprocs/maxprocs"
 
-	"github.com/avinoplan/postar/configs"
-	"github.com/avinoplan/postar/internal/biz"
-	"github.com/avinoplan/postar/internal/server"
+	"github.com/avino-plan/postar/configs"
+	"github.com/avino-plan/postar/internal/biz"
+	"github.com/avino-plan/postar/internal/server"
 	"github.com/go-ini/ini"
 	"github.com/panjf2000/ants/v2"
 )
 
 const (
-	version = "postar-v0.3.0-alpha"
+	version = "postar-v0.3.1-alpha"
 )
 
 func funnyFunnyChickenHomie() {

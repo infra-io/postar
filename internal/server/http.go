@@ -12,10 +12,11 @@ import (
 	"net/http"
 
 	"github.com/FishGoddess/errors"
-	"github.com/avinoplan/postar/api"
-	"github.com/avinoplan/postar/configs"
-	"github.com/avinoplan/postar/internal/biz"
-	"github.com/avinoplan/postar/pkg/trace"
+	baseapi "github.com/avino-plan/api/go-out/base"
+	postarapi "github.com/avino-plan/api/go-out/postar"
+	"github.com/avino-plan/postar/configs"
+	"github.com/avino-plan/postar/internal/biz"
+	"github.com/avino-plan/postar/pkg/trace"
 	"github.com/go-logit/logit"
 	"github.com/julienschmidt/httprouter"
 	"google.golang.org/protobuf/proto"
@@ -42,13 +43,13 @@ func NewHTTPServer(c *configs.Config, smtpBiz *biz.SMTPBiz) Server {
 	return hs
 }
 
-func (hs *HTTPServer) unmarshalSendEmailRequest(reader io.Reader) (*api.SendEmailRequest, error) {
+func (hs *HTTPServer) unmarshalSendEmailRequest(reader io.Reader) (*postarapi.SendEmailRequest, error) {
 	marshaled, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}
 
-	request := new(api.SendEmailRequest)
+	request := new(postarapi.SendEmailRequest)
 	err = proto.Unmarshal(marshaled, request)
 	if err != nil {
 		return nil, err
@@ -56,7 +57,7 @@ func (hs *HTTPServer) unmarshalSendEmailRequest(reader io.Reader) (*api.SendEmai
 	return request, nil
 }
 
-func (hs *HTTPServer) marshalSendEmailResponse(response *api.SendEmailResponse) []byte {
+func (hs *HTTPServer) marshalSendEmailResponse(response *postarapi.SendEmailResponse) []byte {
 	marshaled, err := proto.Marshal(response)
 	if err != nil {
 		logit.Error("proto.Marshal(response) failed").Error("err", err).Stringer("response", response).End()
@@ -65,7 +66,7 @@ func (hs *HTTPServer) marshalSendEmailResponse(response *api.SendEmailResponse) 
 	return marshaled
 }
 
-func (hs *HTTPServer) writeSendEmailResponse(writer http.ResponseWriter, statusCode int, response *api.SendEmailResponse) {
+func (hs *HTTPServer) writeSendEmailResponse(writer http.ResponseWriter, statusCode int, response *postarapi.SendEmailResponse) {
 	writer.WriteHeader(statusCode)
 	_, err := writer.Write(hs.marshalSendEmailResponse(response))
 	if err != nil {
@@ -79,8 +80,8 @@ func (hs *HTTPServer) sendEmail(writer http.ResponseWriter, request *http.Reques
 
 	req, err := hs.unmarshalSendEmailRequest(request.Body)
 	if err != nil {
-		hs.writeSendEmailResponse(writer, http.StatusBadRequest, &api.SendEmailResponse{
-			Code:    api.ServerCode_BAD_REQUEST,
+		hs.writeSendEmailResponse(writer, http.StatusBadRequest, &postarapi.SendEmailResponse{
+			Code:    baseapi.ServerCode_BAD_REQUEST,
 			Msg:     "unmarshal send email request failed",
 			TraceId: traceID,
 		})
@@ -89,8 +90,8 @@ func (hs *HTTPServer) sendEmail(writer http.ResponseWriter, request *http.Reques
 
 	err = hs.smtpBiz.SendEmail(ctx, toModelEmail(req.Email), toModelSendEmailOptions(hs.c, req.Options))
 	if errors.IsBadRequest(err) {
-		hs.writeSendEmailResponse(writer, http.StatusBadRequest, &api.SendEmailResponse{
-			Code:    api.ServerCode_BAD_REQUEST,
+		hs.writeSendEmailResponse(writer, http.StatusBadRequest, &postarapi.SendEmailResponse{
+			Code:    baseapi.ServerCode_BAD_REQUEST,
 			Msg:     err.Error(),
 			TraceId: traceID,
 		})
@@ -98,8 +99,8 @@ func (hs *HTTPServer) sendEmail(writer http.ResponseWriter, request *http.Reques
 	}
 
 	if errors.IsTimeout(err) {
-		hs.writeSendEmailResponse(writer, http.StatusRequestTimeout, &api.SendEmailResponse{
-			Code:    api.ServerCode_TIMEOUT,
+		hs.writeSendEmailResponse(writer, http.StatusRequestTimeout, &postarapi.SendEmailResponse{
+			Code:    baseapi.ServerCode_TIMEOUT,
 			Msg:     "send email timeout",
 			TraceId: traceID,
 		})
@@ -107,16 +108,16 @@ func (hs *HTTPServer) sendEmail(writer http.ResponseWriter, request *http.Reques
 	}
 
 	if err != nil {
-		hs.writeSendEmailResponse(writer, http.StatusInternalServerError, &api.SendEmailResponse{
-			Code:    api.ServerCode_SEND_EMAIL_FAILED,
+		hs.writeSendEmailResponse(writer, http.StatusInternalServerError, &postarapi.SendEmailResponse{
+			Code:    baseapi.ServerCode_SEND_EMAIL_FAILED,
 			Msg:     "send email failed",
 			TraceId: traceID,
 		})
 		return
 	}
 
-	hs.writeSendEmailResponse(writer, http.StatusOK, &api.SendEmailResponse{
-		Code:    api.ServerCode_OK,
+	hs.writeSendEmailResponse(writer, http.StatusOK, &postarapi.SendEmailResponse{
+		Code:    baseapi.ServerCode_OK,
 		TraceId: traceID,
 	})
 }

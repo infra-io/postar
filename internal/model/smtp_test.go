@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/avinoplan/postar/configs"
+	"github.com/avino-plan/postar/configs"
 )
 
 // go test -v -cover -run=^TestDefaultSendEmailOptions$

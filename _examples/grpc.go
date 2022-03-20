@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/avinoplan/postar/api"
+	postarapi "github.com/avino-plan/api/go-out/postar"
 	"google.golang.org/grpc"
 )
 
@@ -20,8 +20,8 @@ func main() {
 	}
 	defer conn.Close()
 
-	req := &api.SendEmailRequest{
-		Email: &api.Email{
+	req := &postarapi.SendEmailRequest{
+		Email: &postarapi.Email{
 			Receivers: []string{os.Getenv("POSTAR_RECEIVER")},
 			Subject:   "测试邮件",
 			BodyType:  "text/html",
@@ -31,7 +31,7 @@ func main() {
 	}
 	fmt.Printf("client req: %+v\n", req)
 
-	client := api.NewPostarServiceClient(conn)
+	client := postarapi.NewPostarServiceClient(conn)
 	rsp, err := client.SendEmail(context.Background(), req)
 	if err != nil {
 		panic(err)
