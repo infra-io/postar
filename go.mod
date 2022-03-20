@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/FishGoddess/errors v0.0.3
-	github.com/avino-plan/api v0.0.4
+	github.com/avino-plan/api v0.0.5
 	github.com/go-ini/ini v1.66.3
 	github.com/go-logit/logit v0.4.22
 	github.com/julienschmidt/httprouter v1.3.0

@@ -54,8 +54,8 @@ func toModelSendEmailOptions(c *configs.Config, opts *postarapi.SendEmailOptions
 
 	result := model.DefaultSendEmailOptions(c)
 	result.Async = opts.Async
-	if opts.Timeout > 0 {
-		result.Timeout = time.Duration(opts.Timeout) * time.Millisecond
+	if opts.TimeoutMillis > 0 {
+		result.Timeout = time.Duration(opts.TimeoutMillis) * time.Millisecond
 	}
 	return result
 }
