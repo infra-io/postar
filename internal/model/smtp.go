@@ -1,17 +1,13 @@
-// Copyright 2021 Ye Zi Jie.  All rights reserved.
+// Copyright 2021 FishGoddess.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-//
-// Author: FishGoddess
-// Email: fishgoddess@qq.com
-// Created at 2021/09/17 00:06:09
 
 package model
 
 import (
 	"time"
 
-	"github.com/avinoplan/postar/configs"
+	"github.com/avino-plan/postar/configs"
 )
 
 type Email struct {

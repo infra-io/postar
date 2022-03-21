@@ -1,10 +1,6 @@
-// Copyright 2021 Ye Zi Jie.  All rights reserved.
+// Copyright 2021 FishGoddess.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-//
-// Author: FishGoddess
-// Email: fishgoddess@qq.com
-// Created at 2021/09/25 23:07:54
 
 package trace
 
@@ -43,8 +39,8 @@ func TestWithContext(t *testing.T) {
 func TestFromContext(t *testing.T) {
 	ctx := context.Background()
 	traceIDInCtx := FromContext(ctx)
-	if traceIDInCtx == "" {
-		t.Error("traceIDInCtx == ''")
+	if traceIDInCtx != "" {
+		t.Errorf("traceIDInCtx %s != ''", traceIDInCtx)
 	}
 
 	traceID := NewTraceID()

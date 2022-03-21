@@ -1,4 +1,4 @@
-# 📝 postar
+# 📝 Postar
 
 [![build](_icons/build.svg)](_icons/build.svg)
 [![coverage](_icons/coverage.svg)](_icons/coverage.svg)
@@ -29,13 +29,15 @@ Docker 版本安装请看：[码云](https://gitee.com/avino-plan/postar-docker)
 
 Postar 的二进制执行包可以通过源码进行编译得到，一共有两种方式：
 
-1. 在源码根目录执行 `./build.sh` 会生成 target 目录，所有的二进制包都在里面
+1. 在源码根目录执行 `make build` 会生成 target 目录，所有的二进制包都在里面。
 
 2. 在 `cmd/postar` 目录下使用 `go build` 构建服务（或 `go run` 启动服务），参考 `go` 命令。
 
-_注意：默认的配置文件路径是 `./postar.ini`，默认的日志输出是 `./log/service.log`。_
+_注意：默认的配置文件路径是 `./postar.ini`，默认的日志输出是 `./log/postar.log`。_
 
 > 想知道怎么使用？查看 [_examples](_examples)。
+
+> 客户端：[码云](https://gitee.com/avino-plan/postar-client) 或 [Github](https://github.com/avino-plan/postar-client)。
 
 ### 👥 贡献者
 
@@ -43,11 +45,11 @@ _注意：默认的配置文件路径是 `./postar.ini`，默认的日志输出�
 
 ### 📦 Postar 使用的技术
 
-| 项目     | 作者          | 描述                  | 链接                                                                                           |
-|--------|-------------|---------------------|----------------------------------------------------------------------------------------------|
-| logit  | FishGoddess | 一个高性能、功能强大且极易上手的日志库 | [码云](https://gitee.com/FishGoddess/logit) / [GitHub](https://github.com/FishGoddess/logit)   |
-| errors | FishGoddess | 一个用于优雅地处理 Go 中错误的库  | [码云](https://gitee.com/FishGoddess/errors) / [GitHub](https://github.com/FishGoddess/errors) |
-| ants | panjf2000 | 一个高性能且低损耗的 goroutine 池  | [GitHub](https://github.com/panjf2000/ants) |
-| gomail | alexcesaro | 一个用于在 Go 中发送邮件的库  | [GitHub](https://github.com/go-gomail/gomail/tree/v2) |
-| ini | unknwon | 一个操作 ini 配置的库  | [GitHub](https://github.com/go-ini/ini) |
-| httprouter | julienschmidt | 一个高性能的 http 路由库  | [GitHub](https://github.com/julienschmidt/httprouter) |
+| 项目         | 作者            | 描述                     | 链接                                                                                           |
+|------------|---------------|------------------------|----------------------------------------------------------------------------------------------|
+| logit      | FishGoddess   | 一个高性能、功能强大且极易上手的日志库    | [码云](https://gitee.com/go-logit/logit) / [GitHub](https://github.com/go-logit/logit)         |
+| errors     | FishGoddess   | 一个用于优雅地处理 Go 中错误的库     | [码云](https://gitee.com/FishGoddess/errors) / [GitHub](https://github.com/FishGoddess/errors) |
+| ants       | panjf2000     | 一个高性能且低损耗的 goroutine 池 | [GitHub](https://github.com/panjf2000/ants)                                                  |
+| gomail     | alexcesaro    | 一个用于在 Go 中发送邮件的库       | [GitHub](https://github.com/go-gomail/gomail/tree/v2)                                        |
+| ini        | unknwon       | 一个操作 ini 配置的库          | [GitHub](https://github.com/go-ini/ini)                                                      |
+| httprouter | julienschmidt | 一个高性能的 http 路由库        | [GitHub](https://github.com/julienschmidt/httprouter)                                        |

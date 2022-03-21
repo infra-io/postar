@@ -1,22 +1,18 @@
-// Copyright 2021 Ye Zi Jie.  All rights reserved.
+// Copyright 2021 FishGoddess.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-//
-// Author: FishGoddess
-// Email: fishgoddess@qq.com
-// Created at 2021/09/16 02:05:37
 
 package biz
 
 import (
 	"context"
-	"github.com/avinoplan/postar/pkg/log"
-	"github.com/avinoplan/postar/pkg/trace"
 
-	liberrors "github.com/FishGoddess/errors"
-	"github.com/avinoplan/postar/configs"
-	"github.com/avinoplan/postar/internal/model"
-	"github.com/avinoplan/postar/pkg/errors"
+	"github.com/go-logit/logit"
+
+	"github.com/FishGoddess/errors"
+	"github.com/avino-plan/postar/configs"
+	"github.com/avino-plan/postar/internal/model"
+	pkgerrors "github.com/avino-plan/postar/pkg/errors"
 	"github.com/panjf2000/ants/v2"
 	"gopkg.in/gomail.v2"
 )
@@ -47,17 +43,15 @@ func (sb *SMTPBiz) sendEmail(email *model.Email) error {
 
 // SendEmail sends email to somewhere.
 func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) error {
-	traceID := trace.FromContext(ctx)
-
 	if email == nil {
-		err := liberrors.New("email is nil")
-		log.Error(err, "email is nil").String("traceID", traceID).End()
+		err := errors.New("email is nil")
+		logit.Error("email is nil").Error("err", err).WithContext(ctx).End()
 		return errors.BadRequest(err)
 	}
 
 	if options == nil {
 		options = model.DefaultSendEmailOptions(sb.c)
-		log.Debug("options is nil, using default options").String("traceID", traceID).Any("options", options).End()
+		logit.Debug("options is nil, using default options").Any("options", options).WithContext(ctx).End()
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, options.Timeout)
@@ -70,8 +64,8 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 	})
 
 	if err != nil {
-		log.Error(err, "submit email sending task to pool failed").String("traceID", traceID).Any("email", email).End()
-		return errors.SendEmailFailedErr(err)
+		logit.Error("submit email sending task to pool failed").Error("err", err).Any("email", email).WithContext(ctx).End()
+		return pkgerrors.SendEmailFailedErr(err)
 	}
 
 	if options.Async {
@@ -81,13 +75,13 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 	select {
 	case err = <-errorCh:
 		if err != nil {
-			log.Error(err, "send email failed").String("traceID", traceID).Any("email", email).End()
-			return errors.SendEmailFailedErr(err)
+			logit.Error("send email failed").Error("err", err).Any("email", email).WithContext(ctx).End()
+			return pkgerrors.SendEmailFailedErr(err)
 		}
 	case <-ctx.Done():
 		err = ctx.Err()
 		if err != nil {
-			log.Error(err, "send email timeout").String("traceID", traceID).Any("email", email).End()
+			logit.Error("send email timeout").Error("err", err).Any("email", email).WithContext(ctx).End()
 			return errors.Timeout(err)
 		}
 	}

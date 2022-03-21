@@ -1,27 +1,25 @@
-// Copyright 2021 Ye Zi Jie.  All rights reserved.
+// Copyright 2021 FishGoddess.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-//
-// Author: FishGoddess
-// Email: fishgoddess@qq.com
-// Created at 2021/09/16 02:05:02
 
 package server
 
 import (
 	"context"
-	"github.com/avinoplan/postar/api"
-	"github.com/avinoplan/postar/configs"
-	"github.com/avinoplan/postar/internal/biz"
-	"github.com/avinoplan/postar/pkg/errors"
-	"github.com/avinoplan/postar/pkg/trace"
-	"google.golang.org/grpc"
 	"net"
+
+	"github.com/FishGoddess/errors"
+	baseapi "github.com/avino-plan/api/go-out/base"
+	postarapi "github.com/avino-plan/api/go-out/postar"
+	"github.com/avino-plan/postar/configs"
+	"github.com/avino-plan/postar/internal/biz"
+	"github.com/avino-plan/postar/pkg/trace"
+	"google.golang.org/grpc"
 )
 
 // GRPCServer is a grpc implement of PostardServer.
 type GRPCServer struct {
-	api.UnimplementedPostarServiceServer
+	postarapi.UnimplementedPostarServiceServer
 	c       *configs.Config
 	smtpBiz *biz.SMTPBiz
 	server  *grpc.Server
@@ -35,42 +33,42 @@ func NewGRPCServer(c *configs.Config, smtpBiz *biz.SMTPBiz) Server {
 		server:  grpc.NewServer(),
 	}
 
-	api.RegisterPostarServiceServer(gs.server, gs)
+	postarapi.RegisterPostarServiceServer(gs.server, gs)
 	return gs
 }
 
 // SendEmail sends emails.
-func (gs *GRPCServer) SendEmail(ctx context.Context, request *api.SendEmailRequest) (*api.SendEmailResponse, error) {
+func (gs *GRPCServer) SendEmail(ctx context.Context, request *postarapi.SendEmailRequest) (*postarapi.SendEmailResponse, error) {
 	traceID := trace.NewTraceID()
 	ctx = trace.NewContext(ctx, traceID)
 
 	err := gs.smtpBiz.SendEmail(ctx, toModelEmail(request.Email), toModelSendEmailOptions(gs.c, request.Options))
 	if errors.IsBadRequest(err) {
-		return &api.SendEmailResponse{
-			Code:    api.ServerCode_BAD_REQUEST,
+		return &postarapi.SendEmailResponse{
+			Code:    baseapi.ServerCode_BAD_REQUEST,
 			Msg:     err.Error(),
 			TraceId: traceID,
 		}, nil
 	}
 
 	if errors.IsTimeout(err) {
-		return &api.SendEmailResponse{
-			Code:    api.ServerCode_TIMEOUT,
+		return &postarapi.SendEmailResponse{
+			Code:    baseapi.ServerCode_TIMEOUT,
 			Msg:     "send email timeout",
 			TraceId: traceID,
 		}, nil
 	}
 
 	if err != nil {
-		return &api.SendEmailResponse{
-			Code:    api.ServerCode_SEND_EMAIL_FAILED,
+		return &postarapi.SendEmailResponse{
+			Code:    baseapi.ServerCode_SEND_EMAIL_FAILED,
 			Msg:     "send email failed",
 			TraceId: traceID,
 		}, nil
 	}
 
-	return &api.SendEmailResponse{
-		Code:    api.ServerCode_OK,
+	return &postarapi.SendEmailResponse{
+		Code:    baseapi.ServerCode_OK,
 		TraceId: traceID,
 	}, nil
 }

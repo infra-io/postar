@@ -1,26 +1,22 @@
-// Copyright 2022 Ye Zi Jie.  All rights reserved.
+// Copyright 2022 FishGoddess.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-//
-// Author: FishGoddess
-// Email: fishgoddess@qq.com
-// Created at 2022/01/23 01:28:36
 
 package configs
 
 import "time"
 
 type TaskConfig struct {
-	WorkerNumber int  `ini:"worker_number"` // The number of task worker.
-	QueueSize    int  `ini:"queue_size"`    // The max size of task queue.
-	Async        bool `ini:"async"`         // The sending mode of task.
-	Timeout      int  `ini:"timeout"`       // The sending timeout in millisecond of task.
+	WorkerNumber  int  `ini:"worker_number"`  // The number of task worker.
+	QueueSize     int  `ini:"queue_size"`     // The max size of task queue.
+	Async         bool `ini:"async"`          // The sending mode of task.
+	TimeoutMillis int  `ini:"timeout_millis"` // The sending timeout in milliseconds of task.
 }
 
 type ServerConfig struct {
-	Type        string `ini:"type"`         // The type of server.
-	Address     string `ini:"address"`      // The address(including ip and port) of server.
-	StopTimeout int    `ini:"stop_timeout"` // The closing timeout in second of server.
+	Type               string `ini:"type"`                 // The type of server.
+	Address            string `ini:"address"`              // The address(including ip and port) of server.
+	StopTimeoutSeconds int    `ini:"stop_timeout_seconds"` // The closing timeout in seconds of server.
 }
 
 type SMTPConfig struct {
@@ -41,15 +37,15 @@ type Config struct {
 func NewDefaultConfig() *Config {
 	return &Config{
 		Task: TaskConfig{
-			WorkerNumber: 64,
-			QueueSize:    0,
-			Async:        false,
-			Timeout:      10000, // 10s
+			WorkerNumber:  64,
+			QueueSize:     0,
+			Async:         false,
+			TimeoutMillis: 10000, // 10s
 		},
 		Server: ServerConfig{
-			Type:        "http",
-			Address:     ":5897",
-			StopTimeout: 30, // 30s
+			Type:               "http",
+			Address:            ":5897",
+			StopTimeoutSeconds: 30, // 30s
 		},
 		SMTP: SMTPConfig{
 			Port: 587,
@@ -70,7 +66,7 @@ func (c *Config) TaskAsync() bool {
 }
 
 func (c *Config) TaskTimeout() time.Duration {
-	return time.Duration(c.Task.Timeout) * time.Millisecond
+	return time.Duration(c.Task.TimeoutMillis) * time.Millisecond
 }
 
 func (c *Config) ServerType() string {
@@ -82,7 +78,7 @@ func (c *Config) ServerAddress() string {
 }
 
 func (c *Config) ServerStopTimeout() time.Duration {
-	return time.Duration(c.Server.StopTimeout) * time.Second
+	return time.Duration(c.Server.StopTimeoutSeconds) * time.Second
 }
 
 func (c *Config) SMTPHost() string {

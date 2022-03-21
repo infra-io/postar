@@ -1,10 +1,6 @@
-// Copyright 2022 Ye Zi Jie.  All rights reserved.
+// Copyright 2022 FishGoddess.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-//
-// Author: FishGoddess
-// Email: fishgoddess@qq.com
-// Created at 2022/01/25 23:24:00
 
 package model
 
@@ -12,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/avinoplan/postar/configs"
+	"github.com/avino-plan/postar/configs"
 )
 
 // go test -v -cover -run=^TestDefaultSendEmailOptions$

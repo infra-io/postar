@@ -1,35 +1,36 @@
-// Copyright 2021 Ye Zi Jie.  All rights reserved.
+// Copyright 2021 FishGoddess.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-//
-// Author: FishGoddess
-// Email: fishgoddess@qq.com
-// Created at 2021/09/16 01:33:43
 
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
-	"github.com/avinoplan/postar/pkg/log"
-	"go.uber.org/automaxprocs/maxprocs"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
 
-	"github.com/avinoplan/postar/configs"
-	"github.com/avinoplan/postar/internal/biz"
-	"github.com/avinoplan/postar/internal/server"
+	"github.com/avino-plan/postar/pkg/trace"
+	"github.com/go-logit/logit"
+	"go.uber.org/automaxprocs/maxprocs"
+
+	"github.com/avino-plan/postar/configs"
+	"github.com/avino-plan/postar/internal/biz"
+	"github.com/avino-plan/postar/internal/server"
 	"github.com/go-ini/ini"
 	"github.com/panjf2000/ants/v2"
 )
 
 const (
-	version = "postar-v0.3.0-alpha"
+	version = "postar-v0.3.1-alpha"
+)
 
+func funnyFunnyChickenHomie() {
 	// You know, for funny.
-	banner = `.______     ______        _______.___________.    ___      .______      
+	fmt.Print(`.______     ______        _______.___________.    ___      .______      
 |   _  \   /  __  \      /       |           |   /   \     |   _  \     
 |  |_)  | |  |  |  |    |   (--- '---|  |----'  /  ^  \    |  |_)  |    
 |   ___/  |  |  |  |     \   \       |  |      /  /_\  \   |      /     
@@ -37,14 +38,10 @@ const (
 | _|       \______/  |_______/       |__|    /__/     \__\ | _| '._____|
 
 Postar is running...
-`
-)
-
-func funnyFunnyChickenHomie() {
-	fmt.Print(banner)
+`)
 }
 
-func loadConfig() (*configs.Config, error) {
+func initConfig() (*configs.Config, error) {
 	configFile := flag.String("config.file", "postar.ini", "The configuration file of postar.")
 	showVersion := flag.Bool("version", false, "Check version of postar.")
 	flag.Parse()
@@ -59,8 +56,21 @@ func loadConfig() (*configs.Config, error) {
 	return c, err
 }
 
-func initPool(c *configs.Config) *ants.Pool {
-	pool, err := ants.NewPool(c.TaskWorkerNumber(), ants.WithMaxBlockingTasks(c.TaskQueueSize()))
+func initLogger(c *configs.Config) *logit.Logger {
+	traceInterceptor := func(ctx context.Context, log *logit.Log) {
+		traceID := trace.FromContext(ctx)
+		if traceID != "" {
+			log.String("traceID", traceID)
+		}
+	}
+
+	logger := logit.NewLogger(logit.Options().WithInterceptors(traceInterceptor))
+	logit.InitGlobal(func() *logit.Logger { return logger })
+	return logger
+}
+
+func initPool(c *configs.Config, logger *logit.Logger) *ants.Pool {
+	pool, err := ants.NewPool(c.TaskWorkerNumber(), ants.WithMaxBlockingTasks(c.TaskQueueSize()), ants.WithLogger(logger))
 	if err != nil {
 		panic(err)
 	}
@@ -69,9 +79,9 @@ func initPool(c *configs.Config) *ants.Pool {
 
 func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) error {
 	cc := *c
-	cc.SMTP.User = "*"
-	cc.SMTP.Password = "*"
-	log.Info("run server with config").Any("config", cc).End()
+	cc.SMTP.User = "*"     // User is sensitive
+	cc.SMTP.Password = "*" // Password is sensitive
+	logit.Info("run server with config").Any("config", cc).End()
 
 	svr := server.NewServer(c, smtpBiz)
 	go func() {
@@ -92,28 +102,25 @@ func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) error {
 func main() {
 	funnyFunnyChickenHomie()
 
-	c, err := loadConfig()
+	c, err := initConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	err = log.Initialize(c)
-	if err != nil {
-		panic(err)
-	}
-	defer log.Close()
+	logger := initLogger(c)
+	defer logger.Close()
 
-	undo, err := maxprocs.Set(maxprocs.Logger(log.Printf))
+	pool := initPool(c, logger)
+	defer pool.Release()
+
+	undo, err := maxprocs.Set(maxprocs.Logger(logit.Printf))
 	if err != nil {
 		undo()
-		log.Error(err, "set maxprocs failed").End()
+		logit.Error("set maxprocs failed").Error("err", err).End()
 	}
-
-	pool := initPool(c)
-	defer pool.Release()
 
 	err = runServer(c, biz.NewSMTPBiz(c, pool))
 	if err != nil {
-		log.Error(err, "stop server failed").End()
+		logit.Error("stop server failed").Error("err", err).End()
 	}
 }
