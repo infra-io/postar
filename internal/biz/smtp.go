@@ -60,7 +60,13 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 	errorCh := make(chan error, 1)
 	err := sb.pool.Submit(func() {
 		defer close(errorCh)
-		errorCh <- sb.sendEmail(email)
+
+		err := sb.sendEmail(email)
+		if err != nil {
+			logit.Error("send email failed").Error("err", err).Any("email", email).WithContext(ctx).End()
+		}
+
+		errorCh <- err
 	})
 
 	if err != nil {
@@ -74,13 +80,9 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 
 	select {
 	case err = <-errorCh:
-		if err != nil {
-			logit.Error("send email failed").Error("err", err).Any("email", email).WithContext(ctx).End()
-			return pkgerrors.SendEmailFailedErr(err)
-		}
+		return pkgerrors.SendEmailFailedErr(err)
 	case <-ctx.Done():
-		err = ctx.Err()
-		if err != nil {
+		if err = ctx.Err(); err != nil {
 			logit.Error("send email timeout").Error("err", err).Any("email", email).WithContext(ctx).End()
 			return errors.Timeout(err)
 		}
