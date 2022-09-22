@@ -9,8 +9,8 @@ import (
 	"net"
 
 	"github.com/FishGoddess/errors"
-	baseapi "github.com/avino-plan/api/go-out/base"
-	postarapi "github.com/avino-plan/api/go-out/postar"
+	baseapi "github.com/avino-plan/api-go/base"
+	postarapi "github.com/avino-plan/api-go/postar"
 	"github.com/avino-plan/postar/configs"
 	"github.com/avino-plan/postar/internal/biz"
 	"github.com/avino-plan/postar/pkg/trace"

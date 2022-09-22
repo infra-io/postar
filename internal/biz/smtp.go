@@ -45,13 +45,13 @@ func (sb *SMTPBiz) sendEmail(email *model.Email) error {
 func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) error {
 	if email == nil {
 		err := errors.New("email is nil")
-		logit.Error("email is nil").Error("err", err).WithContext(ctx).End()
+		logit.Error("email is nil").Error("err", err).WithContext(ctx).Log()
 		return errors.BadRequest(err)
 	}
 
 	if options == nil {
 		options = model.DefaultSendEmailOptions(sb.c)
-		logit.Debug("options is nil, using default options").Any("options", options).WithContext(ctx).End()
+		logit.Debug("options is nil, using default options").Any("options", options).WithContext(ctx).Log()
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, options.Timeout)
@@ -63,14 +63,14 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 
 		err := sb.sendEmail(email)
 		if err != nil {
-			logit.Error("send email failed").Error("err", err).Any("email", email).WithContext(ctx).End()
+			logit.Error("send email failed").Error("err", err).Any("email", email).WithContext(ctx).Log()
 		}
 
 		errorCh <- err
 	})
 
 	if err != nil {
-		logit.Error("submit email sending task to pool failed").Error("err", err).Any("email", email).WithContext(ctx).End()
+		logit.Error("submit email sending task to pool failed").Error("err", err).Any("email", email).WithContext(ctx).Log()
 		return pkgerrors.SendEmailFailedErr(err)
 	}
 
@@ -83,7 +83,7 @@ func (sb *SMTPBiz) SendEmail(ctx context.Context, email *model.Email, options *m
 		return pkgerrors.SendEmailFailedErr(err)
 	case <-ctx.Done():
 		if err = ctx.Err(); err != nil {
-			logit.Error("send email timeout").Error("err", err).Any("email", email).WithContext(ctx).End()
+			logit.Error("send email timeout").Error("err", err).Any("email", email).WithContext(ctx).Log()
 			return errors.Timeout(err)
 		}
 	}

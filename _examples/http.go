@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"os"
 
-	postarapi "github.com/avino-plan/api/go-out/postar"
+	postarapi "github.com/avino-plan/api-go/postar"
 	"google.golang.org/protobuf/proto"
 )
 

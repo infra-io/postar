@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	postarapi "github.com/avino-plan/api/go-out/postar"
+	postarapi "github.com/avino-plan/api-go/postar"
 	"github.com/avino-plan/postar/configs"
 	"github.com/avino-plan/postar/internal/biz"
 	"github.com/avino-plan/postar/internal/model"

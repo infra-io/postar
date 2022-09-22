@@ -12,8 +12,8 @@ import (
 	"net/http"
 
 	"github.com/FishGoddess/errors"
-	baseapi "github.com/avino-plan/api/go-out/base"
-	postarapi "github.com/avino-plan/api/go-out/postar"
+	baseapi "github.com/avino-plan/api-go/base"
+	postarapi "github.com/avino-plan/api-go/postar"
 	"github.com/avino-plan/postar/configs"
 	"github.com/avino-plan/postar/internal/biz"
 	"github.com/avino-plan/postar/pkg/trace"
@@ -60,7 +60,7 @@ func (hs *HTTPServer) unmarshalSendEmailRequest(reader io.Reader) (*postarapi.Se
 func (hs *HTTPServer) marshalSendEmailResponse(response *postarapi.SendEmailResponse) []byte {
 	marshaled, err := proto.Marshal(response)
 	if err != nil {
-		logit.Error("proto.Marshal(response) failed").Error("err", err).Stringer("response", response).End()
+		logit.Error("proto.Marshal(response) failed").Error("err", err).Stringer("response", response).Log()
 		return nil // should never happen...
 	}
 	return marshaled
@@ -70,7 +70,7 @@ func (hs *HTTPServer) writeSendEmailResponse(writer http.ResponseWriter, statusC
 	writer.WriteHeader(statusCode)
 	_, err := writer.Write(hs.marshalSendEmailResponse(response))
 	if err != nil {
-		logit.Error("write send email response failed").Error("err", err).Int("statusCode", statusCode).Stringer("response", response).End()
+		logit.Error("write send email response failed").Error("err", err).Int("statusCode", statusCode).Stringer("response", response).Log()
 	}
 }
 

@@ -10,11 +10,14 @@ echo "----------------------------------------------------------------------"
 # Check
 WORKDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 echo "WORKDIR: $WORKDIR"
+
 CONFIG_DIR=$WORKDIR/_examples/config
 CONFIG_FILE=postar.ini
 echo "CONFIG: $CONFIG_DIR/$CONFIG_FILE"
+
 LICENSE_FILE=LICENSE
 echo "LICENSE: $WORKDIR/$LICENSE"
+
 TARGET=$WORKDIR/target
 echo "TARGET: $TARGET"
 echo "----------------------------------------------------------------------"

@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	version = "postar-v0.3.1-alpha"
+	version = "postar-v0.3.2-alpha"
 )
 
 func funnyFunnyChickenHomie() {
@@ -37,7 +37,6 @@ func funnyFunnyChickenHomie() {
 |  |      |  '--'  | .----)   |      |  |     /  _____  \  |  |\  \----.
 | _|       \______/  |_______/       |__|    /__/     \__\ | _| '._____|
 
-Postar is running...
 `)
 }
 
@@ -65,7 +64,7 @@ func initLogger(c *configs.Config) *logit.Logger {
 	}
 
 	logger := logit.NewLogger(logit.Options().WithInterceptors(traceInterceptor))
-	logit.InitGlobal(func() *logit.Logger { return logger })
+	logger.SetToGlobal()
 	return logger
 }
 
@@ -74,14 +73,14 @@ func initPool(c *configs.Config, logger *logit.Logger) *ants.Pool {
 	if err != nil {
 		panic(err)
 	}
+
 	return pool
 }
 
 func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) error {
 	cc := *c
-	cc.SMTP.User = "*"     // User is sensitive
 	cc.SMTP.Password = "*" // Password is sensitive
-	logit.Info("run server with config").Any("config", cc).End()
+	logit.Info("running server").Any("config", cc).Log()
 
 	svr := server.NewServer(c, smtpBiz)
 	go func() {
@@ -90,6 +89,8 @@ func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) error {
 			panic(err)
 		}
 	}()
+
+	fmt.Println("Postar is running...")
 
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
@@ -100,8 +101,6 @@ func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) error {
 }
 
 func main() {
-	funnyFunnyChickenHomie()
-
 	c, err := initConfig()
 	if err != nil {
 		panic(err)
@@ -116,11 +115,13 @@ func main() {
 	undo, err := maxprocs.Set(maxprocs.Logger(logit.Printf))
 	if err != nil {
 		undo()
-		logit.Error("set maxprocs failed").Error("err", err).End()
+		logit.Error("set maxprocs failed").Error("err", err).Log()
 	}
+
+	funnyFunnyChickenHomie()
 
 	err = runServer(c, biz.NewSMTPBiz(c, pool))
 	if err != nil {
-		logit.Error("stop server failed").Error("err", err).End()
+		logit.Error("stop server failed").Error("err", err).Log()
 	}
 }
