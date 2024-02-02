@@ -1,0 +1,69 @@
+# 创建模板
+POST http://127.0.0.1:7986/api/postar-admin/v1/templates
+Content-Type: application/json
+X-Postar-Space-Id: 100
+X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+
+{
+    "template": {
+        "account_id": 10000,
+        "name": "测试模板",
+        "description": "用于测试的邮件模板信息",
+        "email": {
+            "subject": "测试邮件主题",
+            "to": [],
+            "cc": [],
+            "bcc": [],
+            "content_type": 2,
+            "content": "测试内容"
+        }
+    }
+}
+
+###
+
+# 更新模板
+PATCH http://127.0.0.1:7986/api/postar-admin/v1/templates
+Content-Type: application/json
+X-Postar-Space-Id: 100
+X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+
+{
+    "template": {
+        "id": "1000000",
+        "account_id": 10000,
+        "name": "测试模板",
+        "description": "用于测试的邮件模板信息",
+        "email": {
+            "subject": "测试 {{.xxx}} 邮件主题",
+            "to": [],
+            "cc": [],
+            "bcc": [],
+            "content_type": 2,
+            "content": "测试 {{.zzz}} 内容"
+        }
+    }
+}
+
+###
+
+# 查询模板
+GET http://127.0.0.1:7986/api/postar-admin/v1/templates/1000000
+X-Postar-Space-Id: 100
+X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+
+###
+
+# 分页查询模板列表
+GET http://127.0.0.1:7986/api/postar-admin/v1/templates?pageSize=20
+X-Postar-Space-Id: 100
+X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+
+###
+
+# 删除模板
+DELETE http://127.0.0.1:7986/api/postar-admin/v1/templates/1000000
+X-Postar-Space-Id: 100
+X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+
+###

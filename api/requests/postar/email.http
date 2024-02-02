@@ -1,0 +1,25 @@
+# 发送邮件
+POST http://127.0.0.1:6897/api/postar/v1/emails/send
+Content-Type: application/json
+X-Postar-Space-Id: 100
+X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+
+{
+    "email": {
+        "template_id": 1000000,
+        "to": ["1149062639@qq.com"],
+        "cc": [],
+        "bcc": [],
+        "subject_params": {
+            "xxx": "bbb"
+        },
+        "content_params": {
+            "zzz": "123456"
+        }
+    },
+    "options": {
+        "async": false
+    }
+}
+
+###

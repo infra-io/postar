@@ -1,0 +1,34 @@
+# 创建业务空间
+POST http://127.0.0.1:7986/api/postar-admin/v1/spaces
+Content-Type: application/json
+
+{
+    "space": {
+        "name": "test"
+    }
+}
+
+###
+
+# 更新业务空间
+PATCH http://127.0.0.1:7986/api/postar-admin/v1/spaces
+Content-Type: application/json
+
+{
+    "space": {
+        "id": 100,
+        "name": "test"
+    }
+}
+
+###
+
+# 查询业务空间
+GET http://127.0.0.1:7986/api/postar-admin/v1/spaces/100?with_token=true
+
+###
+
+# 分页查询业务空间列表
+GET http://127.0.0.1:7986/api/postar-admin/v1/spaces?pageSize=20
+
+###

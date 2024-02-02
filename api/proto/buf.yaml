@@ -1,0 +1,10 @@
+version: v1
+name: buf.build/avino-plan/postar
+deps:
+  - buf.build/googleapis/googleapis
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT

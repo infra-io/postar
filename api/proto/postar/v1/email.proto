@@ -1,0 +1,15 @@
+// Copyright 2023 FishGoddess. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+package postar.v1;
+
+message Email {
+  int64 template_id = 1;
+  repeated string to = 2;
+  repeated string cc = 3;
+  repeated string bcc = 4;
+  map<string, string> subject_params = 5;
+  map<string, string> content_params = 6;
+}

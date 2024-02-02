@@ -1,5 +1,11 @@
 ## ✒ 历史版本的特性介绍 (Features in old versions)
 
+### v0.4.0-alpha (Coming soon)
+
+> 此版本发布于 2024-02-14
+
+* Coming soon...
+
 ### v0.3.2-alpha
 
 > 此版本发布于 2022-09-23

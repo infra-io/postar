@@ -1,29 +1,37 @@
-.PHONY: test run linux windows darwin build clean all
+.PHONY: test fmt proto postar postaradmin linux windows darwin build clean all
 
-VERSION=v0.3.2-alpha
-CONFIG_FILE=./_examples/config/postar.ini
-
+VERSION=v0.4.0-alpha
 
 test:
 	go mod tidy
 	go test -cover ./...
 
-run:
+fmt:
+	go fmt ./...
+
+proto:
+	cd api && buf build && buf generate
+
+postar:
 	go mod tidy
-	go run cmd/postar/main.go -config.file $(CONFIG_FILE)
+	go run cmd/postar/main.go -conf ./configs/postar.toml
+
+postaradmin:
+	go mod tidy
+	go run cmd/postar-admin/main.go -conf ./configs/postar_admin.toml
 
 linux:
-	./build.sh linux amd64 postar $(VERSION)
+	./build.sh $(VERSION) linux amd64
 
 windows:
-	./build.sh windows amd64 postar.exe $(VERSION)
+	./build.sh $(VERSION) windows amd64
 
-darwin:
-	./build.sh darwin amd64 postar $(VERSION)
+mac:
+	./build.sh $(VERSION) darwin amd64
 
 build:
 	go mod tidy
-	make linux && make windows && make darwin
+	make linux && make windows && make mac
 
 clean:
 	rm -rf ./target

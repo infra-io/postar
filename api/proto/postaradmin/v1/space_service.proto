@@ -1,0 +1,79 @@
+// Copyright 2023 FishGoddess. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+package postaradmin.v1;
+
+import "postaradmin/v1/space.proto";
+import "google/api/annotations.proto";
+
+message CreateSpaceRequest {
+  Space space = 1;
+}
+
+message CreateSpaceResponse {
+  Space space = 1;
+}
+
+message UpdateSpaceRequest {
+  Space space = 1;
+}
+
+message UpdateSpaceResponse {
+  Space space = 1;
+}
+
+message GetSpaceRequest {
+  int32 space_id = 1;
+  bool with_token = 2;
+}
+
+message GetSpaceResponse {
+  Space space = 1;
+}
+
+message ListSpacesFilter {
+  int32 space_id = 1;
+  string space_name = 2;
+  SpaceState space_state = 3;
+}
+
+message ListSpacesRequest {
+  ListSpacesFilter filter = 1;
+  string page_token = 2;
+  int32 page_size = 3;
+}
+
+message ListSpacesResponse {
+  repeated Space spaces = 1;
+  string next_page_token = 2;
+}
+
+service SpaceService {
+  rpc CreateSpace(CreateSpaceRequest) returns (CreateSpaceResponse) {
+    option (google.api.http) = {
+      post: "/api/postar-admin/v1/spaces",
+      body: "*"
+    };
+  }
+
+  rpc UpdateSpace(UpdateSpaceRequest) returns (UpdateSpaceResponse) {
+    option (google.api.http) = {
+      patch: "/api/postar-admin/v1/spaces",
+      body: "*"
+    };
+  }
+
+  rpc GetSpace(GetSpaceRequest) returns (GetSpaceResponse) {
+    option (google.api.http) = {
+      get: "/api/postar-admin/v1/spaces/{space_id}"
+    };
+  }
+
+  rpc ListSpaces(ListSpacesRequest) returns (ListSpacesResponse) {
+    option (google.api.http) = {
+      get: "/api/postar-admin/v1/spaces"
+    };
+  }
+}
