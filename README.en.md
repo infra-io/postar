@@ -10,9 +10,9 @@
 
 ### 🥇 Features
 
-* Plain and Html form email supports
+* Plain and HTML form email supports
 * Synchronous/Asynchronous mode supports, and timeout is available in synchronous mode
-* Support http/http2/grpc/vex protocol
+* Support http/grpc protocol
 * Gracefully shutdown with signal mechanism
 
 _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about more information._
@@ -21,25 +21,16 @@ _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about mor
 
 1. Use Docker (recommend)
 
-Installation manual: [Gitee](https://gitee.com/infra-io/postar-docker)
-/ [GitHub](https://github.com/infra-io/postar-docker) .
-
-Docker Hub: [https://hub.docker.com/r/fishgoddess/postar](https://hub.docker.com/r/fishgoddess/postar).
+See more information in [docker hub](https://hub.docker.com/r/fishgoddess/postar).
 
 2. Use source code
 
-Postar has two ways to get binary:
+Execute `make build` in the root of source code will generate target directory, which contains all binary files.
 
-1. Invoking `make build` in the root of source code will generate target directory, which contains all binary files.
+_Notice 1: Default config file are `postar.toml` and `postar-admin.toml`, default log file are `postar.log` and `postar-admin.log`._
 
-2. Building by `go build` (or running by `go run`) in `cmd/postar`, see `go`.
-
-_Notice: Default config file is `./postar.ini`, default log output directory is `./log/postar.log`._
-
-> Want to know how to use? See [_examples](_examples).
-
-> Client: [Gitee](https://gitee.com/infra-io/postar-client) or [GitHub](https://github.com/infra-io/postar-client).
+_Notice 2: How to use client in [Gitee](https://gitee.com/infra-io/postar-client) or [GitHub](https://github.com/infra-io/postar-client)._
 
 ### 👥 Contributing
 
-If you find that something is not working as expected please open an _**issue**_.                                       |
+If you find that something is not working as expected please open an _**issue**_.
