@@ -5,16 +5,14 @@
 package rego
 
 type config struct {
-	maxAcquired uint64
-	maxIdle     uint64
-	fastFailed  bool
+	limit      uint64
+	fastFailed bool
 }
 
 func newDefaultConfig() *config {
 	conf := &config{
-		maxAcquired: 128,
-		maxIdle:     64,
-		fastFailed:  false,
+		limit:      64,
+		fastFailed: false,
 	}
 
 	return conf
@@ -26,17 +24,10 @@ func (o Option) ApplyTo(conf *config) {
 	o(conf)
 }
 
-// WithMaxAcquired sets maxAcquired to config.
-func WithMaxAcquired(maxAcquired uint64) Option {
+// WithLimit sets limit to config.
+func WithLimit(limit uint64) Option {
 	return func(conf *config) {
-		conf.maxAcquired = maxAcquired
-	}
-}
-
-// WithMaxIdle sets maxIdle to config.
-func WithMaxIdle(maxIdle uint64) Option {
-	return func(conf *config) {
-		conf.maxIdle = maxIdle
+		conf.limit = limit
 	}
 }
 

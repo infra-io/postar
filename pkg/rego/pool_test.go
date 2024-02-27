@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// go test -v -cover -run=^TestPool$
+// go test -v -cover -count=1 -test.cpu=1 -run=^TestWithFastFailed$
 func TestPool(t *testing.T) {
 	acquire := func() (int, error) {
 		return 0, nil
@@ -21,29 +21,44 @@ func TestPool(t *testing.T) {
 		return nil
 	}
 
-	pool := New[int](acquire, release, WithMaxAcquired(16), WithMaxIdle(8))
+	pool := New[int](acquire, release, WithLimit(16))
 	defer pool.Close()
 
-	test := func(i int) {
+	go func() {
+		for {
+			status := pool.Status()
+			t.Logf("%+v", status)
+
+			if status.Acquired > pool.limit {
+				t.Errorf("status.Acquired %d is wrong", status.Acquired)
+				return
+			}
+
+			if status.Idle > pool.limit {
+				t.Errorf("status.Idle %d is wrong", status.Idle)
+				return
+			}
+
+			time.Sleep(time.Second)
+		}
+	}()
+
+	for i := 0; i < 1024; i++ {
 		resource, err := pool.Take(context.Background())
 		if err != nil {
-			t.Error(err)
+			t.Fatal(err)
 		}
 
-		defer pool.Put(resource)
-		time.Sleep(time.Millisecond)
-	}
-
-	for i := 0; i < 4096; i++ {
-		test(i)
+		time.Sleep(5 * time.Millisecond)
+		pool.Put(resource)
 
 		status := pool.Status()
 		if status.Acquired != 1 {
-			t.Errorf("status.Acquired %d is wrong", status.Acquired)
+			t.Fatalf("status.Acquired %d is wrong", status.Acquired)
 		}
 
 		if status.Idle != 1 {
-			t.Errorf("status.Idle %d is wrong", status.Idle)
+			t.Fatalf("status.Idle %d is wrong", status.Idle)
 		}
 	}
 
@@ -55,15 +70,24 @@ func TestPool(t *testing.T) {
 		go func(i int) {
 			defer wg.Done()
 
-			test(i)
-
-			status := pool.Status()
-			if status.Acquired > pool.maxAcquired {
-				t.Errorf("status.Acquired %d is wrong", status.Acquired)
+			resource, err := pool.Take(context.Background())
+			if err != nil {
+				t.Error(err)
+				return
 			}
 
-			if status.Idle > pool.maxIdle {
+			time.Sleep(20 * time.Millisecond)
+			pool.Put(resource)
+
+			status := pool.Status()
+			if status.Acquired > pool.limit {
+				t.Errorf("status.Acquired %d is wrong", status.Acquired)
+				return
+			}
+
+			if status.Idle > pool.limit {
 				t.Errorf("status.Idle %d is wrong", status.Idle)
+				return
 			}
 		}(i)
 	}

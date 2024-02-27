@@ -16,6 +16,9 @@ var (
 )
 
 type Status struct {
+	// Limit is the limit of acquired resources.
+	Limit uint64 `json:"limit"`
+
 	// Acquired is the count of acquired resources.
 	Acquired uint64 `json:"acquired"`
 
@@ -45,7 +48,8 @@ type Pool[T any] struct {
 	release ReleaseFunc[T]
 
 	resources chan T
-	status    Status
+	acquired  uint64
+	waiting   uint64
 	closed    bool
 
 	lock sync.RWMutex
@@ -65,19 +69,11 @@ func New[T any](acquire AcquireFunc[T], release ReleaseFunc[T], opts ...Option) 
 		config:    *conf,
 		acquire:   acquire,
 		release:   release,
-		resources: make(chan T, conf.maxAcquired),
+		resources: make(chan T, conf.limit),
 		closed:    false,
 	}
 
 	return pool
-}
-
-func (p *Pool[T]) releaseResource(resource T) error {
-	if p.release == nil {
-		return nil
-	}
-
-	return p.release(resource)
 }
 
 func (p *Pool[T]) Put(resource T) error {
@@ -85,21 +81,14 @@ func (p *Pool[T]) Put(resource T) error {
 	defer p.lock.Unlock()
 
 	if p.closed {
-		return p.releaseResource(resource)
-	}
-
-	// Only waiting count < idle count will close the client immediately.
-	if p.status.Waiting < p.status.Idle && p.status.Idle >= p.maxIdle {
-		p.status.Acquired--
-		return p.releaseResource(resource)
+		return p.release(resource)
 	}
 
 	select {
 	case p.resources <- resource:
-		p.status.Idle++
 		return nil
 	default:
-		return p.releaseResource(resource)
+		return p.release(resource)
 	}
 }
 
@@ -142,22 +131,21 @@ func (p *Pool[T]) Take(ctx context.Context) (resource T, err error) {
 
 	var ok bool
 	if resource, ok = p.tryToTake(); ok {
-		p.status.Idle--
 		p.lock.Unlock()
 
 		return resource, nil
 	}
 
-	if p.status.Acquired < p.maxAcquired {
-		p.status.Acquired++
+	if p.acquired < p.limit {
+		p.acquired++
 		p.lock.Unlock()
 
-		// Increase the acquired and unlock before new client may cause the pool becomes full in advance.
+		// Increase the acquired and unlock before acquiring resource may cause the pool becomes full in advance.
 		// So we should decrease the acquired if acquired failed.
 		defer func() {
 			if err != nil {
 				p.lock.Lock()
-				p.status.Acquired--
+				p.acquired--
 				p.lock.Unlock()
 			}
 		}()
@@ -170,19 +158,15 @@ func (p *Pool[T]) Take(ctx context.Context) (resource T, err error) {
 		return resource, errPoolIsFull
 	}
 
-	p.status.Waiting++
+	p.waiting++
 	p.lock.Unlock()
 
 	resource, err = p.waitToTake(ctx)
 
 	p.lock.Lock()
-	defer p.lock.Unlock()
+	p.waiting--
+	p.lock.Unlock()
 
-	if err == nil {
-		p.status.Idle--
-	}
-
-	p.status.Waiting--
 	return resource, err
 }
 
@@ -191,11 +175,17 @@ func (p *Pool[T]) Status() Status {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
 
-	return p.status
+	var status Status
+	status.Limit = p.limit
+	status.Acquired = p.acquired
+	status.Idle = uint64(len(p.resources))
+	status.Waiting = p.waiting
+
+	return status
 }
 
 func (p *Pool[T]) releaseResources() error {
-	for i := uint64(0); i < p.status.Acquired; i++ {
+	for i := 0; i < len(p.resources); i++ {
 		resource := <-p.resources
 		if err := p.release(resource); err != nil {
 			return err
@@ -218,8 +208,9 @@ func (p *Pool[T]) Close() error {
 		return err
 	}
 
+	p.acquired = 0
+	p.waiting = 0
 	p.closed = true
-	p.status = Status{}
 
 	close(p.resources)
 	return nil
