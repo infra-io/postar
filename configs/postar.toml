@@ -47,16 +47,7 @@ max_conn_lifetime = "30m"
 aes_key = "123456788765432112345678"
 aes_iv = "1234567887654321"
 
-# All configurations of task.
-# max_workers is the max number of workers used to do sending tasks.
-# max_tasks is the max number of tasks and sending will be blocked if tasks reached to the max.
-# Set to 0 if you want your sending is non-blocked.
-# async is the sending mode of task, available values: true, false.
-# This will apply to all tasks and you can use options to override this value in requestid.
-# timeout is the sending timeout of task.
-# This will apply to all tasks and you can use options to override this value in requestid.
-[task]
-max_workers = 64
-max_tasks = 100000
-async = false
-timeout = "10s"
+# All configurations of smtp.
+# max_conns_per_account is the max count of connections per account.
+[smtp]
+max_conns_per_account = 64

@@ -166,7 +166,7 @@ func (des *defaultEmailService) combineTemplateEmail(template *model.Template, e
 	return templateEmail, nil
 }
 
-func (des *defaultEmailService) sendEmail(ctx context.Context, account *model.Account, email *model.TemplateEmail) (err error) {
+func (des *defaultEmailService) handleTemplateEmail(ctx context.Context, account *model.Account, email *model.TemplateEmail) (err error) {
 	msg := mail.NewMsg()
 
 	if err = msg.From(account.Username); err != nil {
@@ -201,10 +201,7 @@ func (des *defaultEmailService) sendEmail(ctx context.Context, account *model.Ac
 	return client.DialAndSendWithContext(ctx, msg)
 }
 
-func (des *defaultEmailService) SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) (err error) {
-	logger := logit.FromContext(ctx)
-	logger.Debug("send email", "email", email, "options", options)
-
+func (des *defaultEmailService) sendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) (err error) {
 	var spaceID int32
 	if spaceID, err = des.checkSpace(ctx); err != nil {
 		return err
@@ -225,9 +222,16 @@ func (des *defaultEmailService) SendEmail(ctx context.Context, email *model.Emai
 		return err
 	}
 
-	if err = des.sendEmail(ctx, account, templateEmail); err != nil {
+	if err = des.handleTemplateEmail(ctx, account, templateEmail); err != nil {
 		return errors.InternalServerError(err, errors.WithMsg(err.Error()))
 	}
 
 	return nil
+}
+
+func (des *defaultEmailService) SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) (err error) {
+	logger := logit.FromContext(ctx)
+	logger.Debug("send email", "email", email, "options", options)
+
+	return des.sendEmail(ctx, email, options)
 }

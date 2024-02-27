@@ -11,11 +11,9 @@ import (
 	timex "github.com/infra-io/servicex/time"
 )
 
-// TaskConfig is the config of sending task.
-type TaskConfig struct {
-	MaxWorkers int  `json:"max_workers" toml:"max_workers"`
-	MaxTasks   int  `json:"max_tasks" toml:"max_tasks"`
-	Async      bool `json:"async" toml:"async"`
+// SMTPConfig is the config of smtp.
+type SMTPConfig struct {
+	MaxConnsPerAccount int `json:"max_conns_per_account" toml:"max_conns_per_account"`
 }
 
 // PostarConfig stores all configurations of postar.
@@ -24,7 +22,7 @@ type PostarConfig struct {
 	Server   ServerConfig     `json:"server" toml:"server"`
 	Database DatabaseConfig   `json:"database" toml:"database"`
 	Crypto   CryptoConfig     `json:"crypto" toml:"crypto"`
-	Task     TaskConfig       `json:"task" toml:"task"`
+	SMTP     SMTPConfig       `json:"smtp" toml:"smtp"`
 }
 
 // NewPostarConfig returns a new config for postar.
@@ -59,10 +57,8 @@ func NewPostarConfig() *PostarConfig {
 			ConnMaxIdleTime: timex.NewDuration(3 * time.Second),
 			ReportStatsTime: timex.NewDuration(time.Minute),
 		},
-		Task: TaskConfig{
-			MaxWorkers: 64,
-			MaxTasks:   100000,
-			Async:      false,
+		SMTP: SMTPConfig{
+			MaxConnsPerAccount: 64,
 		},
 	}
 
