@@ -11,10 +11,10 @@ X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk
         "cc": [],
         "bcc": [],
         "subject_params": {
-            "xxx": "bbb"
+            "xxx": "client"
         },
         "content_params": {
-            "zzz": "123456"
+            "zzz": "rego 5"
         }
     },
     "options": {

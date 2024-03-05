@@ -39,6 +39,7 @@ max_open_conns = 64
 max_idle_conns = 16
 max_conn_idle_time = "5m"
 max_conn_lifetime = "30m"
+report_stats_time = "1m"
 
 # All configurations of crypto.
 # aes_key is the key of aes, its length must be 24.
@@ -50,4 +51,5 @@ aes_iv = "1234567887654321"
 # All configurations of smtp.
 # max_conns_per_account is the max count of connections per account.
 [smtp]
-max_conns_per_account = 64
+max_conns_per_account = 2
+report_stats_time = "5s"

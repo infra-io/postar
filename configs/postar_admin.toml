@@ -39,6 +39,7 @@ max_open_conns = 16
 max_idle_conns = 4
 max_conn_idle_time = "3m"
 max_conn_lifetime = "10m"
+report_stats_time = "1m"
 
 # All configurations of crypto.
 # aes_key is the key of aes, its length must be 24.

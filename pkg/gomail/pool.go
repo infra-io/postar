@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/FishGoddess/rego"
 	"github.com/wneessen/go-mail"
@@ -16,39 +17,45 @@ import (
 type Pool struct {
 	clientPools map[string]*rego.Pool[*mail.Client]
 	limit       uint64
+	timeout     time.Duration
 
 	lock sync.RWMutex
 }
 
-func NewPool(limit uint64) *Pool {
+func NewPool(limit uint64, timeout time.Duration) *Pool {
 	pool := &Pool{
 		clientPools: make(map[string]*rego.Pool[*mail.Client], 16),
 		limit:       limit,
+		timeout:     timeout,
 	}
 
 	return pool
 }
 
-func (p *Pool) clientKey(host string, port int32, username string, password string, smtpAuth string) string {
-	return fmt.Sprintf("%s:%d/%s:%s/%s", host, port, username, password, smtpAuth)
+func (p *Pool) clientKey(host string, port int32, username string, smtpAuth string) string {
+	return fmt.Sprintf("%s:%d/%s/%s", host, port, username, smtpAuth)
 }
 
 func (p *Pool) Put(host string, port int32, username string, password string, smtpAuth string, client *mail.Client) error {
-	clientKey := p.clientKey(host, port, username, password, smtpAuth)
+	clientKey := p.clientKey(host, port, username, smtpAuth)
 
 	p.lock.RLock()
 	clientPool, ok := p.clientPools[clientKey]
 	p.lock.RUnlock()
 
-	if ok {
-		return clientPool.Put(client)
+	if !ok {
+		return nil
 	}
 
-	return nil
+	if err := client.Reset(); err != nil {
+		return err
+	}
+
+	return clientPool.Put(client)
 }
 
 func (p *Pool) Take(ctx context.Context, host string, port int32, username string, password string, smtpAuth string) (*mail.Client, error) {
-	clientKey := p.clientKey(host, port, username, password, smtpAuth)
+	clientKey := p.clientKey(host, port, username, smtpAuth)
 
 	p.lock.RLock()
 	clientPool, ok := p.clientPools[clientKey]
@@ -67,11 +74,16 @@ func (p *Pool) Take(ctx context.Context, host string, port int32, username strin
 	}
 
 	acquire := func() (*mail.Client, error) {
-		return mail.NewClient(
-			host, mail.WithPort(int(port)),
-			mail.WithUsername(username), mail.WithPassword(password),
-			mail.WithSMTPAuth(mail.SMTPAuthType(smtpAuth)), mail.WithLogger(Logger{}),
+		client, err := mail.NewClient(
+			host, mail.WithPort(int(port)), mail.WithUsername(username), mail.WithPassword(password),
+			mail.WithSMTPAuth(mail.SMTPAuthType(smtpAuth)), mail.WithTimeout(p.timeout), mail.WithLogger(Logger{}),
 		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return client, client.DialWithContext(context.Background())
 	}
 
 	release := func(client *mail.Client) error {
@@ -82,6 +94,18 @@ func (p *Pool) Take(ctx context.Context, host string, port int32, username strin
 	p.clientPools[clientKey] = clientPool
 
 	return clientPool.Take(ctx)
+}
+
+func (p *Pool) Stats() map[string]rego.Status {
+	p.lock.RLock()
+	defer p.lock.RUnlock()
+
+	stats := make(map[string]rego.Status, len(p.clientPools))
+	for clientKey, clientPool := range p.clientPools {
+		stats[clientKey] = clientPool.Status()
+	}
+
+	return stats
 }
 
 func (p *Pool) Close() (err error) {

@@ -7,6 +7,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
@@ -52,10 +53,27 @@ func NewEmailService(conf *configs.PostarConfig, spaceStore SpaceStore, accountS
 		spaceStore:    spaceStore,
 		accountStore:  accountStore,
 		templateStore: templateStore,
-		pool:          gomail.NewPool(conf.SMTP.MaxConnsPerAccount),
+		pool:          gomail.NewPool(conf.SMTP.MaxConnsPerAccount, conf.SMTP.DialTimeout.Standard()),
 	}
 
+	go service.reportPoolStats()
 	return service
+}
+
+func (des *defaultEmailService) reportPoolStats() {
+	smtpConfig := des.conf.SMTP
+	logger := logit.Default().WithGroup("mail_pool").With("max_conns_per_account", smtpConfig.MaxConnsPerAccount)
+
+	ticker := time.NewTicker(smtpConfig.ReportStatsTime.Standard())
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			stats := des.pool.Stats()
+			logger.Info("report mail pool stats", "stats", stats)
+		}
+	}
 }
 
 func (des *defaultEmailService) checkSpace(ctx context.Context) (spaceID int32, err error) {
@@ -199,7 +217,7 @@ func (des *defaultEmailService) handleTemplateEmail(ctx context.Context, account
 	}
 
 	defer des.pool.Put(account.Host, account.Port, account.Username, account.Password, smtpAuth, client)
-	return client.DialAndSendWithContext(ctx, msg)
+	return client.Send(msg)
 }
 
 func (des *defaultEmailService) sendEmail(ctx context.Context, email *model.Email, _ *model.SendEmailOptions) (err error) {

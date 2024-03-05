@@ -11,6 +11,7 @@ require (
 	github.com/FishGoddess/cryptox v0.4.0
 	github.com/FishGoddess/errors v0.5.2
 	github.com/FishGoddess/logit v1.5.10
+	github.com/FishGoddess/rego v0.1.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
 	github.com/infra-io/postar/api v0.0.0-00010101000000-000000000000
@@ -21,7 +22,6 @@ require (
 )
 
 require (
-	github.com/FishGoddess/rego v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect
 	go.uber.org/automaxprocs v1.5.3 // indirect

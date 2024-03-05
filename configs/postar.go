@@ -13,7 +13,9 @@ import (
 
 // SMTPConfig is the config of smtp.
 type SMTPConfig struct {
-	MaxConnsPerAccount uint64 `json:"max_conns_per_account" toml:"max_conns_per_account"`
+	MaxConnsPerAccount uint64         `json:"max_conns_per_account" toml:"max_conns_per_account"`
+	DialTimeout        timex.Duration `json:"dial_timeout" toml:"dial_timeout"`
+	ReportStatsTime    timex.Duration `json:"report_stats_time" toml:"report_stats_time"`
 }
 
 // PostarConfig stores all configurations of postar.
@@ -59,6 +61,8 @@ func NewPostarConfig() *PostarConfig {
 		},
 		SMTP: SMTPConfig{
 			MaxConnsPerAccount: 64,
+			DialTimeout:        timex.NewDuration(10 * time.Second),
+			ReportStatsTime:    timex.NewDuration(time.Minute),
 		},
 	}
 
