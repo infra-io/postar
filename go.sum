@@ -6,8 +6,6 @@ github.com/FishGoddess/errors v0.5.2 h1:PYjU6Xb72NXbSKUlwNzHszdUz9/VGS8/CBVAh0U/
 github.com/FishGoddess/errors v0.5.2/go.mod h1:gXd4tNYX6ZFr2XmelF2DHn2uF7oTAi+O9ToJDjNeneE=
 github.com/FishGoddess/logit v1.5.10 h1:Di4la3onpM23DMInaJ4L93D6TUAX4woRG6EUiz9lQ9Q=
 github.com/FishGoddess/logit v1.5.10/go.mod h1:6IAtVuIW3AaPTBn2NDfBnML7t0F7/wj1FFeWIPLJy98=
-github.com/FishGoddess/rego v0.1.0 h1:AvwJAVWdIfrbPEk8AfbPuuLYmCVOwgKFPZSIkjA2b9c=
-github.com/FishGoddess/rego v0.1.0/go.mod h1:O4iFjJpvwWmA9uOzVOsSKMdkVEJJgFiUngIwI7oQODY=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

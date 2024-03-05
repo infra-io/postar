@@ -11,20 +11,12 @@ import (
 	timex "github.com/infra-io/servicex/time"
 )
 
-// SMTPConfig is the config of smtp.
-type SMTPConfig struct {
-	MaxConnsPerAccount uint64         `json:"max_conns_per_account" toml:"max_conns_per_account"`
-	DialTimeout        timex.Duration `json:"dial_timeout" toml:"dial_timeout"`
-	ReportStatsTime    timex.Duration `json:"report_stats_time" toml:"report_stats_time"`
-}
-
 // PostarConfig stores all configurations of postar.
 type PostarConfig struct {
 	Logger   logitconf.Config `json:"logger" toml:"logger"`
 	Server   ServerConfig     `json:"server" toml:"server"`
 	Database DatabaseConfig   `json:"database" toml:"database"`
 	Crypto   CryptoConfig     `json:"crypto" toml:"crypto"`
-	SMTP     SMTPConfig       `json:"smtp" toml:"smtp"`
 }
 
 // NewPostarConfig returns a new config for postar.
@@ -58,11 +50,6 @@ func NewPostarConfig() *PostarConfig {
 			ConnMaxLifetime: timex.NewDuration(5 * time.Minute),
 			ConnMaxIdleTime: timex.NewDuration(3 * time.Second),
 			ReportStatsTime: timex.NewDuration(time.Minute),
-		},
-		SMTP: SMTPConfig{
-			MaxConnsPerAccount: 64,
-			DialTimeout:        timex.NewDuration(10 * time.Second),
-			ReportStatsTime:    timex.NewDuration(time.Minute),
 		},
 	}
 

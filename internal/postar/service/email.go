@@ -7,7 +7,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
@@ -34,7 +33,6 @@ type TemplateStore interface {
 
 type EmailService interface {
 	SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) error
-	Close() error
 }
 
 type defaultEmailService struct {
@@ -43,8 +41,6 @@ type defaultEmailService struct {
 	spaceStore    SpaceStore
 	accountStore  AccountStore
 	templateStore TemplateStore
-
-	pool *gomail.Pool
 }
 
 func NewEmailService(conf *configs.PostarConfig, spaceStore SpaceStore, accountStore AccountStore, templateStore TemplateStore) EmailService {
@@ -53,27 +49,9 @@ func NewEmailService(conf *configs.PostarConfig, spaceStore SpaceStore, accountS
 		spaceStore:    spaceStore,
 		accountStore:  accountStore,
 		templateStore: templateStore,
-		pool:          gomail.NewPool(conf.SMTP.MaxConnsPerAccount, conf.SMTP.DialTimeout.Standard()),
 	}
 
-	go service.reportPoolStats()
 	return service
-}
-
-func (des *defaultEmailService) reportPoolStats() {
-	smtpConfig := des.conf.SMTP
-	logger := logit.Default().WithGroup("mail_pool").With("max_conns_per_account", smtpConfig.MaxConnsPerAccount)
-
-	ticker := time.NewTicker(smtpConfig.ReportStatsTime.Standard())
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-			stats := des.pool.Stats()
-			logger.Info("report mail pool stats", "stats", stats)
-		}
-	}
 }
 
 func (des *defaultEmailService) checkSpace(ctx context.Context) (spaceID int32, err error) {
@@ -190,7 +168,6 @@ func (des *defaultEmailService) combineTemplateEmail(template *model.Template, e
 
 func (des *defaultEmailService) handleTemplateEmail(ctx context.Context, account *model.Account, email *model.TemplateEmail) (err error) {
 	msg := mail.NewMsg()
-	smtpAuth := account.SMTPAuth.String()
 
 	if err = msg.From(account.Username); err != nil {
 		return err
@@ -211,13 +188,12 @@ func (des *defaultEmailService) handleTemplateEmail(ctx context.Context, account
 	msg.Subject(email.Subject)
 	msg.SetBodyString(mail.ContentType(email.ContentType.String()), email.Content)
 
-	client, err := des.pool.Take(ctx, account.Host, account.Port, account.Username, account.Password, smtpAuth)
-	if err != nil {
-		return err
-	}
+	client, err := mail.NewClient(
+		account.Host, mail.WithPort(int(account.Port)), mail.WithUsername(account.Username), mail.WithPassword(account.Password),
+		mail.WithSMTPAuth(mail.SMTPAuthType(account.SMTPAuth.String())), mail.WithLogger(gomail.Logger{}),
+	)
 
-	defer des.pool.Put(account.Host, account.Port, account.Username, account.Password, smtpAuth, client)
-	return client.Send(msg)
+	return client.DialAndSendWithContext(ctx, msg)
 }
 
 func (des *defaultEmailService) sendEmail(ctx context.Context, email *model.Email, _ *model.SendEmailOptions) (err error) {
@@ -253,8 +229,4 @@ func (des *defaultEmailService) SendEmail(ctx context.Context, email *model.Emai
 	logger.Debug("send email", "email", email, "options", options)
 
 	return des.sendEmail(ctx, email, options)
-}
-
-func (des *defaultEmailService) Close() error {
-	return des.pool.Close()
 }

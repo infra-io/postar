@@ -47,9 +47,3 @@ report_stats_time = "1m"
 [crypto]
 aes_key = "123456788765432112345678"
 aes_iv = "1234567887654321"
-
-# All configurations of smtp.
-# max_conns_per_account is the max count of connections per account.
-[smtp]
-max_conns_per_account = 2
-report_stats_time = "5s"
