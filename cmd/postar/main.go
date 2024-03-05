@@ -7,6 +7,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"runtime"
 
@@ -67,17 +68,22 @@ func setupLogger(conf *configs.PostarConfig) error {
 	return nil
 }
 
-func newServer(conf *configs.PostarConfig) (server.Server, error) {
+func newServer(conf *configs.PostarConfig) (server.Server, io.Closer, error) {
 	if err := store.Connect(&conf.Database); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	spaceStore := store.NewSpaceStore(conf)
 	accountStore := store.NewAccountStore(conf)
 	templateStore := store.NewTemplateStore(conf)
-
 	emailService := service.NewEmailService(conf, spaceStore, accountStore, templateStore)
-	return server.New(conf, emailService)
+
+	server, err := server.New(conf, emailService)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return server, emailService, nil
 }
 
 func main() {
@@ -96,10 +102,12 @@ func main() {
 	// Setup process information automatically.
 	maxprocs.Setup()
 
-	svr, err := newServer(conf)
+	svr, closer, err := newServer(conf)
 	if err != nil {
 		panic(err)
 	}
+
+	defer closer.Close()
 
 	if err = svr.Serve(); err != nil {
 		panic(err)

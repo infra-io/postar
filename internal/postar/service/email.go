@@ -33,6 +33,7 @@ type TemplateStore interface {
 
 type EmailService interface {
 	SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) error
+	Close() error
 }
 
 type defaultEmailService struct {
@@ -41,6 +42,8 @@ type defaultEmailService struct {
 	spaceStore    SpaceStore
 	accountStore  AccountStore
 	templateStore TemplateStore
+
+	pool *gomail.Pool
 }
 
 func NewEmailService(conf *configs.PostarConfig, spaceStore SpaceStore, accountStore AccountStore, templateStore TemplateStore) EmailService {
@@ -49,6 +52,7 @@ func NewEmailService(conf *configs.PostarConfig, spaceStore SpaceStore, accountS
 		spaceStore:    spaceStore,
 		accountStore:  accountStore,
 		templateStore: templateStore,
+		pool:          gomail.NewPool(conf.SMTP.MaxConnsPerAccount),
 	}
 
 	return service
@@ -168,6 +172,7 @@ func (des *defaultEmailService) combineTemplateEmail(template *model.Template, e
 
 func (des *defaultEmailService) handleTemplateEmail(ctx context.Context, account *model.Account, email *model.TemplateEmail) (err error) {
 	msg := mail.NewMsg()
+	smtpAuth := account.SMTPAuth.String()
 
 	if err = msg.From(account.Username); err != nil {
 		return err
@@ -188,20 +193,16 @@ func (des *defaultEmailService) handleTemplateEmail(ctx context.Context, account
 	msg.Subject(email.Subject)
 	msg.SetBodyString(mail.ContentType(email.ContentType.String()), email.Content)
 
-	client, err := mail.NewClient(
-		account.Host, mail.WithPort(int(account.Port)),
-		mail.WithUsername(account.Username), mail.WithPassword(account.Password),
-		mail.WithSMTPAuth(mail.SMTPAuthType(account.SMTPAuth.String())), mail.WithLogger(gomail.Logger{}),
-	)
-
+	client, err := des.pool.Take(ctx, account.Host, account.Port, account.Username, account.Password, smtpAuth)
 	if err != nil {
 		return err
 	}
 
+	defer des.pool.Put(account.Host, account.Port, account.Username, account.Password, smtpAuth, client)
 	return client.DialAndSendWithContext(ctx, msg)
 }
 
-func (des *defaultEmailService) sendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) (err error) {
+func (des *defaultEmailService) sendEmail(ctx context.Context, email *model.Email, _ *model.SendEmailOptions) (err error) {
 	var spaceID int32
 	if spaceID, err = des.checkSpace(ctx); err != nil {
 		return err
@@ -234,4 +235,8 @@ func (des *defaultEmailService) SendEmail(ctx context.Context, email *model.Emai
 	logger.Debug("send email", "email", email, "options", options)
 
 	return des.sendEmail(ctx, email, options)
+}
+
+func (des *defaultEmailService) Close() error {
+	return des.pool.Close()
 }

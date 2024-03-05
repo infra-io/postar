@@ -21,6 +21,7 @@ require (
 )
 
 require (
+	github.com/FishGoddess/rego v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect
 	go.uber.org/automaxprocs v1.5.3 // indirect

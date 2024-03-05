@@ -13,7 +13,7 @@ import (
 
 // SMTPConfig is the config of smtp.
 type SMTPConfig struct {
-	MaxConnsPerAccount int `json:"max_conns_per_account" toml:"max_conns_per_account"`
+	MaxConnsPerAccount uint64 `json:"max_conns_per_account" toml:"max_conns_per_account"`
 }
 
 // PostarConfig stores all configurations of postar.
