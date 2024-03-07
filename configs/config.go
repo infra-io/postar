@@ -1,98 +1,52 @@
-// Copyright 2022 FishGoddess.  All rights reserved.
+// Copyright 2022 FishGoddess. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
 package configs
 
-import "time"
+import (
+	"fmt"
 
-type TaskConfig struct {
-	WorkerNumber  int  `ini:"worker_number"`  // The number of task worker.
-	QueueSize     int  `ini:"queue_size"`     // The max size of task queue.
-	Async         bool `ini:"async"`          // The sending mode of task.
-	TimeoutMillis int  `ini:"timeout_millis"` // The sending timeout in milliseconds of task.
-}
+	timex "github.com/infra-io/servicex/time"
+)
+
+const (
+	aesKeyLength = 24
+	aesIVLength  = 16
+)
 
 type ServerConfig struct {
-	Type               string `ini:"type"`                 // The type of server.
-	Address            string `ini:"address"`              // The address(including ip and port) of server.
-	StopTimeoutSeconds int    `ini:"stop_timeout_seconds"` // The closing timeout in seconds of server.
+	Type             string         `json:"type" toml:"type"`
+	GrpcEndpoint     string         `json:"grpc_endpoint" toml:"grpc_endpoint"`
+	HttpEndpoint     string         `json:"http_endpoint" toml:"http_endpoint"`
+	RequestTimeout   timex.Duration `json:"request_timeout" toml:"request_timeout"`
+	MaxCloseWaitTime timex.Duration `json:"max_close_wait_time" toml:"max_close_wait_time"`
 }
 
-type SMTPConfig struct {
-	Host     string `ini:"host"`     // The host of smtp server.
-	Port     int    `ini:"port"`     // The port of smtp server.
-	User     string `ini:"user"`     // The user of smtp server.
-	Password string `ini:"password"` // The password of smtp server.
+type DatabaseConfig struct {
+	Address         string         `json:"address" toml:"address"`
+	Username        string         `json:"username" toml:"username"`
+	Password        string         `json:"-" toml:"password"`
+	MaxIdleConns    int            `json:"max_idle_conns" toml:"max_idle_conns"`
+	MaxOpenConns    int            `json:"max_open_conns" toml:"max_open_conns"`
+	ConnMaxLifetime timex.Duration `json:"conn_max_lifetime" toml:"conn_max_lifetime"`
+	ConnMaxIdleTime timex.Duration `json:"conn_max_idle_time" toml:"conn_max_idle_time"`
+	ReportStatsTime timex.Duration `json:"report_stats_time" toml:"report_stats_time"`
 }
 
-// Config stores all configurations of postar.
-type Config struct {
-	Task   TaskConfig   `ini:"task"`
-	Server ServerConfig `ini:"server"`
-	SMTP   SMTPConfig   `ini:"smtp"`
+type CryptoConfig struct {
+	AESKey string `json:"-" toml:"aes_key"`
+	AESIV  string `json:"-" toml:"aes_iv"`
 }
 
-// NewDefaultConfig returns a new config.
-func NewDefaultConfig() *Config {
-	return &Config{
-		Task: TaskConfig{
-			WorkerNumber:  64,
-			QueueSize:     0,
-			Async:         false,
-			TimeoutMillis: 10000, // 10s
-		},
-		Server: ServerConfig{
-			Type:               "http",
-			Address:            ":5897",
-			StopTimeoutSeconds: 30, // 30s
-		},
-		SMTP: SMTPConfig{
-			Port: 587,
-		},
+func (cc *CryptoConfig) Check() error {
+	if len(cc.AESKey) != aesKeyLength {
+		return fmt.Errorf("the length of aes key must be %d", aesKeyLength)
 	}
-}
 
-func (c *Config) TaskWorkerNumber() int {
-	return c.Task.WorkerNumber
-}
+	if len(cc.AESIV) != aesIVLength {
+		return fmt.Errorf("the length of aes iv must be %d", aesIVLength)
+	}
 
-func (c *Config) TaskQueueSize() int {
-	return c.Task.QueueSize
-}
-
-func (c *Config) TaskAsync() bool {
-	return c.Task.Async
-}
-
-func (c *Config) TaskTimeout() time.Duration {
-	return time.Duration(c.Task.TimeoutMillis) * time.Millisecond
-}
-
-func (c *Config) ServerType() string {
-	return c.Server.Type
-}
-
-func (c *Config) ServerAddress() string {
-	return c.Server.Address
-}
-
-func (c *Config) ServerStopTimeout() time.Duration {
-	return time.Duration(c.Server.StopTimeoutSeconds) * time.Second
-}
-
-func (c *Config) SMTPHost() string {
-	return c.SMTP.Host
-}
-
-func (c *Config) SMTPPort() int {
-	return c.SMTP.Port
-}
-
-func (c *Config) SMTPUser() string {
-	return c.SMTP.User
-}
-
-func (c *Config) SMTPPassword() string {
-	return c.SMTP.Password
+	return nil
 }

@@ -1,0 +1,39 @@
+// Copyright 2023 FishGoddess. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+package postaradmin.v1;
+
+enum EmailContentType {
+  EMAIL_CONTENT_TYPE_UNSPECIFIED = 0;
+  EMAIL_CONTENT_TYPE_PLAIN = 1;
+  EMAIL_CONTENT_TYPE_HTML = 2;
+}
+
+enum TemplateState {
+  TEMPLATE_STATE_UNSPECIFIED = 0;
+  TEMPLATE_STATE_DELETED = 1;
+  TEMPLATE_STATE_DISABLED = 2;
+  TEMPLATE_STATE_ENABLED = 3;
+}
+
+message TemplateEmail {
+  string subject = 1;
+  repeated string to = 2;
+  repeated string cc = 3;
+  repeated string bcc = 4;
+  EmailContentType content_type = 5;
+  string content = 6;
+}
+
+message Template {
+  int64 id = 1;
+  int32 account_id = 2;
+  string name = 3;
+  string description = 4;
+  TemplateEmail email = 5;
+  TemplateState state = 6;
+  int64 create_time = 7;
+  int64 update_time = 8;
+}

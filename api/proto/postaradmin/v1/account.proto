@@ -1,0 +1,32 @@
+// Copyright 2023 FishGoddess. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+package postaradmin.v1;
+
+enum SMTPAuth {
+  SMTP_AUTH_UNSPECIFIED  = 0;
+  SMTP_AUTH_PLAIN  = 1;
+  SMTP_AUTH_LOGIN  = 2;
+  SMTP_AUTH_CRAM_MD5  = 3;
+  SMTP_AUTH_XOAUTH2  = 4;
+}
+
+enum AccountState {
+  ACCOUNT_STATE_UNSPECIFIED = 0;
+  ACCOUNT_STATE_DISABLED = 1;
+  ACCOUNT_STATE_ENABLED = 2;
+}
+
+message Account {
+  int32 id = 1;
+  string host = 2;
+  int32 port = 3;
+  string username = 4;
+  string password = 5;
+  SMTPAuth smtp_auth = 6;
+  AccountState state = 7;
+  int64 create_time = 8;
+  int64 update_time = 9;
+}

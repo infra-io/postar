@@ -1,0 +1,143 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "postar/v1/email_service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "EmailService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/postar/v1/emails/send": {
+      "post": {
+        "operationId": "EmailService_SendEmail",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SendEmailResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1SendEmailRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EmailService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Email": {
+      "type": "object",
+      "properties": {
+        "templateId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "bcc": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subjectParams": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "contentParams": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "v1SendEmailOptions": {
+      "type": "object",
+      "properties": {
+        "async": {
+          "type": "boolean"
+        }
+      }
+    },
+    "v1SendEmailRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "$ref": "#/definitions/v1Email"
+        },
+        "options": {
+          "$ref": "#/definitions/v1SendEmailOptions"
+        }
+      }
+    },
+    "v1SendEmailResponse": {
+      "type": "object"
+    }
+  }
+}

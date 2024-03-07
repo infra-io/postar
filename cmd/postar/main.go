@@ -1,127 +1,107 @@
-// Copyright 2021 FishGoddess.  All rights reserved.
+// Copyright 2021 FishGoddess. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"os"
-	"os/signal"
 	"runtime"
-	"syscall"
 
-	"github.com/avino-plan/postar/pkg/trace"
-	"github.com/go-logit/logit"
-	"go.uber.org/automaxprocs/maxprocs"
+	"github.com/BurntSushi/toml"
+	"github.com/FishGoddess/logit"
+	"github.com/infra-io/postar"
+	"github.com/infra-io/postar/internal/postar/server"
+	"github.com/infra-io/postar/internal/postar/service"
+	"github.com/infra-io/postar/internal/postar/store"
+	"github.com/infra-io/servicex/runtime/maxprocs"
 
-	"github.com/avino-plan/postar/configs"
-	"github.com/avino-plan/postar/internal/biz"
-	"github.com/avino-plan/postar/internal/server"
-	"github.com/go-ini/ini"
-	"github.com/panjf2000/ants/v2"
+	"github.com/infra-io/postar/configs"
 )
 
-const (
-	version = "postar-v0.3.2-alpha"
-)
-
-func funnyFunnyChickenHomie() {
-	// You know, for funny.
-	fmt.Print(`.______     ______        _______.___________.    ___      .______      
-|   _  \   /  __  \      /       |           |   /   \     |   _  \     
-|  |_)  | |  |  |  |    |   (--- '---|  |----'  /  ^  \    |  |_)  |    
-|   ___/  |  |  |  |     \   \       |  |      /  /_\  \   |      /     
-|  |      |  '--'  | .----)   |      |  |     /  _____  \  |  |\  \----.
-| _|       \______/  |_______/       |__|    /__/     \__\ | _| '._____|
-
-`)
-}
-
-func initConfig() (*configs.Config, error) {
-	configFile := flag.String("config.file", "postar.ini", "The configuration file of postar.")
-	showVersion := flag.Bool("version", false, "Check version of postar.")
+func parseConfigFile() (string, error) {
+	configFile := flag.String("conf", "postar.toml", "The config file of postar.")
+	printVersion := flag.Bool("version", false, "Print the version information of postar.")
 	flag.Parse()
 
-	if *showVersion {
-		fmt.Printf("%s (%s, %s, %s)\n", version, runtime.GOOS, runtime.GOARCH, runtime.Version())
+	if *printVersion {
+		fmt.Printf("postar-%s\nos: %s\narch: %s\ngo: %s\n", postar.Version, runtime.GOOS, runtime.GOARCH, runtime.Version())
 		os.Exit(0)
 	}
 
-	c := configs.NewDefaultConfig()
-	err := ini.MapTo(c, *configFile)
-	return c, err
+	return *configFile, nil
 }
 
-func initLogger(c *configs.Config) *logit.Logger {
-	traceInterceptor := func(ctx context.Context, log *logit.Log) {
-		traceID := trace.FromContext(ctx)
-		if traceID != "" {
-			log.String("traceID", traceID)
-		}
-	}
-
-	logger := logit.NewLogger(logit.Options().WithInterceptors(traceInterceptor))
-	logger.SetToGlobal()
-	return logger
-}
-
-func initPool(c *configs.Config, logger *logit.Logger) *ants.Pool {
-	pool, err := ants.NewPool(c.TaskWorkerNumber(), ants.WithMaxBlockingTasks(c.TaskQueueSize()), ants.WithLogger(logger))
+func setupConfig() (*configs.PostarConfig, error) {
+	configFile, err := parseConfigFile()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return pool
+	conf := configs.NewPostarConfig()
+	if _, err = toml.DecodeFile(configFile, conf); err != nil {
+		return nil, err
+	}
+
+	if err = conf.Check(); err != nil {
+		return nil, err
+	}
+
+	return conf, nil
 }
 
-func runServer(c *configs.Config, smtpBiz *biz.SMTPBiz) error {
-	cc := *c
-	cc.SMTP.Password = "*" // Password is sensitive
-	logit.Info("running server").Any("config", cc).Log()
+func setupLogger(conf *configs.PostarConfig) error {
+	opts, err := conf.Logger.Options()
+	if err != nil {
+		return err
+	}
 
-	svr := server.NewServer(c, smtpBiz)
-	go func() {
-		err := svr.Start()
-		if err != nil {
-			panic(err)
-		}
-	}()
+	logger, err := logit.NewLoggerGracefully(opts...)
+	if err != nil {
+		return err
+	}
 
-	fmt.Println("Postar is running...")
+	logit.SetDefault(logger)
+	return nil
+}
 
-	signalCh := make(chan os.Signal, 1)
-	signal.Notify(signalCh, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
-	<-signalCh
+func newServer(conf *configs.PostarConfig) (server.Server, error) {
+	if err := store.Connect(&conf.Database); err != nil {
+		return nil, err
+	}
 
-	fmt.Println("Postar is shutdown gracefully...")
-	return svr.Stop()
+	spaceStore := store.NewSpaceStore(conf)
+	accountStore := store.NewAccountStore(conf)
+	templateStore := store.NewTemplateStore(conf)
+
+	emailService := service.NewEmailService(conf, spaceStore, accountStore, templateStore)
+	return server.New(conf, emailService)
 }
 
 func main() {
-	c, err := initConfig()
+	conf, err := setupConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	logger := initLogger(c)
-	defer logger.Close()
-
-	pool := initPool(c, logger)
-	defer pool.Release()
-
-	undo, err := maxprocs.Set(maxprocs.Logger(logit.Printf))
-	if err != nil {
-		undo()
-		logit.Error("set maxprocs failed").Error("err", err).Log()
+	if err = setupLogger(conf); err != nil {
+		panic(err)
 	}
 
-	funnyFunnyChickenHomie()
+	logit.Info("using config", "conf", conf)
+	defer logit.Close()
 
-	err = runServer(c, biz.NewSMTPBiz(c, pool))
+	// Setup process information automatically.
+	maxprocs.Setup()
+
+	svr, err := newServer(conf)
 	if err != nil {
-		logit.Error("stop server failed").Error("err", err).Log()
+		panic(err)
+	}
+
+	if err = svr.Serve(); err != nil {
+		panic(err)
 	}
 }

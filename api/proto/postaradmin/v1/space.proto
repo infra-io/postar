@@ -1,0 +1,21 @@
+// Copyright 2023 FishGoddess. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+package postaradmin.v1;
+
+enum SpaceState {
+  SPACE_STATE_UNSPECIFIED = 0;
+  SPACE_STATE_DISABLED = 1;
+  SPACE_STATE_ENABLED = 2;
+}
+
+message Space {
+  int32 id = 1;
+  string name = 2;
+  string token = 3;
+  SpaceState state = 4;
+  int64 create_time = 5;
+  int64 update_time = 6;
+}

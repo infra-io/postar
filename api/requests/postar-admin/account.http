@@ -1,0 +1,50 @@
+# 创建账号
+POST http://127.0.0.1:7986/api/postar-admin/v1/accounts
+Content-Type: application/json
+X-Postar-Space-Id: 100
+X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+
+{
+    "account": {
+        "host": "smtp.office365.com",
+        "port": 587,
+        "username": "",
+        "password": "",
+        "smtp_auth": 2
+    }
+}
+
+###
+
+# 更新账号
+PATCH http://127.0.0.1:7986/api/postar-admin/v1/accounts
+Content-Type: application/json
+X-Postar-Space-Id: 100
+X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+
+{
+    "account": {
+        "id": 10000,
+        "host": "smtp.office365.com",
+        "port": 587,
+        "username": "",
+        "password": "",
+        "smtp_auth": 2
+    }
+}
+
+###
+
+# 查询账号
+GET http://127.0.0.1:7986/api/postar-admin/v1/accounts/10000?with_password=true
+X-Postar-Space-Id: 100
+X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+
+###
+
+# 分页查询账号列表
+GET http://127.0.0.1:7986/api/postar-admin/v1/accounts?pageSize=20
+X-Postar-Space-Id: 100
+X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+
+###

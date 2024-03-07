@@ -1,0 +1,49 @@
+# All configurations of logger.
+# level has some available values: debug, info, warn, error.
+# handler has some available values: tape, text, json.
+# target is the logging destination for writing logs.
+# file_max_size is the max size to rotate a new log file and rename the old log file.
+# file_max_age is the max time to keep the old log files.
+# file_max_backups is the max number to keep the old log files.
+[logger]
+level = "debug"
+handler = "tape"
+
+[logger.writer]
+target = "./postar.log"
+file_rotate = true
+file_max_size = "128M"
+file_max_age = "30d"
+file_max_backups = 60
+
+# All configurations of server.
+# type has some available values: http, grpc.
+# address includes ip and port and you can bind a specific ip and port for your server.
+# close_timeout is the timeout of closing server.
+[server]
+type = "gateway"
+grpc_endpoint = ":5897"
+http_endpoint = ":6897"
+request_timeout = "10s"
+max_close_wait_time = "1m"
+
+# All configurations of database.
+# You should specify the authentication of database with address, username and password.
+# Of course, database is necessary.
+[database]
+address = "127.0.0.1:6033"
+username = "postar"
+password = "123456"
+database = "postar"
+max_open_conns = 64
+max_idle_conns = 16
+max_conn_idle_time = "5m"
+max_conn_lifetime = "30m"
+report_stats_time = "1m"
+
+# All configurations of crypto.
+# aes_key is the key of aes, its length must be 24.
+# aes_iv is the iv of aes, its length must be 16.
+[crypto]
+aes_key = "123456788765432112345678"
+aes_iv = "1234567887654321"

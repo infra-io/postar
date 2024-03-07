@@ -1,8 +1,8 @@
 # 📝 Postar
 
-[![build](_icons/build.svg)](_icons/build.svg)
-[![coverage](_icons/coverage.svg)](_icons/coverage.svg)
 [![license](_icons/license.svg)](https://opensource.org/licenses/MIT)
+[![coverage](_icons/coverage.svg)](_icons/coverage.svg)
+![build](https://github.com/infra-io/postar/actions/workflows/check.yml/badge.svg)
 
 **Postar** is an easy-to-use and low-coupling email service, which can provide email functions for your applications.
 
@@ -10,9 +10,9 @@
 
 ### 🥇 Features
 
-* Plain and Html form email supports
+* Plain and HTML form email supports
 * Synchronous/Asynchronous mode supports, and timeout is available in synchronous mode
-* Support http/http2/grpc/vex/udp protocol
+* Support http/grpc protocol
 * Gracefully shutdown with signal mechanism
 
 _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about more information._
@@ -21,36 +21,18 @@ _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about mor
 
 1. Use Docker (recommend)
 
-Installation manual: [Gitee](https://gitee.com/avino-plan/postar-docker)
-/ [GitHub](https://github.com/avino-plan/postar-docker) .
-
-Docker Hub: [https://hub.docker.com/r/fishgoddess/postar](https://hub.docker.com/r/fishgoddess/postar).
+See more information in [docker hub](https://hub.docker.com/r/fishgoddess/postar).
 
 2. Use source code
 
-Postar has two ways to get binary:
+Execute `make build` in the root of source code will generate target directory, which contains all binary files.
 
-1. Invoking `make build` in the root of source code will generate target directory, which contains all binary files.
+_Notice 1: Default config file are `postar.toml` and `postar-admin.toml`, default log file are `postar.log` and `postar-admin.log`._
 
-2. Building by `go build` (or running by `go run`) in `cmd/postar`, see `go`.
+_Notice 2: Postar needs mysql to store some configurations about email, so you should create tables in `postar.sql` which will record all changes._
 
-_Notice: Default config file is `./postar.ini`, default log output directory is `./log/postar.log`._
-
-> Want to know how to use? See [_examples](_examples).
-
-> Client: [Gitee](https://gitee.com/avino-plan/postar-client) or [Github](https://github.com/avino-plan/postar-client).
+_Notice 3: How to use client in [Gitee](https://gitee.com/infra-io/postar-client) or [GitHub](https://github.com/infra-io/postar-client)._
 
 ### 👥 Contributing
 
 If you find that something is not working as expected please open an _**issue**_.
-
-### 📦 Projects postar used
-
-| Project    | Author        | Description                                           | link                                                                                            |
-|------------|---------------|-------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| logit      | FishGoddess   | A high-performance and easy-to-use logging foundation | [Gitee](https://gitee.com/go-logit/logit) / [GitHub](https://github.com/go-logit/logit)         |
-| errors     | FishGoddess   | A lib for handling error gracefully in Go             | [Gitee](https://gitee.com/FishGoddess/errors) / [GitHub](https://github.com/FishGoddess/errors) |
-| ants       | panjf2000     | A high-performance and low-cost goroutine pool        | [GitHub](https://github.com/panjf2000/ants)                                                     |
-| gomail     | alexcesaro    | The best way to send emails in Go                     | [GitHub](https://github.com/go-gomail/gomail/tree/v2)                                           |
-| ini        | unknwon       | Provides INI file read and write functionality in Go  | [GitHub](https://github.com/go-ini/ini)                                                         |
-| httprouter | julienschmidt | A high performance HTTP request router                | [GitHub](https://github.com/julienschmidt/httprouter)                                           |

@@ -1,0 +1,92 @@
+// Copyright 2023 FishGoddess. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+package postaradmin.v1;
+
+import "postaradmin/v1/template.proto";
+import "google/api/annotations.proto";
+
+message CreateTemplateRequest {
+  Template template = 1;
+}
+
+message CreateTemplateResponse {
+  Template template = 1;
+}
+
+message UpdateTemplateRequest {
+  Template template = 1;
+}
+
+message UpdateTemplateResponse {
+  Template template = 1;
+}
+
+message GetTemplateRequest {
+  int64 template_id = 1;
+}
+
+message GetTemplateResponse {
+  Template template = 1;
+}
+
+message ListTemplatesFilter {
+  int32 account_id = 1;
+  int64 template_id = 2;
+  string template_name = 3;
+  TemplateState template_state = 4;
+  string email_subject = 5;
+}
+
+message ListTemplatesRequest {
+  ListTemplatesFilter filter = 1;
+  string page_token = 2;
+  int32 page_size = 3;
+}
+
+message ListTemplatesResponse {
+  repeated Template templates = 1;
+  string next_page_token = 2;
+}
+
+message DeleteTemplateRequest {
+  int64 template_id = 1;
+}
+
+message DeleteTemplateResponse {}
+
+service TemplateService {
+  rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse) {
+    option (google.api.http) = {
+      post: "/api/postar-admin/v1/templates",
+      body: "*"
+    };
+  }
+
+  rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse) {
+    option (google.api.http) = {
+      patch: "/api/postar-admin/v1/templates",
+      body: "*"
+    };
+  }
+
+  rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse) {
+    option (google.api.http) = {
+      get: "/api/postar-admin/v1/templates/{template_id}"
+    };
+  }
+
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse) {
+    option (google.api.http) = {
+      get: "/api/postar-admin/v1/templates"
+    };
+  }
+
+  rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse) {
+    option (google.api.http) = {
+      delete: "/api/postar-admin/v1/templates/{template_id}"
+    };
+  }
+}

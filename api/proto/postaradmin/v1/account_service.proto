@@ -1,0 +1,80 @@
+// Copyright 2023 FishGoddess. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+package postaradmin.v1;
+
+import "postaradmin/v1/account.proto";
+import "google/api/annotations.proto";
+
+message CreateAccountRequest {
+  Account account = 1;
+}
+
+message CreateAccountResponse {
+  Account account = 1;
+}
+
+message UpdateAccountRequest {
+  Account account = 1;
+}
+
+message UpdateAccountResponse {
+  Account account = 1;
+}
+
+message GetAccountRequest {
+  int32 account_id = 1;
+  bool with_password = 2;
+}
+
+message GetAccountResponse {
+  Account account = 1;
+}
+
+message ListAccountsFilter {
+  int32 account_id = 1;
+  string account_username = 2;
+  string account_host = 3;
+  AccountState account_state = 4;
+}
+
+message ListAccountsRequest {
+  ListAccountsFilter filter = 1;
+  string page_token = 2;
+  int32 page_size = 3;
+}
+
+message ListAccountsResponse {
+  repeated Account accounts = 1;
+  string next_page_token = 2;
+}
+
+service AccountService {
+  rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse) {
+    option (google.api.http) = {
+      post: "/api/postar-admin/v1/accounts",
+      body: "*"
+    };
+  }
+
+  rpc UpdateAccount(UpdateAccountRequest) returns (UpdateAccountResponse) {
+    option (google.api.http) = {
+      patch: "/api/postar-admin/v1/accounts",
+      body: "*"
+    };
+  }
+
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponse) {
+    option (google.api.http) = {
+      get: "/api/postar-admin/v1/accounts/{account_id}"
+    };
+  }
+
+  rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse) {
+    option (google.api.http) = {
+      get: "/api/postar-admin/v1/accounts"
+    };
+  }
+}

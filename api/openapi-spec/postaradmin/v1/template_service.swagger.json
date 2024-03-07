@@ -1,0 +1,410 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "postaradmin/v1/template_service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "TemplateService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/postar-admin/v1/templates": {
+      "get": {
+        "operationId": "TemplateService_ListTemplates",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListTemplatesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "filter.accountId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "filter.templateId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "filter.templateName",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter.templateState",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "TEMPLATE_STATE_UNSPECIFIED",
+              "TEMPLATE_STATE_DELETED",
+              "TEMPLATE_STATE_DISABLED",
+              "TEMPLATE_STATE_ENABLED"
+            ],
+            "default": "TEMPLATE_STATE_UNSPECIFIED"
+          },
+          {
+            "name": "filter.emailSubject",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "TemplateService"
+        ]
+      },
+      "post": {
+        "operationId": "TemplateService_CreateTemplate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateTemplateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateTemplateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TemplateService"
+        ]
+      },
+      "patch": {
+        "operationId": "TemplateService_UpdateTemplate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateTemplateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1UpdateTemplateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TemplateService"
+        ]
+      }
+    },
+    "/api/postar-admin/v1/templates/{templateId}": {
+      "get": {
+        "operationId": "TemplateService_GetTemplate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetTemplateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "TemplateService"
+        ]
+      },
+      "delete": {
+        "operationId": "TemplateService_DeleteTemplate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteTemplateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "TemplateService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1CreateTemplateRequest": {
+      "type": "object",
+      "properties": {
+        "template": {
+          "$ref": "#/definitions/v1Template"
+        }
+      }
+    },
+    "v1CreateTemplateResponse": {
+      "type": "object",
+      "properties": {
+        "template": {
+          "$ref": "#/definitions/v1Template"
+        }
+      }
+    },
+    "v1DeleteTemplateResponse": {
+      "type": "object"
+    },
+    "v1EmailContentType": {
+      "type": "string",
+      "enum": [
+        "EMAIL_CONTENT_TYPE_UNSPECIFIED",
+        "EMAIL_CONTENT_TYPE_PLAIN",
+        "EMAIL_CONTENT_TYPE_HTML"
+      ],
+      "default": "EMAIL_CONTENT_TYPE_UNSPECIFIED"
+    },
+    "v1GetTemplateResponse": {
+      "type": "object",
+      "properties": {
+        "template": {
+          "$ref": "#/definitions/v1Template"
+        }
+      }
+    },
+    "v1ListTemplatesFilter": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "templateId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "templateName": {
+          "type": "string"
+        },
+        "templateState": {
+          "$ref": "#/definitions/v1TemplateState"
+        },
+        "emailSubject": {
+          "type": "string"
+        }
+      }
+    },
+    "v1ListTemplatesResponse": {
+      "type": "object",
+      "properties": {
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Template"
+          }
+        },
+        "nextPageToken": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Template": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "accountId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "email": {
+          "$ref": "#/definitions/v1TemplateEmail"
+        },
+        "state": {
+          "$ref": "#/definitions/v1TemplateState"
+        },
+        "createTime": {
+          "type": "string",
+          "format": "int64"
+        },
+        "updateTime": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1TemplateEmail": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "bcc": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "contentType": {
+          "$ref": "#/definitions/v1EmailContentType"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "v1TemplateState": {
+      "type": "string",
+      "enum": [
+        "TEMPLATE_STATE_UNSPECIFIED",
+        "TEMPLATE_STATE_DELETED",
+        "TEMPLATE_STATE_DISABLED",
+        "TEMPLATE_STATE_ENABLED"
+      ],
+      "default": "TEMPLATE_STATE_UNSPECIFIED"
+    },
+    "v1UpdateTemplateRequest": {
+      "type": "object",
+      "properties": {
+        "template": {
+          "$ref": "#/definitions/v1Template"
+        }
+      }
+    },
+    "v1UpdateTemplateResponse": {
+      "type": "object",
+      "properties": {
+        "template": {
+          "$ref": "#/definitions/v1Template"
+        }
+      }
+    }
+  }
+}

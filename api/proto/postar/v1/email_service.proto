@@ -1,0 +1,29 @@
+// Copyright 2023 FishGoddess. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+package postar.v1;
+
+import "postar/v1/email.proto";
+import "google/api/annotations.proto";
+
+message SendEmailOptions {
+  bool async = 1;
+}
+
+message SendEmailRequest {
+  Email email = 1;
+  SendEmailOptions options = 2;
+}
+
+message SendEmailResponse {}
+
+service EmailService {
+  rpc SendEmail(SendEmailRequest) returns (SendEmailResponse) {
+    option (google.api.http) = {
+      post: "/api/postar/v1/emails/send",
+      body: "*"
+    };
+  }
+}
