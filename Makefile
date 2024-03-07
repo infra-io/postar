@@ -20,18 +20,11 @@ postaradmin:
 	go mod tidy
 	go run cmd/postar-admin/main.go -conf ./configs/postar_admin.toml
 
-linux:
-	./build.sh $(VERSION) linux amd64
-
-windows:
-	./build.sh $(VERSION) windows amd64
-
-mac:
-	./build.sh $(VERSION) darwin amd64
-
 build:
 	go mod tidy
-	make linux && make windows && make mac
+	./build.sh $(VERSION) linux amd64
+	./build.sh $(VERSION) darwin amd64
+	./build.sh $(VERSION) windows amd64
 
 clean:
 	rm -rf ./target

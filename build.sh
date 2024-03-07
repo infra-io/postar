@@ -2,6 +2,7 @@
 
 function prepare() {
     mkdir -p "$TARGET" || exit
+    mkdir -p "$PACKAGE" || exit
 }
 
 function build_postar() {
@@ -10,7 +11,7 @@ function build_postar() {
         binary_file="$binary_file".exe
     fi
 
-    CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$TARGET"/"$binary_file" "$WORKDIR"/cmd/postar/main.go || exit
+    CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$PACKAGE"/"$binary_file" "$WORKDIR"/cmd/postar/main.go || exit
     echo "$binary_file"
 }
 
@@ -20,42 +21,45 @@ function build_postar_admin() {
         binary_file="$binary_file".exe
     fi
 
-    CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$TARGET"/"$binary_file" "$WORKDIR"/cmd/postar-admin/main.go || exit
+    CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$PACKAGE"/"$binary_file" "$WORKDIR"/cmd/postar-admin/main.go || exit
     echo "$binary_file"
 }
 
 function package() {
-    local postar_binary_file=$1
-    local postar_config_file=postar.toml
-    local postar_admin_binary_file=$2
-    local postar_admin_config_file=postar_admin.toml
-    local license_file=LICENSE
+    cp "$WORKDIR"/configs/postar.toml "$PACKAGE"/
+    cp "$WORKDIR"/configs/postar_admin.toml "$PACKAGE"/
+    cp "$WORKDIR"/LICENSE "$PACKAGE"/
 
-    local pkg_file=postar-$VERSION-$GOOS-$GOARCH.tar.gz
-    tar -czf "$TARGET"/"$pkg_file" -C "$TARGET" "$postar_binary_file" -C "$WORKDIR"/configs "$postar_config_file" -C "$TARGET" "$postar_admin_binary_file" -C "$WORKDIR"/configs "$postar_admin_config_file" -C "$WORKDIR" "$license_file" || exit
+    local pkg_file="postar-$VERSION-$GOOS-$GOARCH"
+    if [[ $GOOS = "windows" ]]; then
+        pkg_file="$pkg_file".zip
+        zip -qr "$TARGET"/"$pkg_file" "$PACKAGE" || exit
+    else
+        pkg_file="$pkg_file".tar.gz
+        tar -czf "$TARGET"/"$pkg_file" -P "$PACKAGE" || exit
+    fi
 
     echo "$pkg_file"
 }
 
 function clean() {
-    local postar_binary_file=$1
-    local postar_admin_binary_file=$2
-
-    rm "$TARGET"/"$postar_binary_file"
-    rm "$TARGET"/"$postar_admin_binary_file"
+    rm -rf "$PACKAGE"
 }
 
+# Main
 VERSION=$1
 GOOS=$2
 GOARCH=$3
 
 WORKDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 TARGET=$WORKDIR/target
+PACKAGE=$TARGET/postar-$VERSION-$GOOS-$GOARCH
 
 echo "-----------------------------------------------------------------------"
 echo "VERSION: $VERSION, GOOS: $GOOS, GOARCH:$GOARCH"
 echo "WORKDIR: $WORKDIR"
 echo "TARGET: $TARGET"
+echo "PACKAGE: $PACKAGE"
 echo "-----------------------------------------------------------------------"
 
 # Prepare
@@ -74,5 +78,6 @@ pkg_file=$(package $postar_binary_file $postar_admin_binary_file) || exit
 echo "Package $pkg_file successfully!"
 
 # Done
-clean $postar_binary_file $postar_admin_binary_file || exit
+clean || exit
 echo "Done!"
+echo ""

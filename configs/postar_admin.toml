@@ -10,7 +10,7 @@ level = "debug"
 handler = "tape"
 
 [logger.writer]
-target = "./postar_admin.log"
+target = "./logs/postar_admin.log"
 file_rotate = true
 file_max_size = "128M"
 file_max_age = "60d"
