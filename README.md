@@ -19,9 +19,9 @@ _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新�
 
 ### 🚀 安装方式
 
-* 使用 Docker 的方式（推荐）
+* 使用二进制包的方式（推荐）
 
-具体信息参考请 [docker hub](https://hub.docker.com/r/fishgoddess/postar)。
+我们提供了编译好的二进制包文件，到 [码云](https://gitee.com/infra-io/postar/releases) 或 [GitHub](https://github.com/infra-io/postar/releases) 上进行下载。
 
 * 使用源码包的方式
 

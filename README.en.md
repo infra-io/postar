@@ -19,9 +19,9 @@ _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about mor
 
 ### 🚀 Installation
 
-1. Use Docker (recommend)
+1. Use binary (recommend)
 
-See more information in [docker hub](https://hub.docker.com/r/fishgoddess/postar).
+We provide built binaries, go check on [码云](https://gitee.com/infra-io/postar/releases) or [GitHub](https://github.com/infra-io/postar/releases) and download.
 
 2. Use source code
 
