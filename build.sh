@@ -2,7 +2,7 @@
 
 function prepare() {
     mkdir -p "$TARGET" || exit
-    mkdir -p "$PACKAGE" || exit
+    mkdir -p "$TARGET"/"$PACKAGE" || exit
 }
 
 function build_postar() {
@@ -11,7 +11,7 @@ function build_postar() {
         binary_file="$binary_file".exe
     fi
 
-    CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$PACKAGE"/"$binary_file" "$WORKDIR"/cmd/postar/main.go || exit
+    CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$TARGET_PACKAGE"/"$binary_file" "$WORKDIR"/cmd/postar/main.go || exit
     echo "$binary_file"
 }
 
@@ -21,14 +21,16 @@ function build_postar_admin() {
         binary_file="$binary_file".exe
     fi
 
-    CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$PACKAGE"/"$binary_file" "$WORKDIR"/cmd/postar-admin/main.go || exit
+    CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH go build -o "$TARGET_PACKAGE"/"$binary_file" "$WORKDIR"/cmd/postar-admin/main.go || exit
     echo "$binary_file"
 }
 
 function package() {
-    cp "$WORKDIR"/configs/postar.toml "$PACKAGE"/
-    cp "$WORKDIR"/configs/postar_admin.toml "$PACKAGE"/
-    cp "$WORKDIR"/LICENSE "$PACKAGE"/
+    cp "$WORKDIR"/configs/postar.toml "$TARGET_PACKAGE"/
+    cp "$WORKDIR"/configs/postar_admin.toml "$TARGET_PACKAGE"/
+    cp "$WORKDIR"/LICENSE "$TARGET_PACKAGE"/
+
+    cd "$TARGET"
 
     local pkg_file="postar-$VERSION-$GOOS-$GOARCH"
     if [[ $GOOS = "windows" ]]; then
@@ -39,11 +41,12 @@ function package() {
         tar -czf "$TARGET"/"$pkg_file" -P "$PACKAGE" || exit
     fi
 
+    cd "$WORKDIR"
     echo "$pkg_file"
 }
 
 function clean() {
-    rm -rf "$PACKAGE"
+    rm -rf "$TARGET_PACKAGE"
 }
 
 # Main
@@ -52,14 +55,15 @@ GOOS=$2
 GOARCH=$3
 
 WORKDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-TARGET=$WORKDIR/target
-PACKAGE=$TARGET/postar-$VERSION-$GOOS-$GOARCH
+TARGET="$WORKDIR"/target
+PACKAGE="postar-$VERSION-$GOOS-$GOARCH"
+TARGET_PACKAGE="$TARGET"/"$PACKAGE"
 
 echo "-----------------------------------------------------------------------"
 echo "VERSION: $VERSION, GOOS: $GOOS, GOARCH:$GOARCH"
 echo "WORKDIR: $WORKDIR"
 echo "TARGET: $TARGET"
-echo "PACKAGE: $PACKAGE"
+echo "TARGET_PACKAGE: $TARGET_PACKAGE"
 echo "-----------------------------------------------------------------------"
 
 # Prepare
