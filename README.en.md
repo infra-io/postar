@@ -29,7 +29,9 @@ Execute `make build` in the root of source code will generate target directory, 
 
 _Notice 1: Default config file are `postar.toml` and `postar-admin.toml`, default log file are `postar.log` and `postar-admin.log`._
 
-_Notice 2: How to use client in [Gitee](https://gitee.com/infra-io/postar-client) or [GitHub](https://github.com/infra-io/postar-client)._
+_Notice 2: Postar needs mysql to store some configurations about email, so you should create tables in `postar.sql` which will record all changes._
+
+_Notice 3: How to use client in [Gitee](https://gitee.com/infra-io/postar-client) or [GitHub](https://github.com/infra-io/postar-client)._
 
 ### 👥 Contributing
 

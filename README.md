@@ -29,7 +29,9 @@ _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新�
 
 _注意事项 1：默认的配置文件是 `postar.toml` 和 `postar-admin.toml`，默认的日志文件是 `postar.log` 和 `postar-admin.log`。_
 
-_注意事项 2：客户端使用请查看 [码云](https://gitee.com/infra-io/postar-client) 或 [GitHub](https://github.com/infra-io/postar-client)。_
+_注意事项 2：服务依赖 mysql 组件存储邮件相关配置，需要先在 mysql 上创建对应的库表，具体 sql 可以查看 `postar.sql`，后续库表变更也会体现在该文件中。_
+
+_注意事项 3：客户端使用请查看 [码云](https://gitee.com/infra-io/postar-client) 或 [GitHub](https://github.com/infra-io/postar-client)。_
 
 ### 👥 贡献者
 
