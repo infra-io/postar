@@ -7,15 +7,15 @@ X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk
 {
     "template": {
         "account_id": 10000,
-        "name": "测试模板",
-        "description": "用于测试的邮件模板信息",
+        "name": "测试 HTML 模板",
+        "description": "用于测试 HTML 内容的邮件模板信息",
         "email": {
-            "subject": "测试邮件主题",
+            "subject": "这是 {{.num}} 封 <b>{{.subject}}</b> 内容的邮件",
             "to": [],
             "cc": [],
             "bcc": [],
             "content_type": 2,
-            "content": "测试内容"
+            "content": "测试一下 <p style='color: #87CEEB'>{{.p}}</p> <img src='{{.img}}' width='260' height='260'> 看到图片了吗"
         }
     }
 }
@@ -30,17 +30,17 @@ X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk
 
 {
     "template": {
-        "id": "1000000",
+        "id": "1000001",
         "account_id": 10000,
-        "name": "测试模板",
-        "description": "用于测试的邮件模板信息",
+        "name": "测试 HTML 模板",
+        "description": "用于测试 HTML 内容的邮件模板信息",
         "email": {
-            "subject": "测试 {{.xxx}} 邮件主题",
+            "subject": "这是 {{.num}} 封 <b>{{.subject}}</b> 内容的邮件",
             "to": [],
             "cc": [],
             "bcc": [],
             "content_type": 2,
-            "content": "测试 {{.zzz}} 内容"
+            "content": "测试一下 <p style='color: #87CEEB'>{{.p}}</p> <img src='{{.img}}' width='260' height='260'> 看到图片了吗"
         }
     }
 }

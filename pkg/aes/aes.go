@@ -19,8 +19,7 @@ func Encrypt(aesKey string, aesIV string, str string) (encrypted string, err err
 		return "", err
 	}
 
-	encrypted = bs.Base64()
-	return encrypted, nil
+	return bs.Base64(), nil
 }
 
 func Decrypt(aesKey string, aesIV string, str string) (decrypted string, err error) {
@@ -37,6 +36,5 @@ func Decrypt(aesKey string, aesIV string, str string) (decrypted string, err err
 		return "", err
 	}
 
-	decrypted = bs.String()
-	return decrypted, nil
+	return bs.String(), nil
 }

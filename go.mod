@@ -2,7 +2,7 @@ module github.com/infra-io/postar
 
 go 1.21
 
-//replace github.com/infra-io/servicex => ../servicex
+replace github.com/infra-io/servicex => ../servicex
 
 //replace github.com/infra-io/postar/api => ./api
 
