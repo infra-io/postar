@@ -14,7 +14,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
 	github.com/infra-io/postar/api v1.0.0
-	github.com/infra-io/servicex v0.3.1
+	github.com/infra-io/servicex v0.4.0
 	github.com/wneessen/go-mail v0.4.0
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.32.0
