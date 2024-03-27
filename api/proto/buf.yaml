@@ -1,5 +1,5 @@
 version: v1
-name: buf.build/avino-plan/postar
+name: buf.build/infra-io/postar
 deps:
   - buf.build/googleapis/googleapis
 breaking:
