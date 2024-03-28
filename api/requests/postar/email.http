@@ -6,19 +6,18 @@ X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk
 
 {
     "email": {
-        "template_id": 1000000,
+        "template_id": 1000001,
         "to": ["1149062639@qq.com"],
         "cc": [],
         "bcc": [],
         "subject_params": {
-            "xxx": "clientsss"
+            "num": "1",
+            "subject": "HTML"
         },
         "content_params": {
-            "zzz": "rego 6"
+            "p": "哈哈哈哈哈",
+            "img": "xxx"
         }
-    },
-    "options": {
-        "async": false
     }
 }
 

@@ -117,22 +117,11 @@
         }
       }
     },
-    "v1SendEmailOptions": {
-      "type": "object",
-      "properties": {
-        "async": {
-          "type": "boolean"
-        }
-      }
-    },
     "v1SendEmailRequest": {
       "type": "object",
       "properties": {
         "email": {
           "$ref": "#/definitions/v1Email"
-        },
-        "options": {
-          "$ref": "#/definitions/v1SendEmailOptions"
         }
       }
     },

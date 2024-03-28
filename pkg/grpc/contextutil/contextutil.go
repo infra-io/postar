@@ -8,12 +8,31 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/infra-io/postar/pkg/grpc/gateway"
-	grpcx "github.com/infra-io/servicex/net/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
+const (
+	MetadataKeySpaceID    = "postar.space_id"
+	MetadataKeySpaceToken = "postar.space_token"
+	MetadataKeyTraceID    = "postar.trace_id"
+)
+
+func getIncomingMetadata(ctx context.Context, key string) string {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return ""
+	}
+
+	strs := md.Get(key)
+	if len(strs) != 1 {
+		return ""
+	}
+
+	return strs[0]
+}
+
 func GetSpaceID(ctx context.Context) int32 {
-	id := grpcx.GetMetadata(ctx, gateway.MetadataKeySpaceID)
+	id := getIncomingMetadata(ctx, MetadataKeySpaceID)
 	if id == "" {
 		return 0
 	}
@@ -27,5 +46,5 @@ func GetSpaceID(ctx context.Context) int32 {
 }
 
 func GetSpaceToken(ctx context.Context) string {
-	return grpcx.GetMetadata(ctx, gateway.MetadataKeySpaceToken)
+	return getIncomingMetadata(ctx, MetadataKeySpaceToken)
 }

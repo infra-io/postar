@@ -13,7 +13,7 @@ import (
 	postarv1 "github.com/infra-io/postar/api/genproto/postar/v1"
 	"github.com/infra-io/postar/configs"
 	"github.com/infra-io/postar/internal/postar/service"
-	"github.com/infra-io/postar/pkg/grpc/gateway"
+	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -26,7 +26,7 @@ type GatewayServer struct {
 
 func newGrpcServer(conf *configs.PostarConfig, emailService service.EmailService) (Server, http.Handler, error) {
 	ctx := context.Background()
-	mux := gateway.NewServeMux()
+	mux := grpcx.NewGatewayMux()
 	endpoint := conf.Server.GrpcEndpoint
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 

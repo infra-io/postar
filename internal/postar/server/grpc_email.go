@@ -28,35 +28,35 @@ func newEmail(email *postarv1.Email) *model.Email {
 	return result
 }
 
-func newSendEmailOptions(conf *postarv1.SendEmailOptions) *model.SendEmailOptions {
-	if conf == nil {
-		return new(model.SendEmailOptions)
+func fromEmail(email *model.Email) *postarv1.Email {
+	if email == nil {
+		return new(postarv1.Email)
 	}
 
-	result := &model.SendEmailOptions{
-		Async: conf.Async,
+	result := &postarv1.Email{
+		TemplateId:    email.TemplateID,
+		To:            email.To,
+		Cc:            email.CC,
+		Bcc:           email.BCC,
+		SubjectParams: email.SubjectParams,
+		ContentParams: email.ContentParams,
 	}
 
 	return result
 }
 
-func parseSendEmailRequest(request *postarv1.SendEmailRequest) (email *model.Email, options *model.SendEmailOptions) {
-	email = newEmail(request.Email)
-	options = newSendEmailOptions(request.Options)
-
-	return email, options
+func parseSendEmailRequest(request *postarv1.SendEmailRequest) *model.Email {
+	return newEmail(request.Email)
 }
 
 func newSendEmailResponse() *postarv1.SendEmailResponse {
-	resp := &postarv1.SendEmailResponse{}
-
-	return resp
+	return new(postarv1.SendEmailResponse)
 }
 
 func (gs *GrpcServer) SendEmail(ctx context.Context, request *postarv1.SendEmailRequest) (response *postarv1.SendEmailResponse, err error) {
-	email, options := parseSendEmailRequest(request)
+	email := parseSendEmailRequest(request)
 
-	if err = gs.emailService.SendEmail(ctx, email, options); err != nil {
+	if err = gs.emailService.SendEmail(ctx, email); err != nil {
 		return nil, err
 	}
 

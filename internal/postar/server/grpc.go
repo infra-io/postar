@@ -12,8 +12,7 @@ import (
 	postarv1 "github.com/infra-io/postar/api/genproto/postar/v1"
 	"github.com/infra-io/postar/configs"
 	"github.com/infra-io/postar/internal/postar/service"
-	"github.com/infra-io/postar/pkg/grpc/logging"
-	grpcx "github.com/infra-io/servicex/net/grpc"
+	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"google.golang.org/grpc"
 )
 
@@ -28,7 +27,7 @@ type GrpcServer struct {
 
 func NewGrpcServer(conf *configs.PostarConfig, emailService service.EmailService) (Server, error) {
 	timeout := conf.Server.RequestTimeout.Standard()
-	interceptor := grpcx.Interceptor(timeout, logging.ResolveRequest)
+	interceptor := grpcx.Interceptor("postar", timeout)
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(interceptor))
 
 	gs := &GrpcServer{

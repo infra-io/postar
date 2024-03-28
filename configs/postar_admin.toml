@@ -5,6 +5,7 @@
 # file_max_size is the max size to rotate a new log file and rename the old log file.
 # file_max_age is the max time to keep the old log files.
 # file_max_backups is the max number to keep the old log files.
+# Check `FishGoddess/logit` library in github to get more information.
 [logger]
 level = "debug"
 handler = "tape"

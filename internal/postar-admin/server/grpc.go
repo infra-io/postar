@@ -13,9 +13,8 @@ import (
 	postaradminv1 "github.com/infra-io/postar/api/genproto/postaradmin/v1"
 	"github.com/infra-io/postar/configs"
 	"github.com/infra-io/postar/internal/postar-admin/service"
+	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"github.com/infra-io/postar/pkg/grpc/contextutil"
-	"github.com/infra-io/postar/pkg/grpc/logging"
-	grpcx "github.com/infra-io/servicex/net/grpc"
 	"google.golang.org/grpc"
 )
 
@@ -34,7 +33,7 @@ type GrpcServer struct {
 
 func NewGrpcServer(conf *configs.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error) {
 	timeout := conf.Server.RequestTimeout.Standard()
-	interceptor := grpcx.Interceptor(timeout, logging.ResolveRequest)
+	interceptor := grpcx.Interceptor("postar-admin", timeout)
 	checkSpace := checkSpaceInterceptor(spaceService)
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(interceptor, checkSpace))
 
