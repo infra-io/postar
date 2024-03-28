@@ -24,7 +24,7 @@ type AccountStore struct {
 	accountStore service.AccountStore
 }
 
-func NewAccountStore(accountStore service.AccountStore) service.AccountStore {
+func WrapAccountStore(accountStore service.AccountStore) service.AccountStore {
 	store := &AccountStore{
 		cache:        cache.New("account"),
 		accountStore: accountStore,

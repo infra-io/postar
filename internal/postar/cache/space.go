@@ -24,7 +24,7 @@ type SpaceStore struct {
 	spaceStore service.SpaceStore
 }
 
-func NewSpaceStore(spaceStore service.SpaceStore) service.SpaceStore {
+func WrapSpaceStore(spaceStore service.SpaceStore) service.SpaceStore {
 	store := &SpaceStore{
 		cache:      cache.New("space"),
 		spaceStore: spaceStore,

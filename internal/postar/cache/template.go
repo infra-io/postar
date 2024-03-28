@@ -24,7 +24,7 @@ type TemplateStore struct {
 	templateStore service.TemplateStore
 }
 
-func NewTemplateStore(templateStore service.TemplateStore) service.TemplateStore {
+func WrapTemplateStore(templateStore service.TemplateStore) service.TemplateStore {
 	store := &TemplateStore{
 		cache:         cache.New("template"),
 		templateStore: templateStore,
