@@ -2,19 +2,20 @@ module github.com/infra-io/postar
 
 go 1.21
 
-replace github.com/infra-io/servicex => ../servicex
+//replace github.com/infra-io/servicex => ../servicex
 
-//replace github.com/infra-io/postar/api => ./api
+replace github.com/infra-io/postar/api => ./api
 
 require (
 	github.com/BurntSushi/toml v1.3.2
+	github.com/FishGoddess/cachego v0.6.1
 	github.com/FishGoddess/cryptox v0.4.0
 	github.com/FishGoddess/errors v0.5.2
 	github.com/FishGoddess/logit v1.5.10
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
 	github.com/infra-io/postar/api v1.0.0
-	github.com/infra-io/servicex v0.4.0
+	github.com/infra-io/servicex v0.4.1
 	github.com/wneessen/go-mail v0.4.0
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.32.0

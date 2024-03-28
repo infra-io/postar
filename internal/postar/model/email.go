@@ -12,7 +12,3 @@ type Email struct {
 	SubjectParams map[string]string `json:"subject_params"`
 	ContentParams map[string]string `json:"content_params"`
 }
-
-type SendEmailOptions struct {
-	Async bool `json:"async"`
-}

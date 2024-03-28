@@ -13,6 +13,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/FishGoddess/logit"
 	"github.com/infra-io/postar"
+	"github.com/infra-io/postar/internal/postar/cache"
 	"github.com/infra-io/postar/internal/postar/server"
 	"github.com/infra-io/postar/internal/postar/service"
 	"github.com/infra-io/postar/internal/postar/store"
@@ -72,9 +73,9 @@ func newServer(conf *configs.PostarConfig) (server.Server, error) {
 		return nil, err
 	}
 
-	spaceStore := store.NewSpaceStore(conf)
-	accountStore := store.NewAccountStore(conf)
-	templateStore := store.NewTemplateStore(conf)
+	spaceStore := cache.NewSpaceStore(store.NewSpaceStore(conf))
+	accountStore := cache.NewAccountStore(store.NewAccountStore(conf))
+	templateStore := cache.NewTemplateStore(store.NewTemplateStore(conf))
 
 	emailService := service.NewEmailService(conf, spaceStore, accountStore, templateStore)
 	return server.New(conf, emailService)

@@ -8,13 +8,8 @@ package postar.v1;
 import "postar/v1/email.proto";
 import "google/api/annotations.proto";
 
-message SendEmailOptions {
-  bool async = 1;
-}
-
 message SendEmailRequest {
   Email email = 1;
-  SendEmailOptions options = 2;
 }
 
 message SendEmailResponse {}

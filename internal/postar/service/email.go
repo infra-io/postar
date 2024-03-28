@@ -32,7 +32,7 @@ type TemplateStore interface {
 }
 
 type EmailService interface {
-	SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) error
+	SendEmail(ctx context.Context, email *model.Email) (err error)
 }
 
 type defaultEmailService struct {
@@ -196,7 +196,7 @@ func (des *defaultEmailService) handleTemplateEmail(ctx context.Context, account
 	return client.DialAndSendWithContext(ctx, msg)
 }
 
-func (des *defaultEmailService) sendEmail(ctx context.Context, email *model.Email, _ *model.SendEmailOptions) (err error) {
+func (des *defaultEmailService) sendEmail(ctx context.Context, email *model.Email) (err error) {
 	var spaceID int32
 	if spaceID, err = des.checkSpace(ctx); err != nil {
 		return err
@@ -224,9 +224,9 @@ func (des *defaultEmailService) sendEmail(ctx context.Context, email *model.Emai
 	return nil
 }
 
-func (des *defaultEmailService) SendEmail(ctx context.Context, email *model.Email, options *model.SendEmailOptions) (err error) {
+func (des *defaultEmailService) SendEmail(ctx context.Context, email *model.Email) (err error) {
 	logger := logit.FromContext(ctx)
-	logger.Debug("send email", "email", email, "options", options)
+	logger.Debug("send email", "email", email)
 
-	return des.sendEmail(ctx, email, options)
+	return des.sendEmail(ctx, email)
 }

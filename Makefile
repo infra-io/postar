@@ -1,6 +1,6 @@
-.PHONY: test fmt proto postar postaradmin linux windows darwin build clean all
+.PHONY: test fmt proto postar postaradmin build clean all
 
-VERSION=v0.4.0-alpha
+VERSION=v0.4.1-alpha
 
 test:
 	go mod tidy
