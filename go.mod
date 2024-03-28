@@ -18,7 +18,7 @@ require (
 	github.com/infra-io/servicex v0.4.1
 	github.com/wneessen/go-mail v0.4.0
 	google.golang.org/grpc v1.60.1
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/protobuf v1.33.0
 )
 
 require (
