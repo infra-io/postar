@@ -11,7 +11,7 @@ level = "debug"
 handler = "tape"
 
 [logger.writer]
-target = "./logs/postar.log"
+target = "./log/postar.log"
 file_rotate = true
 file_max_size = "128M"
 file_max_age = "30d"
@@ -25,6 +25,8 @@ file_max_backups = 60
 type = "gateway"
 grpc_endpoint = ":5897"
 http_endpoint = ":6897"
+cert_file = "./cert/localhost.crt"
+key_file = "./cert/localhost.key"
 request_timeout = "10s"
 max_close_wait_time = "1m"
 

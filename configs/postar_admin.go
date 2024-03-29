@@ -25,7 +25,7 @@ func NewPostarAdminConfig() *PostarAdminConfig {
 		Logger: logitconf.Config{
 			Level: "debug",
 			Writer: logitconf.WriterConfig{
-				Target:         "./postar_admin.log",
+				Target:         "./log/postar_admin.log",
 				FileRotate:     true,
 				FileMaxSize:    "128MB",
 				FileMaxAge:     "60d",

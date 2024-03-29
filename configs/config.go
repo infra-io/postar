@@ -19,8 +19,14 @@ type ServerConfig struct {
 	Type             string         `json:"type" toml:"type"`
 	GrpcEndpoint     string         `json:"grpc_endpoint" toml:"grpc_endpoint"`
 	HttpEndpoint     string         `json:"http_endpoint" toml:"http_endpoint"`
+	CertFile         string         `json:"cert_file" toml:"cert_file"`
+	KeyFile          string         `json:"key_file" toml:"key_file"`
 	RequestTimeout   timex.Duration `json:"request_timeout" toml:"request_timeout"`
 	MaxCloseWaitTime timex.Duration `json:"max_close_wait_time" toml:"max_close_wait_time"`
+}
+
+func (sc *ServerConfig) TLS() bool {
+	return sc.CertFile != "" && sc.KeyFile != ""
 }
 
 type DatabaseConfig struct {

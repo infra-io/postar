@@ -16,6 +16,7 @@ import (
 	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"github.com/infra-io/postar/pkg/grpc/contextutil"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type GrpcServer struct {
@@ -31,12 +32,32 @@ type GrpcServer struct {
 	templateService service.TemplateService
 }
 
-func NewGrpcServer(conf *configs.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error) {
-	timeout := conf.Server.RequestTimeout.Standard()
-	interceptor := grpcx.Interceptor("postar-admin", timeout)
-	checkSpace := checkSpaceInterceptor(spaceService)
-	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(interceptor, checkSpace))
+func newGrpcServerOpts(conf *configs.PostarAdminConfig, spaceService service.SpaceService) ([]grpc.ServerOption, error) {
+	var opts []grpc.ServerOption
 
+	if conf.Server.TLS() {
+		creds, err := credentials.NewServerTLSFromFile(conf.Server.CertFile, conf.Server.KeyFile)
+		if err != nil {
+			return nil, err
+		}
+
+		opts = append(opts, grpc.Creds(creds))
+	}
+
+	interceptor := grpcx.Interceptor("postar-admin", conf.Server.RequestTimeout.Standard())
+	checkSpace := checkSpaceInterceptor(spaceService)
+	opts = append(opts, grpc.ChainUnaryInterceptor(interceptor, checkSpace))
+
+	return opts, nil
+}
+
+func NewGrpcServer(conf *configs.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error) {
+	opts, err := newGrpcServerOpts(conf, spaceService)
+	if err != nil {
+		return nil, err
+	}
+
+	grpcServer := grpc.NewServer(opts...)
 	gs := &GrpcServer{
 		conf:            conf,
 		server:          grpcServer,
@@ -48,7 +69,6 @@ func NewGrpcServer(conf *configs.PostarAdminConfig, spaceService service.SpaceSe
 	postaradminv1.RegisterSpaceServiceServer(gs.server, gs)
 	postaradminv1.RegisterAccountServiceServer(gs.server, gs)
 	postaradminv1.RegisterTemplateServiceServer(gs.server, gs)
-
 	return gs, nil
 }
 

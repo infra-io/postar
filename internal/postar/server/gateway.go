@@ -15,6 +15,7 @@ import (
 	"github.com/infra-io/postar/internal/postar/service"
 	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
@@ -28,7 +29,18 @@ func newGrpcServer(conf *configs.PostarConfig, emailService service.EmailService
 	ctx := context.Background()
 	mux := grpcx.NewGatewayMux()
 	endpoint := conf.Server.GrpcEndpoint
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+
+	var opts []grpc.DialOption
+	if conf.Server.TLS() {
+		creds, err := credentials.NewClientTLSFromFile(conf.Server.CertFile, "")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		opts = append(opts, grpc.WithTransportCredentials(creds))
+	} else {
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	}
 
 	err := postarv1.RegisterEmailServiceHandlerFromEndpoint(ctx, mux, endpoint, opts)
 	if err != nil {

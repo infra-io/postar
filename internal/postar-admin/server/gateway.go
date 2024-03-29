@@ -15,6 +15,7 @@ import (
 	"github.com/infra-io/postar/internal/postar-admin/service"
 	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
@@ -28,7 +29,18 @@ func newGrpcServer(conf *configs.PostarAdminConfig, spaceService service.SpaceSe
 	ctx := context.Background()
 	mux := grpcx.NewGatewayMux()
 	endpoint := conf.Server.GrpcEndpoint
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+
+	var opts []grpc.DialOption
+	if conf.Server.TLS() {
+		creds, err := credentials.NewClientTLSFromFile(conf.Server.CertFile, "")
+		if err != nil {
+			return nil, nil, err
+		}
+
+		opts = append(opts, grpc.WithTransportCredentials(creds))
+	} else {
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	}
 
 	err := postaradminv1.RegisterSpaceServiceHandlerFromEndpoint(ctx, mux, endpoint, opts)
 	if err != nil {

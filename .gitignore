@@ -13,6 +13,8 @@
 
 # Program
 target/
+log/
+cert/
 *.test
 *.out
 *.log
