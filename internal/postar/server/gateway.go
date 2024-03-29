@@ -6,6 +6,7 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
 	"net"
 	"net/http"
 
@@ -32,11 +33,9 @@ func newGrpcServer(conf *configs.PostarConfig, emailService service.EmailService
 
 	var opts []grpc.DialOption
 	if conf.Server.TLS() {
-		creds, err := credentials.NewClientTLSFromFile(conf.Server.CertFile, "")
-		if err != nil {
-			return nil, nil, err
-		}
-
+		// TODO The best way is parsing the dns name from cert file and pass it to tls, but we failed in x509.ParseCertificate.
+		tlsConfig := &tls.Config{InsecureSkipVerify: true}
+		creds := credentials.NewTLS(tlsConfig)
 		opts = append(opts, grpc.WithTransportCredentials(creds))
 	} else {
 		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
