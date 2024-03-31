@@ -6,7 +6,6 @@ package server
 
 import (
 	"context"
-	"crypto/tls"
 	"net"
 	"net/http"
 
@@ -16,7 +15,6 @@ import (
 	"github.com/infra-io/postar/internal/postar/service"
 	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
@@ -32,10 +30,12 @@ func newGrpcServer(conf *configs.PostarConfig, emailService service.EmailService
 	endpoint := conf.Server.GrpcEndpoint
 
 	var opts []grpc.DialOption
-	if conf.Server.TLS() {
-		// TODO The best way is parsing the dns name from cert file and pass it to tls, but we failed in x509.ParseCertificate.
-		tlsConfig := &tls.Config{InsecureSkipVerify: true}
-		creds := credentials.NewTLS(tlsConfig)
+	if conf.Server.UseTLS {
+		creds, err := grpcx.NewClientTLSFromCert(conf.Server.CertFile)
+		if err != nil {
+			return nil, nil, err
+		}
+
 		opts = append(opts, grpc.WithTransportCredentials(creds))
 	} else {
 		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -99,7 +99,7 @@ func (gs *GatewayServer) Serve() error {
 }
 
 func (gs *GatewayServer) Close() error {
-	timeout := gs.conf.Server.MaxCloseWaitTime.Standard()
+	timeout := gs.conf.Server.CloseServerTimeout.Standard()
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 

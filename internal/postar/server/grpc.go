@@ -29,7 +29,7 @@ type GrpcServer struct {
 func newGrpcServerOpts(conf *configs.PostarConfig) ([]grpc.ServerOption, error) {
 	var opts []grpc.ServerOption
 
-	if conf.Server.TLS() {
+	if conf.Server.UseTLS {
 		creds, err := credentials.NewServerTLSFromFile(conf.Server.CertFile, conf.Server.KeyFile)
 		if err != nil {
 			return nil, err
@@ -84,7 +84,7 @@ func (gs *GrpcServer) Close() error {
 		stopCh <- struct{}{}
 	}()
 
-	timeout := gs.conf.Server.MaxCloseWaitTime.Standard()
+	timeout := gs.conf.Server.CloseServerTimeout.Standard()
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
