@@ -24,15 +24,15 @@ const (
 var db *sql.DB
 
 func newDSN(conf *configs.DatabaseConfig) string {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/postar?charset=utf8mb4&parseTime=true&loc=Local&time_zone=%s",
-		conf.Username, conf.Password, conf.Address, url.QueryEscape("'Asia/Shanghai'"),
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=true&loc=Local&time_zone=%s",
+		conf.Username, conf.Password, conf.Address, conf.Database, url.QueryEscape("'Asia/Shanghai'"),
 	)
 
 	return dsn
 }
 
 func reportStats(conf *configs.DatabaseConfig) {
-	logger := logit.Default().WithGroup("db").With("address", conf.Address, "username", conf.Username)
+	logger := logit.Default().WithGroup("db").With("address", conf.Address, "username", conf.Username, "database", conf.Database)
 
 	ticker := time.NewTicker(conf.ReportStatsTime.Standard())
 	defer ticker.Stop()

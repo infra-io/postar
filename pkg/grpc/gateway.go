@@ -5,10 +5,14 @@
 package grpc
 
 import (
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
+	"os"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/infra-io/postar/pkg/grpc/contextutil"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -72,4 +76,34 @@ func jsonifyProto(v any) string {
 	}
 
 	return string(marshaled)
+}
+
+func dnsNamesFromCert(certFile string) ([]string, error) {
+	certFileBytes, err := os.ReadFile(certFile)
+	if err != nil {
+		return nil, err
+	}
+
+	certPem, _ := pem.Decode(certFileBytes)
+
+	cert, err := x509.ParseCertificate(certPem.Bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return cert.DNSNames, nil
+}
+
+func NewClientTLSFromCert(certFile string) (credentials.TransportCredentials, error) {
+	dnsNames, err := dnsNamesFromCert(certFile)
+	if err != nil {
+		return nil, err
+	}
+
+	serverName := ""
+	if len(dnsNames) > 0 {
+		serverName = dnsNames[0]
+	}
+
+	return credentials.NewClientTLSFromFile(certFile, serverName)
 }

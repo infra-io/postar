@@ -28,7 +28,18 @@ func newGrpcServer(conf *configs.PostarConfig, emailService service.EmailService
 	ctx := context.Background()
 	mux := grpcx.NewGatewayMux()
 	endpoint := conf.Server.GrpcEndpoint
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+
+	var opts []grpc.DialOption
+	if conf.Server.UseTLS {
+		creds, err := grpcx.NewClientTLSFromCert(conf.Server.CertFile)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		opts = append(opts, grpc.WithTransportCredentials(creds))
+	} else {
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	}
 
 	err := postarv1.RegisterEmailServiceHandlerFromEndpoint(ctx, mux, endpoint, opts)
 	if err != nil {
@@ -88,7 +99,7 @@ func (gs *GatewayServer) Serve() error {
 }
 
 func (gs *GatewayServer) Close() error {
-	timeout := gs.conf.Server.MaxCloseWaitTime.Standard()
+	timeout := gs.conf.Server.CloseServerTimeout.Standard()
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 

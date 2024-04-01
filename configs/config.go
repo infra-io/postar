@@ -16,17 +16,21 @@ const (
 )
 
 type ServerConfig struct {
-	Type             string         `json:"type" toml:"type"`
-	GrpcEndpoint     string         `json:"grpc_endpoint" toml:"grpc_endpoint"`
-	HttpEndpoint     string         `json:"http_endpoint" toml:"http_endpoint"`
-	RequestTimeout   timex.Duration `json:"request_timeout" toml:"request_timeout"`
-	MaxCloseWaitTime timex.Duration `json:"max_close_wait_time" toml:"max_close_wait_time"`
+	Type               string         `json:"type" toml:"type"`
+	GrpcEndpoint       string         `json:"grpc_endpoint" toml:"grpc_endpoint"`
+	HttpEndpoint       string         `json:"http_endpoint" toml:"http_endpoint"`
+	UseTLS             bool           `json:"use_tls" toml:"use_tls"`
+	CertFile           string         `json:"cert_file" toml:"cert_file"`
+	KeyFile            string         `json:"key_file" toml:"key_file"`
+	RequestTimeout     timex.Duration `json:"request_timeout" toml:"request_timeout"`
+	CloseServerTimeout timex.Duration `json:"close_server_timeout" toml:"close_server_timeout"`
 }
 
 type DatabaseConfig struct {
 	Address         string         `json:"address" toml:"address"`
 	Username        string         `json:"username" toml:"username"`
 	Password        string         `json:"-" toml:"password"`
+	Database        string         `json:"database" toml:"database"`
 	MaxIdleConns    int            `json:"max_idle_conns" toml:"max_idle_conns"`
 	MaxOpenConns    int            `json:"max_open_conns" toml:"max_open_conns"`
 	ConnMaxLifetime timex.Duration `json:"conn_max_lifetime" toml:"conn_max_lifetime"`

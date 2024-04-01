@@ -23,9 +23,10 @@ type PostarAdminConfig struct {
 func NewPostarAdminConfig() *PostarAdminConfig {
 	conf := &PostarAdminConfig{
 		Logger: logitconf.Config{
-			Level: "debug",
+			Level:   "debug",
+			Handler: "tape",
 			Writer: logitconf.WriterConfig{
-				Target:         "./postar_admin.log",
+				Target:         "./log/postar_admin.log",
 				FileRotate:     true,
 				FileMaxSize:    "128MB",
 				FileMaxAge:     "60d",
@@ -35,21 +36,29 @@ func NewPostarAdminConfig() *PostarAdminConfig {
 			WithPID:    false,
 		},
 		Server: ServerConfig{
-			Type:             "grpc",
-			GrpcEndpoint:     ":7985",
-			HttpEndpoint:     ":7986",
-			RequestTimeout:   timex.NewDuration(10 * time.Second),
-			MaxCloseWaitTime: timex.NewDuration(time.Minute),
+			Type:               "gateway",
+			GrpcEndpoint:       ":7985",
+			HttpEndpoint:       ":7986",
+			UseTLS:             false,
+			CertFile:           "./cert/localhost.crt",
+			KeyFile:            "./cert/localhost.key",
+			RequestTimeout:     timex.NewDuration(time.Second),
+			CloseServerTimeout: timex.NewDuration(time.Minute),
 		},
 		Database: DatabaseConfig{
 			Address:         "127.0.0.1:6033",
 			Username:        "postar",
 			Password:        "123456",
+			Database:        "postar",
 			MaxOpenConns:    16,
 			MaxIdleConns:    4,
-			ConnMaxLifetime: timex.NewDuration(3 * time.Minute),
-			ConnMaxIdleTime: timex.NewDuration(time.Second),
+			ConnMaxIdleTime: timex.NewDuration(3 * time.Minute),
+			ConnMaxLifetime: timex.NewDuration(10 * time.Minute),
 			ReportStatsTime: timex.NewDuration(time.Minute),
+		},
+		Crypto: CryptoConfig{
+			AESKey: "",
+			AESIV:  "",
 		},
 	}
 

@@ -14,6 +14,7 @@ import (
 	"github.com/infra-io/postar/internal/postar/service"
 	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type GrpcServer struct {
@@ -25,11 +26,31 @@ type GrpcServer struct {
 	emailService service.EmailService
 }
 
-func NewGrpcServer(conf *configs.PostarConfig, emailService service.EmailService) (Server, error) {
-	timeout := conf.Server.RequestTimeout.Standard()
-	interceptor := grpcx.Interceptor("postar", timeout)
-	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(interceptor))
+func newGrpcServerOpts(conf *configs.PostarConfig) ([]grpc.ServerOption, error) {
+	var opts []grpc.ServerOption
 
+	if conf.Server.UseTLS {
+		creds, err := credentials.NewServerTLSFromFile(conf.Server.CertFile, conf.Server.KeyFile)
+		if err != nil {
+			return nil, err
+		}
+
+		opts = append(opts, grpc.Creds(creds))
+	}
+
+	interceptor := grpcx.Interceptor("postar", conf.Server.RequestTimeout.Standard())
+	opts = append(opts, grpc.ChainUnaryInterceptor(interceptor))
+
+	return opts, nil
+}
+
+func NewGrpcServer(conf *configs.PostarConfig, emailService service.EmailService) (Server, error) {
+	opts, err := newGrpcServerOpts(conf)
+	if err != nil {
+		return nil, err
+	}
+
+	grpcServer := grpc.NewServer(opts...)
 	gs := &GrpcServer{
 		conf:         conf,
 		server:       grpcServer,
@@ -37,7 +58,6 @@ func NewGrpcServer(conf *configs.PostarConfig, emailService service.EmailService
 	}
 
 	postarv1.RegisterEmailServiceServer(gs.server, gs)
-
 	return gs, nil
 }
 
@@ -64,7 +84,7 @@ func (gs *GrpcServer) Close() error {
 		stopCh <- struct{}{}
 	}()
 
-	timeout := gs.conf.Server.MaxCloseWaitTime.Standard()
+	timeout := gs.conf.Server.CloseServerTimeout.Standard()
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 

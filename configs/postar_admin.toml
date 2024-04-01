@@ -2,35 +2,50 @@
 # level has some available values: debug, info, warn, error.
 # handler has some available values: tape, text, json.
 # target is the logging destination for writing logs.
+# file_rotate will rotate log files if needs.
 # file_max_size is the max size to rotate a new log file and rename the old log file.
 # file_max_age is the max time to keep the old log files.
-# file_max_backups is the max number to keep the old log files.
+# file_max_backups is the max count to keep the old log files.
 # Check `FishGoddess/logit` library in github to get more information.
 [logger]
 level = "debug"
 handler = "tape"
 
 [logger.writer]
-target = "./logs/postar_admin.log"
+target = "./log/postar_admin.log"
 file_rotate = true
 file_max_size = "128M"
 file_max_age = "60d"
 file_max_backups = 90
 
 # All configurations of server.
-# type has some available values: http, grpc.
-# address includes ip and port and you can bind a specific ip and port for your server.
-# close_timeout is the timeout of closing server.
+# type has some available values: gateway, grpc.
+# grpc_endpoint is the ip:port of the grpc server.
+# http_endpoint is the ip:port of the http server when type is gateway.
+# use_tls determines if the server uses tls or not.
+# cert_file is the certificate file path. Necessary if use_tls = true.
+# key_file is the private key file path. Necessary if use_tls = true.
+# request_timeout is the timeout of requests.
+# close_server_timeout is the timeout of closing server.
 [server]
 type = "gateway"
 grpc_endpoint = ":7985"
 http_endpoint = ":7986"
-request_timeout = "10s"
-max_close_wait_time = "1m"
+use_tls = false
+cert_file = "./cert/localhost.crt"
+key_file = "./cert/localhost.key"
+request_timeout = "1s"
+close_server_timeout = "1m"
 
 # All configurations of database.
-# You should specify the authentication of database with address, username and password.
-# Of course, database is necessary.
+# address is the ip:port of the database.
+# username is the username of the database.
+# password is the password of the database.
+# max_open_conns is the max connected connections of the database.
+# max_idle_conns is the max idle connections of the database.
+# max_conn_idle_time is the max idle time of connections connected to database.
+# max_conn_lifetime is the max lifetime of connections connected to database.
+# report_stats_time is the duration for reporting the stats of database.
 [database]
 address = "127.0.0.1:6033"
 username = "postar"
@@ -43,8 +58,8 @@ max_conn_lifetime = "10m"
 report_stats_time = "1m"
 
 # All configurations of crypto.
-# aes_key is the key of aes, its length must be 24.
-# aes_iv is the iv of aes, its length must be 16.
+# aes_key is the key of aes which length must be 24.
+# aes_iv is the iv of aes which length must be 16.
 [crypto]
 aes_key = "123456788765432112345678"
 aes_iv = "1234567887654321"
