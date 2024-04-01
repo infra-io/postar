@@ -11,7 +11,7 @@
 ### 🥇 Features
 
 * Plain and HTML form email supports
-* Synchronous/Asynchronous mode supports, and timeout is available in synchronous mode
+* Multi spaces supports, accounts and templates configuration supports
 * Support http/grpc protocol
 * Gracefully shutdown with signal mechanism
 

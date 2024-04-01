@@ -5,5 +5,5 @@
 package postar
 
 const (
-	Version = "v0.4.1-alpha"
+	Version = "v0.4.2-alpha"
 )
