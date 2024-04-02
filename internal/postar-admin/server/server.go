@@ -11,7 +11,7 @@ import (
 	"syscall"
 
 	"github.com/FishGoddess/logit"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/service"
 )
 
@@ -22,14 +22,14 @@ var (
 	}
 )
 
-type newServerFunc func(conf *configs.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error)
+type newServerFunc func(conf *config.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error)
 
 type Server interface {
 	Serve() error
 	Close() error
 }
 
-func New(conf *configs.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error) {
+func New(conf *config.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error) {
 	newServer, ok := newServers[conf.Server.Type]
 	if !ok {
 		return nil, fmt.Errorf("server: type %s not found", conf.Server.Type)

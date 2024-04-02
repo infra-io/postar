@@ -10,7 +10,7 @@ import (
 
 	"github.com/FishGoddess/logit"
 	postarv1 "github.com/infra-io/postar/api/genproto/postar/v1"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar/service"
 	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"google.golang.org/grpc"
@@ -20,13 +20,13 @@ import (
 type GrpcServer struct {
 	postarv1.UnimplementedEmailServiceServer
 
-	conf   *configs.PostarConfig
+	conf   *config.PostarConfig
 	server *grpc.Server
 
 	emailService service.EmailService
 }
 
-func newGrpcServerOpts(conf *configs.PostarConfig) ([]grpc.ServerOption, error) {
+func newGrpcServerOpts(conf *config.PostarConfig) ([]grpc.ServerOption, error) {
 	var opts []grpc.ServerOption
 
 	if conf.Server.UseTLS {
@@ -44,7 +44,7 @@ func newGrpcServerOpts(conf *configs.PostarConfig) ([]grpc.ServerOption, error) 
 	return opts, nil
 }
 
-func NewGrpcServer(conf *configs.PostarConfig, emailService service.EmailService) (Server, error) {
+func NewGrpcServer(conf *config.PostarConfig, emailService service.EmailService) (Server, error) {
 	opts, err := newGrpcServerOpts(conf)
 	if err != nil {
 		return nil, err

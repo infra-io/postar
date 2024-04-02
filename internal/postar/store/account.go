@@ -11,16 +11,16 @@ import (
 
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar/model"
 )
 
 type AccountStore struct {
-	conf *configs.PostarConfig
+	conf *config.PostarConfig
 	db   *sql.DB
 }
 
-func NewAccountStore(conf *configs.PostarConfig) *AccountStore {
+func NewAccountStore(conf *config.PostarConfig) *AccountStore {
 	store := &AccountStore{
 		conf: conf,
 		db:   db,

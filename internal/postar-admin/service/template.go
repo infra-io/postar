@@ -12,7 +12,7 @@ import (
 
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/model"
 )
 
@@ -25,11 +25,11 @@ type TemplateStore interface {
 }
 
 type defaultTemplateService struct {
-	conf          *configs.PostarAdminConfig
+	conf          *config.PostarAdminConfig
 	templateStore TemplateStore
 }
 
-func NewTemplateService(conf *configs.PostarAdminConfig, templateStore TemplateStore) TemplateService {
+func NewTemplateService(conf *config.PostarAdminConfig, templateStore TemplateStore) TemplateService {
 	service := &defaultTemplateService{
 		conf:          conf,
 		templateStore: templateStore,

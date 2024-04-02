@@ -12,7 +12,7 @@ import (
 
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/model"
 	"github.com/infra-io/postar/pkg/aes"
 )
@@ -25,11 +25,11 @@ type AccountStore interface {
 }
 
 type defaultAccountService struct {
-	conf         *configs.PostarAdminConfig
+	conf         *config.PostarAdminConfig
 	accountStore AccountStore
 }
 
-func NewAccountService(conf *configs.PostarAdminConfig, accountStore AccountStore) AccountService {
+func NewAccountService(conf *config.PostarAdminConfig, accountStore AccountStore) AccountService {
 	service := &defaultAccountService{
 		conf:         conf,
 		accountStore: accountStore,

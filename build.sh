@@ -26,8 +26,8 @@ function build_postar_admin() {
 }
 
 function package() {
-    cp "$WORKDIR"/configs/postar.toml "$TARGET_PACKAGE"/
-    cp "$WORKDIR"/configs/postar_admin.toml "$TARGET_PACKAGE"/
+    cp "$WORKDIR"/config/postar.toml "$TARGET_PACKAGE"/
+    cp "$WORKDIR"/config/postar_admin.toml "$TARGET_PACKAGE"/
     cp "$WORKDIR"/LICENSE "$TARGET_PACKAGE"/
 
     cd "$TARGET"

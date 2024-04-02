@@ -13,16 +13,16 @@ import (
 
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/model"
 )
 
 type TemplateStore struct {
-	conf *configs.PostarAdminConfig
+	conf *config.PostarAdminConfig
 	db   *sql.DB
 }
 
-func NewTemplateStore(conf *configs.PostarAdminConfig) *TemplateStore {
+func NewTemplateStore(conf *config.PostarAdminConfig) *TemplateStore {
 	store := &TemplateStore{
 		conf: conf,
 		db:   db,

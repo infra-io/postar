@@ -11,7 +11,7 @@ import (
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
 	postaradminv1 "github.com/infra-io/postar/api/genproto/postaradmin/v1"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/service"
 	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"github.com/infra-io/postar/pkg/grpc/contextutil"
@@ -24,7 +24,7 @@ type GrpcServer struct {
 	postaradminv1.UnimplementedAccountServiceServer
 	postaradminv1.UnimplementedTemplateServiceServer
 
-	conf   *configs.PostarAdminConfig
+	conf   *config.PostarAdminConfig
 	server *grpc.Server
 
 	spaceService    service.SpaceService
@@ -32,7 +32,7 @@ type GrpcServer struct {
 	templateService service.TemplateService
 }
 
-func newGrpcServerOpts(conf *configs.PostarAdminConfig, spaceService service.SpaceService) ([]grpc.ServerOption, error) {
+func newGrpcServerOpts(conf *config.PostarAdminConfig, spaceService service.SpaceService) ([]grpc.ServerOption, error) {
 	var opts []grpc.ServerOption
 
 	if conf.Server.UseTLS {
@@ -51,7 +51,7 @@ func newGrpcServerOpts(conf *configs.PostarAdminConfig, spaceService service.Spa
 	return opts, nil
 }
 
-func NewGrpcServer(conf *configs.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error) {
+func NewGrpcServer(conf *config.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error) {
 	opts, err := newGrpcServerOpts(conf, spaceService)
 	if err != nil {
 		return nil, err
