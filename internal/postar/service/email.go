@@ -10,7 +10,7 @@ import (
 
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar/model"
 	"github.com/infra-io/postar/pkg/aes"
 	"github.com/infra-io/postar/pkg/gomail"
@@ -36,14 +36,14 @@ type EmailService interface {
 }
 
 type defaultEmailService struct {
-	conf *configs.PostarConfig
+	conf *config.PostarConfig
 
 	spaceStore    SpaceStore
 	accountStore  AccountStore
 	templateStore TemplateStore
 }
 
-func NewEmailService(conf *configs.PostarConfig, spaceStore SpaceStore, accountStore AccountStore, templateStore TemplateStore) EmailService {
+func NewEmailService(conf *config.PostarConfig, spaceStore SpaceStore, accountStore AccountStore, templateStore TemplateStore) EmailService {
 	service := &defaultEmailService{
 		conf:          conf,
 		spaceStore:    spaceStore,

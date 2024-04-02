@@ -19,7 +19,7 @@ import (
 	"github.com/infra-io/postar/internal/postar/store"
 	"github.com/infra-io/servicex/runtime/maxprocs"
 
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 )
 
 func parseConfigFile() (string, error) {
@@ -35,13 +35,13 @@ func parseConfigFile() (string, error) {
 	return *configFile, nil
 }
 
-func setupConfig() (*configs.PostarConfig, error) {
+func setupConfig() (*config.PostarConfig, error) {
 	configFile, err := parseConfigFile()
 	if err != nil {
 		return nil, err
 	}
 
-	conf := configs.NewPostarConfig()
+	conf := config.NewPostarConfig()
 	if _, err = toml.DecodeFile(configFile, conf); err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func setupConfig() (*configs.PostarConfig, error) {
 	return conf, nil
 }
 
-func setupLogger(conf *configs.PostarConfig) error {
+func setupLogger(conf *config.PostarConfig) error {
 	opts, err := conf.Logger.Options()
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func setupLogger(conf *configs.PostarConfig) error {
 	return nil
 }
 
-func newServer(conf *configs.PostarConfig) (server.Server, error) {
+func newServer(conf *config.PostarConfig) (server.Server, error) {
 	if err := store.Connect(&conf.Database); err != nil {
 		return nil, err
 	}

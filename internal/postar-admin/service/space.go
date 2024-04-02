@@ -12,7 +12,7 @@ import (
 
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/model"
 	"github.com/infra-io/postar/pkg/aes"
 	"github.com/infra-io/servicex/rand"
@@ -26,11 +26,11 @@ type SpaceStore interface {
 }
 
 type defaultSpaceService struct {
-	conf       *configs.PostarAdminConfig
+	conf       *config.PostarAdminConfig
 	spaceStore SpaceStore
 }
 
-func NewSpaceService(conf *configs.PostarAdminConfig, spaceStore SpaceStore) SpaceService {
+func NewSpaceService(conf *config.PostarAdminConfig, spaceStore SpaceStore) SpaceService {
 	service := &defaultSpaceService{
 		conf:       conf,
 		spaceStore: spaceStore,

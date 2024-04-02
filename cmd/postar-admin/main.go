@@ -13,7 +13,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/FishGoddess/logit"
 	"github.com/infra-io/postar"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/server"
 	"github.com/infra-io/postar/internal/postar-admin/service"
 	"github.com/infra-io/postar/internal/postar-admin/store"
@@ -33,13 +33,13 @@ func parseConfigFile() (string, error) {
 	return *configFile, nil
 }
 
-func setupConfig() (*configs.PostarAdminConfig, error) {
+func setupConfig() (*config.PostarAdminConfig, error) {
 	configFile, err := parseConfigFile()
 	if err != nil {
 		return nil, err
 	}
 
-	conf := configs.NewPostarAdminConfig()
+	conf := config.NewPostarAdminConfig()
 	if _, err = toml.DecodeFile(configFile, conf); err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func setupConfig() (*configs.PostarAdminConfig, error) {
 	return conf, nil
 }
 
-func setupLogger(conf *configs.PostarAdminConfig) error {
+func setupLogger(conf *config.PostarAdminConfig) error {
 	opts, err := conf.Logger.Options()
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func setupLogger(conf *configs.PostarAdminConfig) error {
 	return nil
 }
 
-func newServer(conf *configs.PostarAdminConfig) (server.Server, error) {
+func newServer(conf *config.PostarAdminConfig) (server.Server, error) {
 	if err := store.Connect(&conf.Database); err != nil {
 		return nil, err
 	}

@@ -11,7 +11,7 @@ import (
 
 	"github.com/FishGoddess/logit"
 	postaradminv1 "github.com/infra-io/postar/api/genproto/postaradmin/v1"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/service"
 	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"google.golang.org/grpc"
@@ -19,12 +19,12 @@ import (
 )
 
 type GatewayServer struct {
-	conf       *configs.PostarAdminConfig
+	conf       *config.PostarAdminConfig
 	grpcServer Server
 	httpServer *http.Server
 }
 
-func newGrpcServer(conf *configs.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, http.Handler, error) {
+func newGrpcServer(conf *config.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, http.Handler, error) {
 	ctx := context.Background()
 	mux := grpcx.NewGatewayMux()
 	endpoint := conf.Server.GrpcEndpoint
@@ -60,7 +60,7 @@ func newGrpcServer(conf *configs.PostarAdminConfig, spaceService service.SpaceSe
 	return grpcServer, mux, err
 }
 
-func NewGatewayServer(conf *configs.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error) {
+func NewGatewayServer(conf *config.PostarAdminConfig, spaceService service.SpaceService, accountService service.AccountService, templateService service.TemplateService) (Server, error) {
 	grpcServer, handler, err := newGrpcServer(conf, spaceService, accountService, templateService)
 	if err != nil {
 		return nil, err

@@ -27,9 +27,9 @@ We provide built binaries, go check on [码云](https://gitee.com/infra-io/posta
 
 Execute `make build` in the root of source code will generate target directory, which contains all binary files.
 
-_Notice 1: Default config file are `postar.toml` and `postar-admin.toml`, default log file are `postar.log` and `postar-admin.log`._
+_Notice 1: Default config file are [postar.toml](./config/postar.toml) and [postar_admin.toml](./config/postar_admin.toml), default log files are stored in `log`._
 
-_Notice 2: Postar needs mysql to store some configurations about email, so you should create tables in `postar.sql` which will record all changes._
+_Notice 2: Postar needs mysql to store some configurations about email, so you should create tables in [postar.sql](./postar.sql) which will record all changes._
 
 _Notice 3: How to use client in [Gitee](https://gitee.com/infra-io/postar-client) or [GitHub](https://github.com/infra-io/postar-client)._
 

@@ -11,7 +11,7 @@ import (
 
 	"github.com/FishGoddess/logit"
 	postarv1 "github.com/infra-io/postar/api/genproto/postar/v1"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar/service"
 	grpcx "github.com/infra-io/postar/pkg/grpc"
 	"google.golang.org/grpc"
@@ -19,12 +19,12 @@ import (
 )
 
 type GatewayServer struct {
-	conf       *configs.PostarConfig
+	conf       *config.PostarConfig
 	grpcServer Server
 	httpServer *http.Server
 }
 
-func newGrpcServer(conf *configs.PostarConfig, emailService service.EmailService) (Server, http.Handler, error) {
+func newGrpcServer(conf *config.PostarConfig, emailService service.EmailService) (Server, http.Handler, error) {
 	ctx := context.Background()
 	mux := grpcx.NewGatewayMux()
 	endpoint := conf.Server.GrpcEndpoint
@@ -50,7 +50,7 @@ func newGrpcServer(conf *configs.PostarConfig, emailService service.EmailService
 	return grpcServer, mux, err
 }
 
-func NewGatewayServer(conf *configs.PostarConfig, emailService service.EmailService) (Server, error) {
+func NewGatewayServer(conf *config.PostarConfig, emailService service.EmailService) (Server, error) {
 	grpcServer, handler, err := newGrpcServer(conf, emailService)
 	if err != nil {
 		return nil, err

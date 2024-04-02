@@ -10,7 +10,7 @@ import (
 
 	"github.com/FishGoddess/cryptox"
 	"github.com/FishGoddess/cryptox/aes"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/model"
 )
 
@@ -58,7 +58,7 @@ func newNextPageToken(skip int64, pageSize int32, currentSize int) string {
 	return strconv.FormatInt(skip, 10)
 }
 
-func newAES(conf configs.CryptoConfig) aes.AES {
+func newAES(conf config.CryptoConfig) aes.AES {
 	aesKey := cryptox.FromString(conf.AESKey)
 	return aes.New(aesKey)
 }

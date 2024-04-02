@@ -1,6 +1,6 @@
 .PHONY: all fmt test build clean proto postar postaradmin
 
-VERSION=v0.4.2-alpha
+VERSION=v0.4.3-alpha
 
 all:
 	make test && make clean && make build
@@ -26,8 +26,8 @@ proto:
 
 postar:
 	go mod tidy
-	go run cmd/postar/main.go -conf ./configs/postar.toml
+	go run cmd/postar/main.go -conf ./config/postar.toml
 
 postaradmin:
 	go mod tidy
-	go run cmd/postar-admin/main.go -conf ./configs/postar_admin.toml
+	go run cmd/postar-admin/main.go -conf ./config/postar_admin.toml

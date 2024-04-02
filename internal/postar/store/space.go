@@ -10,16 +10,16 @@ import (
 
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar/model"
 )
 
 type SpaceStore struct {
-	conf *configs.PostarConfig
+	conf *config.PostarConfig
 	db   *stdsql.DB
 }
 
-func NewSpaceStore(conf *configs.PostarConfig) *SpaceStore {
+func NewSpaceStore(conf *config.PostarConfig) *SpaceStore {
 	store := &SpaceStore{
 		conf: conf,
 		db:   db,

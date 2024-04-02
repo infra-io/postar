@@ -14,7 +14,7 @@ import (
 
 	"github.com/FishGoddess/logit"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/infra-io/postar/configs"
+	"github.com/infra-io/postar/config"
 )
 
 const (
@@ -23,7 +23,7 @@ const (
 
 var db *sql.DB
 
-func newDSN(conf *configs.DatabaseConfig) string {
+func newDSN(conf *config.DatabaseConfig) string {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=true&loc=Local&time_zone=%s",
 		conf.Username, conf.Password, conf.Address, conf.Database, url.QueryEscape("'Asia/Shanghai'"),
 	)
@@ -31,7 +31,7 @@ func newDSN(conf *configs.DatabaseConfig) string {
 	return dsn
 }
 
-func reportStats(conf *configs.DatabaseConfig) {
+func reportStats(conf *config.DatabaseConfig) {
 	logger := logit.Default().WithGroup("db").With("address", conf.Address, "username", conf.Username, "database", conf.Database)
 
 	ticker := time.NewTicker(conf.ReportStatsTime.Standard())
@@ -46,7 +46,7 @@ func reportStats(conf *configs.DatabaseConfig) {
 	}
 }
 
-func Connect(conf *configs.DatabaseConfig) (err error) {
+func Connect(conf *config.DatabaseConfig) (err error) {
 	db, err = sql.Open("mysql", newDSN(conf))
 	if err != nil {
 		return err
