@@ -10,31 +10,33 @@ import (
 )
 
 func Encrypt(aesKey string, aesIV string, str string) (encrypted string, err error) {
-	raw := cryptox.FromString(str)
-	aes := aes.New(cryptox.FromString(aesKey))
-	iv := cryptox.FromString(aesIV)
+	key := []byte(aesKey)
+	iv := []byte(aesIV)
+	bs := []byte(str)
 
-	bs, err := aes.EncryptCTR(cryptox.PaddingNone, iv, raw)
+	bs, err = aes.EncryptCTR(key, iv, cryptox.PaddingNone, bs)
 	if err != nil {
 		return "", err
 	}
 
-	return bs.Base64(), nil
+	encrypted = cryptox.Bytes(bs).Base64()
+	return encrypted, nil
 }
 
 func Decrypt(aesKey string, aesIV string, str string) (decrypted string, err error) {
-	raw, err := cryptox.FromBase64(str)
+	key := []byte(aesKey)
+	iv := []byte(aesIV)
+
+	bs, err := cryptox.ParseBase64(str)
 	if err != nil {
 		return "", err
 	}
 
-	aes := aes.New(cryptox.FromString(aesKey))
-	iv := cryptox.FromString(aesIV)
-
-	bs, err := aes.DecryptCTR(cryptox.UnPaddingNone, iv, raw)
+	bs, err = aes.DecryptCTR(key, iv, cryptox.PaddingNone, bs)
 	if err != nil {
 		return "", err
 	}
 
-	return bs.String(), nil
+	decrypted = string(bs)
+	return decrypted, nil
 }

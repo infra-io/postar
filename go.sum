@@ -2,8 +2,8 @@ github.com/BurntSushi/toml v1.3.2 h1:o7IhLm0Msx3BaB+n3Ag7L8EVlByGnpq14C4YWiu/gL8
 github.com/BurntSushi/toml v1.3.2/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/FishGoddess/cachego v0.6.1 h1:mbytec3loqw5dcO177LyRGyStKG0AngP5g2GR3SzSh0=
 github.com/FishGoddess/cachego v0.6.1/go.mod h1:VLSMwWRlRPazjGYer8pq+4aDrIe1Otj3Yy9HAb0eo3c=
-github.com/FishGoddess/cryptox v0.4.0 h1:L30r7Ebp7UepUW7Z9BktTXMoUYTMKpJKB5b7bY2Ayg8=
-github.com/FishGoddess/cryptox v0.4.0/go.mod h1:nsE22CNveo1oVSJgxl88KqhJhdK2KQXykEXq85r+3T4=
+github.com/FishGoddess/cryptox v0.4.3 h1:EP1732fzkkgWKi7RSdVje+/pN8WeYFtzdHhJG4JcSs4=
+github.com/FishGoddess/cryptox v0.4.3/go.mod h1:1j6yGIdxvxJ/V0XThrGhZ+c0NzMi0WxO7WeDFTfNyIM=
 github.com/FishGoddess/errors v0.5.2 h1:PYjU6Xb72NXbSKUlwNzHszdUz9/VGS8/CBVAh0U/IwM=
 github.com/FishGoddess/errors v0.5.2/go.mod h1:gXd4tNYX6ZFr2XmelF2DHn2uF7oTAi+O9ToJDjNeneE=
 github.com/FishGoddess/logit v1.5.10 h1:Di4la3onpM23DMInaJ4L93D6TUAX4woRG6EUiz9lQ9Q=
@@ -21,8 +21,8 @@ github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0 h1:Wqo399gCIufwto+VfwCSvsnfGpF
 github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0/go.mod h1:qmOFXW2epJhM0qSnUUYpldc7gVz2KMQwJ/QYCDIa7XU=
 github.com/infra-io/postar/api v1.2.0 h1:IVHdjI0Pd52ldFqLhqumbb07rcxeB4wSNQYI9dpLcoM=
 github.com/infra-io/postar/api v1.2.0/go.mod h1:D15av3VEjck56mXb8kF4iy7YWw9qHbl/OKxzPDm8lXg=
-github.com/infra-io/servicex v0.4.1 h1:JDMIgOr73g1ME+s1PihQBshj26NI9XJPBiZ15OnV7O4=
-github.com/infra-io/servicex v0.4.1/go.mod h1:8Vks9qOy72ByqgFflz11YPNRnwqjCqkEIa5YQE9Y8oQ=
+github.com/infra-io/servicex v0.4.2 h1:RksS8zwtTF1jaWct/Rq1Z562FTiKgszBOYDhrexJKCE=
+github.com/infra-io/servicex v0.4.2/go.mod h1:wnDlyT0SagG665gqtuZ/PiBOUo/eG8c/3KY25Ginzlo=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prashantv/gostub v1.1.0 h1:BTyx3RfQjRHnUWaGF9oQos79AlQ5k8WNktv7VGvVH4g=

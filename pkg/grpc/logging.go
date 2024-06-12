@@ -8,8 +8,8 @@ import (
 	"context"
 
 	"github.com/infra-io/postar/pkg/grpc/contextutil"
-	"github.com/infra-io/servicex/observability/logging"
-	"github.com/infra-io/servicex/observability/tracing"
+	"github.com/infra-io/servicex/observe/logging"
+	"github.com/infra-io/servicex/observe/tracing"
 )
 
 func spaceResolver(ctx context.Context, _ any) []any {

@@ -7,12 +7,12 @@ package aes
 import (
 	"testing"
 
-	"github.com/infra-io/servicex/rand"
+	"github.com/FishGoddess/cryptox"
 )
 
 // go test -v -cover -count=1 -test.cpu=1 -run=^TestNew$
 func TestAES(t *testing.T) {
-	str := rand.GenerateString(64)
+	str := cryptox.GenerateString(64)
 
 	aesKey := "123456788765432112345678"
 	aesIV := "1234567887654321"

@@ -11,8 +11,8 @@ import (
 
 	"github.com/FishGoddess/logit"
 	"github.com/infra-io/postar/pkg/grpc/contextutil"
-	"github.com/infra-io/servicex/observability/logging"
-	"github.com/infra-io/servicex/observability/tracing"
+	"github.com/infra-io/servicex/observe/logging"
+	"github.com/infra-io/servicex/observe/tracing"
 	"github.com/infra-io/servicex/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
