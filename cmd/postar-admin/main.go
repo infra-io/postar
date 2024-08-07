@@ -17,7 +17,7 @@ import (
 	"github.com/infra-io/postar/internal/postar-admin/server"
 	"github.com/infra-io/postar/internal/postar-admin/service"
 	"github.com/infra-io/postar/internal/postar-admin/store"
-	"github.com/infra-io/servicex/runtime/maxprocs"
+	_ "github.com/infra-io/servicex"
 )
 
 func parseConfigFile() (string, error) {
@@ -94,9 +94,6 @@ func main() {
 
 	logit.Info("using config", "conf", conf)
 	defer logit.Close()
-
-	// Setup process information automatically.
-	maxprocs.Setup()
 
 	svr, err := newServer(conf)
 	if err != nil {

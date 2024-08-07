@@ -8,7 +8,6 @@ import (
 	"time"
 
 	logitconf "github.com/FishGoddess/logit/extension/config"
-	timex "github.com/infra-io/servicex/time"
 )
 
 // PostarAdminConfig stores all configurations of postar-admin.
@@ -42,8 +41,8 @@ func NewPostarAdminConfig() *PostarAdminConfig {
 			UseTLS:             false,
 			CertFile:           "./cert/localhost.crt",
 			KeyFile:            "./cert/localhost.key",
-			RequestTimeout:     timex.NewDuration(time.Second),
-			CloseServerTimeout: timex.NewDuration(time.Minute),
+			RequestTimeout:     Duration(time.Second),
+			CloseServerTimeout: Duration(time.Minute),
 		},
 		Database: DatabaseConfig{
 			Address:         "127.0.0.1:6033",
@@ -52,9 +51,9 @@ func NewPostarAdminConfig() *PostarAdminConfig {
 			Database:        "postar",
 			MaxOpenConns:    16,
 			MaxIdleConns:    4,
-			ConnMaxIdleTime: timex.NewDuration(3 * time.Minute),
-			ConnMaxLifetime: timex.NewDuration(10 * time.Minute),
-			ReportStatsTime: timex.NewDuration(time.Minute),
+			ConnMaxIdleTime: Duration(3 * time.Minute),
+			ConnMaxLifetime: Duration(10 * time.Minute),
+			ReportStatsTime: Duration(time.Minute),
 		},
 		Crypto: CryptoConfig{
 			AESKey: "",

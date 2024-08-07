@@ -11,11 +11,11 @@ require (
 	github.com/FishGoddess/cachego v0.6.1
 	github.com/FishGoddess/cryptox v0.4.3
 	github.com/FishGoddess/errors v0.5.2
-	github.com/FishGoddess/logit v1.5.10
+	github.com/FishGoddess/logit v1.8.1
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
 	github.com/infra-io/postar/api v1.2.0
-	github.com/infra-io/servicex v0.4.2
+	github.com/infra-io/servicex v0.4.3
 	github.com/wneessen/go-mail v0.4.0
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
