@@ -12,11 +12,10 @@ import (
 	"github.com/FishGoddess/cachego"
 	"github.com/infra-io/postar/internal/postar/model"
 	"github.com/infra-io/postar/internal/postar/service"
-	"github.com/infra-io/servicex/cache"
 )
 
 const (
-	accountCacheTTL = 3 * time.Second
+	accountCacheTTL = time.Second
 )
 
 type AccountStore struct {
@@ -26,7 +25,7 @@ type AccountStore struct {
 
 func WrapAccountStore(accountStore service.AccountStore) service.AccountStore {
 	store := &AccountStore{
-		cache:        cache.New("account"),
+		cache:        newCache("account"),
 		accountStore: accountStore,
 	}
 

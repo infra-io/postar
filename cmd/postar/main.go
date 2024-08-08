@@ -1,4 +1,4 @@
-// Copyright 2021 FishGoddess. All rights reserved.
+// Copyright 2024 FishGoddess. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -17,7 +17,7 @@ import (
 	"github.com/infra-io/postar/internal/postar/server"
 	"github.com/infra-io/postar/internal/postar/service"
 	"github.com/infra-io/postar/internal/postar/store"
-	"github.com/infra-io/servicex/runtime/maxprocs"
+	_ "github.com/infra-io/postar/pkg/runtime"
 
 	"github.com/infra-io/postar/config"
 )
@@ -59,12 +59,9 @@ func setupLogger(conf *config.PostarConfig) error {
 		return err
 	}
 
-	logger, err := logit.NewLoggerGracefully(opts...)
-	if err != nil {
-		return err
-	}
-
+	logger := logit.NewLogger(opts...)
 	logit.SetDefault(logger)
+
 	return nil
 }
 
@@ -73,9 +70,20 @@ func newServer(conf *config.PostarConfig) (server.Server, error) {
 		return nil, err
 	}
 
-	spaceStore := cache.WrapSpaceStore(store.NewSpaceStore(conf))
-	accountStore := cache.WrapAccountStore(store.NewAccountStore(conf))
-	templateStore := cache.WrapTemplateStore(store.NewTemplateStore(conf))
+	var spaceStore service.SpaceStore = store.NewSpaceStore(conf)
+	if conf.Cache.UseSpaceCache {
+		spaceStore = cache.WrapSpaceStore(spaceStore)
+	}
+
+	var accountStore service.AccountStore = store.NewAccountStore(conf)
+	if conf.Cache.UseAccountCache {
+		accountStore = cache.WrapAccountStore(accountStore)
+	}
+
+	var templateStore service.TemplateStore = store.NewTemplateStore(conf)
+	if conf.Cache.UseTemplateCache {
+		templateStore = cache.WrapTemplateStore(templateStore)
+	}
 
 	emailService := service.NewEmailService(conf, spaceStore, accountStore, templateStore)
 	return server.New(conf, emailService)
@@ -93,9 +101,6 @@ func main() {
 
 	logit.Info("using config", "conf", conf)
 	defer logit.Close()
-
-	// Setup process information automatically.
-	maxprocs.Setup()
 
 	svr, err := newServer(conf)
 	if err != nil {

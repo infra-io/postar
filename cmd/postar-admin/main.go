@@ -1,4 +1,4 @@
-// Copyright 2023 FishGoddess. All rights reserved.
+// Copyright 2024 FishGoddess. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -17,7 +17,7 @@ import (
 	"github.com/infra-io/postar/internal/postar-admin/server"
 	"github.com/infra-io/postar/internal/postar-admin/service"
 	"github.com/infra-io/postar/internal/postar-admin/store"
-	"github.com/infra-io/servicex/runtime/maxprocs"
+	_ "github.com/infra-io/postar/pkg/runtime"
 )
 
 func parseConfigFile() (string, error) {
@@ -57,12 +57,9 @@ func setupLogger(conf *config.PostarAdminConfig) error {
 		return err
 	}
 
-	logger, err := logit.NewLoggerGracefully(opts...)
-	if err != nil {
-		return err
-	}
-
+	logger := logit.NewLogger(opts...)
 	logit.SetDefault(logger)
+
 	return nil
 }
 
@@ -94,9 +91,6 @@ func main() {
 
 	logit.Info("using config", "conf", conf)
 	defer logit.Close()
-
-	// Setup process information automatically.
-	maxprocs.Setup()
 
 	svr, err := newServer(conf)
 	if err != nil {

@@ -1,4 +1,4 @@
-// Copyright 2023 FishGoddess. All rights reserved.
+// Copyright 2024 FishGoddess. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -8,7 +8,6 @@ import (
 	"time"
 
 	logitconf "github.com/FishGoddess/logit/extension/config"
-	timex "github.com/infra-io/servicex/time"
 )
 
 // PostarConfig stores all configurations of postar.
@@ -17,6 +16,7 @@ type PostarConfig struct {
 	Server   ServerConfig     `json:"server" toml:"server"`
 	Database DatabaseConfig   `json:"database" toml:"database"`
 	Crypto   CryptoConfig     `json:"crypto" toml:"crypto"`
+	Cache    CacheConfig      `json:"cache" toml:"cache"`
 }
 
 // NewPostarConfig returns a new config for postar.
@@ -42,8 +42,8 @@ func NewPostarConfig() *PostarConfig {
 			UseTLS:             false,
 			CertFile:           "./cert/localhost.crt",
 			KeyFile:            "./cert/localhost.key",
-			RequestTimeout:     timex.NewDuration(10 * time.Second),
-			CloseServerTimeout: timex.NewDuration(time.Minute),
+			RequestTimeout:     Duration(10 * time.Second),
+			CloseServerTimeout: Duration(time.Minute),
 		},
 		Database: DatabaseConfig{
 			Address:         "127.0.0.1:6033",
@@ -52,13 +52,18 @@ func NewPostarConfig() *PostarConfig {
 			Database:        "postar",
 			MaxOpenConns:    64,
 			MaxIdleConns:    16,
-			ConnMaxIdleTime: timex.NewDuration(5 * time.Minute),
-			ConnMaxLifetime: timex.NewDuration(15 * time.Minute),
-			ReportStatsTime: timex.NewDuration(time.Minute),
+			ConnMaxIdleTime: Duration(5 * time.Minute),
+			ConnMaxLifetime: Duration(15 * time.Minute),
+			ReportStatsTime: Duration(time.Minute),
 		},
 		Crypto: CryptoConfig{
 			AESKey: "",
 			AESIV:  "",
+		},
+		Cache: CacheConfig{
+			UseSpaceCache:    true,
+			UseAccountCache:  true,
+			UseTemplateCache: true,
 		},
 	}
 

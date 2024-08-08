@@ -2,7 +2,7 @@
 POST http://127.0.0.1:7986/api/postar-admin/v1/accounts
 Content-Type: application/json
 X-Postar-Space-Id: 100
-X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+X-Postar-Space-Token: 6U88W5CbrxyUUaEEqc0K1htdBFqVozd0ENbQZumsI9lDEDqJ3CPXmRtPewntoCJy
 
 {
     "account": {
@@ -20,7 +20,7 @@ X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk
 PATCH http://127.0.0.1:7986/api/postar-admin/v1/accounts
 Content-Type: application/json
 X-Postar-Space-Id: 100
-X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+X-Postar-Space-Token: 6U88W5CbrxyUUaEEqc0K1htdBFqVozd0ENbQZumsI9lDEDqJ3CPXmRtPewntoCJy
 
 {
     "account": {
@@ -38,13 +38,13 @@ X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk
 # 查询账号
 GET http://127.0.0.1:7986/api/postar-admin/v1/accounts/10000?with_password=true
 X-Postar-Space-Id: 100
-X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+X-Postar-Space-Token: 6U88W5CbrxyUUaEEqc0K1htdBFqVozd0ENbQZumsI9lDEDqJ3CPXmRtPewntoCJy
 
 ###
 
 # 分页查询账号列表
 GET http://127.0.0.1:7986/api/postar-admin/v1/accounts?pageSize=20
 X-Postar-Space-Id: 100
-X-Postar-Space-Token: alYxRWwwdHg2MWhMc3R1Y25DcXFOU2R5cURGWWUzeXBwWThQdHdCWGpyUk5obHlLcU1CQ2NENjE1SFNXRWhuUg==
+X-Postar-Space-Token: 6U88W5CbrxyUUaEEqc0K1htdBFqVozd0ENbQZumsI9lDEDqJ3CPXmRtPewntoCJy
 
 ###

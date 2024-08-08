@@ -12,11 +12,10 @@ import (
 	"github.com/FishGoddess/cachego"
 	"github.com/infra-io/postar/internal/postar/model"
 	"github.com/infra-io/postar/internal/postar/service"
-	"github.com/infra-io/servicex/cache"
 )
 
 const (
-	templateCacheTTL = 3 * time.Second
+	templateCacheTTL = time.Second
 )
 
 type TemplateStore struct {
@@ -26,7 +25,7 @@ type TemplateStore struct {
 
 func WrapTemplateStore(templateStore service.TemplateStore) service.TemplateStore {
 	store := &TemplateStore{
-		cache:         cache.New("template"),
+		cache:         newCache("template"),
 		templateStore: templateStore,
 	}
 

@@ -1,4 +1,4 @@
-// Copyright 2023 FishGoddess. All rights reserved.
+// Copyright 2024 FishGoddess. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -8,9 +8,6 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/FishGoddess/cryptox"
-	"github.com/FishGoddess/cryptox/aes"
-	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/model"
 )
 
@@ -56,9 +53,4 @@ func newNextPageToken(skip int64, pageSize int32, currentSize int) string {
 
 	skip = skip + int64(pageSize)
 	return strconv.FormatInt(skip, 10)
-}
-
-func newAES(conf config.CryptoConfig) aes.AES {
-	aesKey := cryptox.FromString(conf.AESKey)
-	return aes.New(aesKey)
 }

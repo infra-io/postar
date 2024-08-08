@@ -1,4 +1,4 @@
-// Copyright 2023 FishGoddess. All rights reserved.
+// Copyright 2024 FishGoddess. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -10,12 +10,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/FishGoddess/cryptox"
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
 	"github.com/infra-io/postar/config"
 	"github.com/infra-io/postar/internal/postar-admin/model"
 	"github.com/infra-io/postar/pkg/aes"
-	"github.com/infra-io/servicex/rand"
 )
 
 type SpaceStore interface {
@@ -56,7 +56,7 @@ func (dss *defaultSpaceService) CreateSpace(ctx context.Context, space *model.Sp
 		return nil, err
 	}
 
-	token := rand.GenerateString(64)
+	token := cryptox.GenerateString(64)
 	encrypted, err := aes.Encrypt(dss.conf.Crypto.AESKey, dss.conf.Crypto.AESIV, token)
 	if err != nil {
 		logger.Error("encrypt token failed", "err", err)
