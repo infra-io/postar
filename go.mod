@@ -12,7 +12,7 @@ require (
 	github.com/FishGoddess/logit v1.8.1
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
-	github.com/infra-io/postar/api v1.2.0
+	github.com/infra-io/postar/api v1.2.1
 	github.com/wneessen/go-mail v0.4.0
 	go.uber.org/automaxprocs v1.5.3
 	google.golang.org/grpc v1.62.1
