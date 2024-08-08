@@ -70,9 +70,20 @@ func newServer(conf *config.PostarConfig) (server.Server, error) {
 		return nil, err
 	}
 
-	spaceStore := cache.WrapSpaceStore(store.NewSpaceStore(conf))
-	accountStore := cache.WrapAccountStore(store.NewAccountStore(conf))
-	templateStore := cache.WrapTemplateStore(store.NewTemplateStore(conf))
+	var spaceStore service.SpaceStore = store.NewSpaceStore(conf)
+	if conf.Cache.UseSpaceCache {
+		spaceStore = cache.WrapSpaceStore(spaceStore)
+	}
+
+	var accountStore service.AccountStore = store.NewAccountStore(conf)
+	if conf.Cache.UseAccountCache {
+		accountStore = cache.WrapAccountStore(accountStore)
+	}
+
+	var templateStore service.TemplateStore = store.NewTemplateStore(conf)
+	if conf.Cache.UseTemplateCache {
+		templateStore = cache.WrapTemplateStore(templateStore)
+	}
 
 	emailService := service.NewEmailService(conf, spaceStore, accountStore, templateStore)
 	return server.New(conf, emailService)

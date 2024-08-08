@@ -52,3 +52,9 @@ func (cc *CryptoConfig) Check() error {
 
 	return nil
 }
+
+type CacheConfig struct {
+	UseSpaceCache    bool `json:"use_space_cache" toml:"use_space_cache"`
+	UseAccountCache  bool `json:"use_account_cache" toml:"use_account_cache"`
+	UseTemplateCache bool `json:"use_template_cache" toml:"use_template_cache"`
+}

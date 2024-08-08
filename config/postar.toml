@@ -63,3 +63,12 @@ report_stats_time = "1m"
 [crypto]
 aes_key = "123456788765432112345678"
 aes_iv = "1234567887654321"
+
+# All configurations of cache.
+# use_space_cache is whether postar uses cache for spaces or not.
+# use_account_cache is whether postar uses cache for accounts or not.
+# use_template_cache is whether postar uses cache for templates or not.
+[cache]
+use_space_cache = true
+use_account_cache = true
+use_template_cache = true

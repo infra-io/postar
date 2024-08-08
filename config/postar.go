@@ -16,6 +16,7 @@ type PostarConfig struct {
 	Server   ServerConfig     `json:"server" toml:"server"`
 	Database DatabaseConfig   `json:"database" toml:"database"`
 	Crypto   CryptoConfig     `json:"crypto" toml:"crypto"`
+	Cache    CacheConfig      `json:"cache" toml:"cache"`
 }
 
 // NewPostarConfig returns a new config for postar.
@@ -58,6 +59,11 @@ func NewPostarConfig() *PostarConfig {
 		Crypto: CryptoConfig{
 			AESKey: "",
 			AESIV:  "",
+		},
+		Cache: CacheConfig{
+			UseSpaceCache:    true,
+			UseAccountCache:  true,
+			UseTemplateCache: true,
 		},
 	}
 
