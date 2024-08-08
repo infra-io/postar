@@ -57,12 +57,9 @@ func setupLogger(conf *config.PostarAdminConfig) error {
 		return err
 	}
 
-	logger, err := logit.NewLoggerGracefully(opts...)
-	if err != nil {
-		return err
-	}
-
+	logger := logit.NewLogger(opts...)
 	logit.SetDefault(logger)
+
 	return nil
 }
 

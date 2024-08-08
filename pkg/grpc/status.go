@@ -23,7 +23,7 @@ func init() {
 	)
 }
 
-func wrapWithStatus(err error) error {
+func wrapStatus(err error) error {
 	code, msg := status.Parse(err)
 	gCode := grpccodes.Code(code)
 
