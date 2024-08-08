@@ -4,10 +4,23 @@
 
 package runtime
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
-// go test -v -cover -count=1 -test.cpu=1 -run=^TestStack$
-func TestStack(t *testing.T) {
-	stack := Stack()
-	t.Log(stack)
+// BenchmarkCallers-2   	  437528	      2584 ns/op	     748 B/op	      12 allocs/op
+func BenchmarkCallers(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		Callers()
+	}
+}
+
+// go test -v -cover -count=1 -test.cpu=1 -run=^TestCallers$
+func TestCallers(t *testing.T) {
+	callers := Callers()
+	fmt.Println(callers)
 }

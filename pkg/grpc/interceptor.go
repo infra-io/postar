@@ -20,7 +20,7 @@ func Interceptor(serviceName string, timeout time.Duration) grpc.UnaryServerInte
 	return func(ctx context.Context, req any, serverInfo *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
 		defer func() {
 			if r := recover(); r != nil {
-				logit.FromContext(ctx).Error("recovery from panic", "r", r, "stack", runtime.Stack())
+				logit.FromContext(ctx).Error("recovery from panic", "r", r, "callers", runtime.Callers())
 			}
 		}()
 
