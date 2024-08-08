@@ -1,6 +1,6 @@
 .PHONY: all fmt test build clean proto postar postaradmin
 
-VERSION=v0.4.4-alpha
+VERSION=v0.5.0
 
 all:
 	make test && make clean && make build
