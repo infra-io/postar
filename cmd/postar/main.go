@@ -1,4 +1,4 @@
-// Copyright 2021 FishGoddess. All rights reserved.
+// Copyright 2024 FishGoddess. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -17,7 +17,7 @@ import (
 	"github.com/infra-io/postar/internal/postar/server"
 	"github.com/infra-io/postar/internal/postar/service"
 	"github.com/infra-io/postar/internal/postar/store"
-	_ "github.com/infra-io/servicex"
+	_ "github.com/infra-io/postar/pkg/runtime"
 
 	"github.com/infra-io/postar/config"
 )

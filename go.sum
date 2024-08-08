@@ -21,8 +21,6 @@ github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0 h1:Wqo399gCIufwto+VfwCSvsnfGpF
 github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0/go.mod h1:qmOFXW2epJhM0qSnUUYpldc7gVz2KMQwJ/QYCDIa7XU=
 github.com/infra-io/postar/api v1.2.0 h1:IVHdjI0Pd52ldFqLhqumbb07rcxeB4wSNQYI9dpLcoM=
 github.com/infra-io/postar/api v1.2.0/go.mod h1:D15av3VEjck56mXb8kF4iy7YWw9qHbl/OKxzPDm8lXg=
-github.com/infra-io/servicex v0.4.3 h1:TiDTy7vuDiC1pLGQUXYLDrCk3gHD2PSOM15w0IRi8b8=
-github.com/infra-io/servicex v0.4.3/go.mod h1:ONC2pxiBnRO7XL9llwezF+S0XnbusprYrAGDPTB+PSA=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prashantv/gostub v1.1.0 h1:BTyx3RfQjRHnUWaGF9oQos79AlQ5k8WNktv7VGvVH4g=

@@ -100,7 +100,7 @@ func NewClientTLSFromCert(certFile string) (credentials.TransportCredentials, er
 		return nil, err
 	}
 
-	serverName := ""
+	var serverName string
 	if len(dnsNames) > 0 {
 		serverName = dnsNames[0]
 	}

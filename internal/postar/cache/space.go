@@ -12,11 +12,10 @@ import (
 	"github.com/FishGoddess/cachego"
 	"github.com/infra-io/postar/internal/postar/model"
 	"github.com/infra-io/postar/internal/postar/service"
-	"github.com/infra-io/servicex/cache"
 )
 
 const (
-	spaceCacheTTL = 30 * time.Second
+	spaceCacheTTL = 10 * time.Second
 )
 
 type SpaceStore struct {
@@ -26,7 +25,7 @@ type SpaceStore struct {
 
 func WrapSpaceStore(spaceStore service.SpaceStore) service.SpaceStore {
 	store := &SpaceStore{
-		cache:      cache.New("space"),
+		cache:      newCache("space"),
 		spaceStore: spaceStore,
 	}
 

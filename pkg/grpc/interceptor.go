@@ -1,4 +1,4 @@
-// Copyright 2023 FishGoddess. All rights reserved.
+// Copyright 2024 FishGoddess. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -6,36 +6,15 @@ package grpc
 
 import (
 	"context"
-	"path"
 	"time"
 
 	"github.com/FishGoddess/logit"
 	"github.com/infra-io/postar/pkg/grpc/contextutil"
-	"github.com/infra-io/servicex/runtime"
-	"github.com/infra-io/servicex/tracing"
+	"github.com/infra-io/postar/pkg/runtime"
+	"github.com/infra-io/postar/pkg/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
-
-func parseServiceInfo(info *grpc.UnaryServerInfo) (serviceName string, serviceMethod string) {
-	if method := path.Base(info.FullMethod); method != "" {
-		return "", method
-	}
-
-	return "", info.FullMethod
-}
-
-func newLogger(ctx context.Context, info *grpc.UnaryServerInfo, trace *tracing.Trace) *logit.Logger {
-	serviceName, serviceMethod := parseServiceInfo(info)
-	args := []any{"service_name", serviceName, "service_method", serviceMethod, "trace_id", trace.ID()}
-
-	spaceID := contextutil.GetSpaceID(ctx)
-	if spaceID > 0 {
-		args = append(args, "space_id", spaceID)
-	}
-
-	return logit.FromContext(ctx).With(args...)
-}
 
 func Interceptor(serviceName string, timeout time.Duration) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, serverInfo *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
@@ -47,10 +26,10 @@ func Interceptor(serviceName string, timeout time.Duration) grpc.UnaryServerInte
 
 		beginTime := time.Now()
 
-		trace := tracing.New()
-		ctx = tracing.NewContext(ctx, trace)
+		traceID := trace.ID()
+		ctx = trace.NewContext(ctx, traceID)
 
-		logger := newLogger(ctx, serverInfo, trace)
+		logger := newLogger(ctx, serverInfo, traceID)
 		ctx = logit.NewContext(ctx, logger)
 
 		var cancel context.CancelFunc
@@ -73,7 +52,7 @@ func Interceptor(serviceName string, timeout time.Duration) grpc.UnaryServerInte
 			}
 		}()
 
-		grpc.SetHeader(ctx, metadata.Pairs(contextutil.MetadataKeyTraceID, trace.ID()))
+		grpc.SetHeader(ctx, metadata.Pairs(contextutil.MetadataKeyTraceID, traceID))
 		return handler(ctx, req)
 	}
 }
