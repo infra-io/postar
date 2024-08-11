@@ -4,8 +4,8 @@ github.com/FishGoddess/cachego v0.6.1 h1:mbytec3loqw5dcO177LyRGyStKG0AngP5g2GR3S
 github.com/FishGoddess/cachego v0.6.1/go.mod h1:VLSMwWRlRPazjGYer8pq+4aDrIe1Otj3Yy9HAb0eo3c=
 github.com/FishGoddess/cryptox v0.4.3 h1:EP1732fzkkgWKi7RSdVje+/pN8WeYFtzdHhJG4JcSs4=
 github.com/FishGoddess/cryptox v0.4.3/go.mod h1:1j6yGIdxvxJ/V0XThrGhZ+c0NzMi0WxO7WeDFTfNyIM=
-github.com/FishGoddess/errors v0.6.3-alpha h1:zYTSXYQcwYlI90JHnnrswMkcjweyobIlZCNeKmNvnpk=
-github.com/FishGoddess/errors v0.6.3-alpha/go.mod h1:sjLqiuMcGykL4Wl7/wI13SJF4i+ZfL1ThSlPikZLLh0=
+github.com/FishGoddess/errors v0.7.0 h1:yPNSUvvD9xRnhHlZ6SAo/yAjxUGceD/W1ITjhPWu/c4=
+github.com/FishGoddess/errors v0.7.0/go.mod h1:sjLqiuMcGykL4Wl7/wI13SJF4i+ZfL1ThSlPikZLLh0=
 github.com/FishGoddess/logit v1.8.1 h1:FQM3A2KHZHT88DmcGibWO2ho69jhwJSYswa6JtsAzGo=
 github.com/FishGoddess/logit v1.8.1/go.mod h1:6IAtVuIW3AaPTBn2NDfBnML7t0F7/wj1FFeWIPLJy98=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
