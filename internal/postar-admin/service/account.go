@@ -6,7 +6,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
@@ -40,28 +39,23 @@ func NewAccountService(conf *config.PostarAdminConfig, accountStore AccountStore
 
 func (das *defaultAccountService) checkCreateAccountParams(account *model.Account) error {
 	if strings.TrimSpace(account.Host) == "" {
-		err := errors.New("trim account.Host == ''")
-		return errors.BadRequest(err, errors.WithMsg("账号主机不能为空"))
+		return errors.BadRequest("账号主机不能为空")
 	}
 
 	if account.Port <= 0 {
-		err := errors.New("account.Port <= 0")
-		return errors.BadRequest(err, errors.WithMsg("账号端口非法"))
+		return errors.BadRequest("账号端口需要大于 0")
 	}
 
 	if strings.TrimSpace(account.Username) == "" {
-		err := errors.New("trim account.Username == ''")
-		return errors.BadRequest(err, errors.WithMsg("账号用户名不能为空"))
+		return errors.BadRequest("账号用户名不能为空")
 	}
 
 	if account.Password == "" {
-		err := errors.New("account.Password == ''")
-		return errors.BadRequest(err, errors.WithMsg("账号密码不能为空"))
+		return errors.BadRequest("账号密码不能为空")
 	}
 
 	if account.SMTPAuth <= 0 {
-		err := errors.New("account.SMTPAuth <= 0")
-		return errors.BadRequest(err, errors.WithMsg("未指定 SMTP 认证方式"))
+		return errors.BadRequest("未指定 SMTP 认证方式")
 	}
 
 	return nil
@@ -99,13 +93,11 @@ func (das *defaultAccountService) CreateAccount(ctx context.Context, spaceID int
 
 func (das *defaultAccountService) checkUpdateAccountParams(account *model.Account) error {
 	if account.ID <= 0 {
-		err := fmt.Errorf("account.ID %d <= 0", account.ID)
-		return errors.BadRequest(err, errors.WithMsg("账号编号需要大于 0"))
+		return errors.BadRequest("账号编号需要大于 0")
 	}
 
 	if account.State > 0 && !account.State.Valid() {
-		err := fmt.Errorf("account.State %d not valid", account.State)
-		return errors.BadRequest(err, errors.WithMsg("账号状态无效"))
+		return errors.BadRequest("账号状态 %d 无效", account.State)
 	}
 
 	return nil
@@ -142,10 +134,9 @@ func (das *defaultAccountService) UpdateAccount(ctx context.Context, spaceID int
 	return account, nil
 }
 
-func (das *defaultAccountService) checkGetAccountParams(spaceID int32, accountID int32) error {
+func (das *defaultAccountService) checkGetAccountParams(accountID int32) error {
 	if accountID <= 0 {
-		err := fmt.Errorf("accountID %d <= 0", accountID)
-		return errors.BadRequest(err, errors.WithMsg("账号编号非法"))
+		return errors.BadRequest("账号编号需要大于 0")
 	}
 
 	return nil
@@ -154,7 +145,7 @@ func (das *defaultAccountService) checkGetAccountParams(spaceID int32, accountID
 func (das *defaultAccountService) GetAccount(ctx context.Context, spaceID int32, accountID int32, withPassword bool) (*model.Account, error) {
 	logger := logit.FromContext(ctx)
 
-	if err := das.checkGetAccountParams(spaceID, accountID); err != nil {
+	if err := das.checkGetAccountParams(accountID); err != nil {
 		logger.Error("check get account params failed", "err", err, "account_id", accountID)
 		return nil, err
 	}
@@ -182,18 +173,15 @@ func (das *defaultAccountService) GetAccount(ctx context.Context, spaceID int32,
 
 func (das *defaultAccountService) checkListAccountsParams(pageSize int32, filter *model.ListAccountsFilter) error {
 	if pageSize < minPageSize || pageSize > maxPageSize {
-		err := fmt.Errorf("pageSize %d not in [%d, %d]", pageSize, minPageSize, maxPageSize)
-		return errors.BadRequest(err, errors.WithMsg("分页大小需要位于区间 [%d, %d] 内", minPageSize, maxPageSize))
+		return errors.BadRequest("分页大小 %d 需要位于区间 [%d, %d] 内", pageSize, minPageSize, maxPageSize)
 	}
 
 	if filter.AccountID < 0 {
-		err := fmt.Errorf("filter.AccountID %d < 0", filter.AccountID)
-		return errors.BadRequest(err, errors.WithMsg("过滤的账号编号非法"))
+		return errors.BadRequest("账号编号不能为负数")
 	}
 
 	if filter.AccountState > 0 && !filter.AccountState.Valid() {
-		err := fmt.Errorf("filter.AccountState %d not valid", filter.AccountState)
-		return errors.BadRequest(err, errors.WithMsg("过滤的账号状态非法"))
+		return errors.BadRequest("账号状态 %d 无效", filter.AccountState)
 	}
 
 	return nil

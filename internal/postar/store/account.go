@@ -41,7 +41,7 @@ func (as *AccountStore) newAccount(row *stdsql.Row) (*model.Account, error) {
 
 	err := row.Scan(&account.ID, &account.Host, &account.Port, &account.Username, &account.Password, &account.SMTPAuth, &account.State)
 	if err == stdsql.ErrNoRows {
-		return nil, errors.NotFound(err, errors.WithMsg("账号不存在"))
+		return nil, errors.NotFound("账号不存在").With(err)
 	}
 
 	return account, err

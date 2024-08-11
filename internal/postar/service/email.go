@@ -6,7 +6,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
@@ -59,8 +58,7 @@ func (des *defaultEmailService) checkSpace(ctx context.Context) (spaceID int32, 
 	spaceToken := contextutil.GetSpaceToken(ctx)
 
 	if spaceID <= 0 {
-		err = errors.New("wrong space")
-		return 0, errors.BadRequest(err, errors.WithMsg("业务空间错误"))
+		return 0, errors.BadRequest("业务空间 %d <= 0", spaceID)
 	}
 
 	space, err := des.spaceStore.GetSpace(ctx, spaceID)
@@ -69,8 +67,7 @@ func (des *defaultEmailService) checkSpace(ctx context.Context) (spaceID int32, 
 	}
 
 	if !space.Enabled() {
-		err = errors.New("space not enabled")
-		return 0, errors.BadRequest(err, errors.WithMsg("业务空间未启用"))
+		return 0, errors.BadRequest("业务空间 (%d）%s 未启用", space.ID, space.Name)
 	}
 
 	decrypted, err := aes.Decrypt(des.conf.Crypto.AESKey, des.conf.Crypto.AESIV, space.Token)
@@ -81,8 +78,7 @@ func (des *defaultEmailService) checkSpace(ctx context.Context) (spaceID int32, 
 	space.Token = decrypted
 
 	if spaceToken != space.Token {
-		err = errors.New("wrong token")
-		return 0, errors.Forbidden(err, errors.WithMsg("业务空间的令牌错误"))
+		return 0, errors.Forbidden("业务空间 （%d）%s 的令牌错误", space.ID, space.Name)
 	}
 
 	return spaceID, nil
@@ -96,7 +92,7 @@ func (des *defaultEmailService) getTemplate(ctx context.Context, spaceID int32, 
 
 	if !template.Enabled() {
 		err = errors.New("template not enabled")
-		return nil, errors.BadRequest(err, errors.WithMsg("邮件模板未启用"))
+		return nil, errors.BadRequest("模板 (%d）%s 未启用", template.ID, template.Name)
 	}
 
 	return template, nil
@@ -110,7 +106,7 @@ func (des *defaultEmailService) getAccount(ctx context.Context, spaceID int32, a
 
 	if !account.Enabled() {
 		err = errors.New("account not enabled")
-		return nil, errors.BadRequest(err, errors.WithMsg("账号未启用"))
+		return nil, errors.BadRequest("账号 (%d）%s 未启用", account.ID, account.Username)
 	}
 
 	decrypted, err := aes.Decrypt(des.conf.Crypto.AESKey, des.conf.Crypto.AESIV, account.Password)
@@ -140,8 +136,7 @@ func (des *defaultEmailService) combineTemplateEmail(template *model.Template, e
 	templateEmail.To = append(templateEmail.To, email.To...)
 
 	if len(templateEmail.To) <= 0 {
-		err := fmt.Errorf("zero email to")
-		return nil, errors.BadRequest(err, errors.WithMsg("邮件收件人为空"))
+		return nil, errors.BadRequest("邮件收件人为空")
 	}
 
 	templateEmail.CC = append(templateEmail.CC, email.CC...)
@@ -218,7 +213,7 @@ func (des *defaultEmailService) sendEmail(ctx context.Context, email *model.Emai
 	}
 
 	if err = des.handleTemplateEmail(ctx, account, templateEmail); err != nil {
-		return errors.InternalServerError(err, errors.WithMsg(err.Error()))
+		return err
 	}
 
 	return nil

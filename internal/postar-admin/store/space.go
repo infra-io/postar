@@ -123,7 +123,7 @@ func (ss *SpaceStore) newSpace(row *stdsql.Row) (*model.Space, error) {
 
 	err := row.Scan(&space.ID, &space.Name, &space.Token, &space.State, &space.CreateTime, &space.UpdateTime)
 	if err == stdsql.ErrNoRows {
-		return nil, errors.NotFound(err, errors.WithMsg("业务空间不存在"))
+		return nil, errors.NotFound("业务空间不存在").With(err)
 	}
 
 	return space, err
