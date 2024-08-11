@@ -8,13 +8,23 @@ import (
 	"context"
 	"time"
 
+	"github.com/FishGoddess/errors"
 	"github.com/FishGoddess/logit"
 	"github.com/infra-io/postar/pkg/grpc/contextutil"
 	"github.com/infra-io/postar/pkg/runtime"
 	"github.com/infra-io/postar/pkg/trace"
 	"google.golang.org/grpc"
+	grpccodes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	grpcstatus "google.golang.org/grpc/status"
 )
+
+func newStatusError(err error) error {
+	code, msg := errors.CodeMessage(err, 500, "internal server error")
+	gcode := grpccodes.Code(code)
+
+	return grpcstatus.New(gcode, msg).Err()
+}
 
 func Interceptor(serviceName string, timeout time.Duration) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, serverInfo *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
@@ -48,7 +58,7 @@ func Interceptor(serviceName string, timeout time.Duration) grpc.UnaryServerInte
 			} else {
 				logger.Error("service method end", "err", err, "request", reqJson, "response", respJson, "cost", cost)
 
-				err = wrapStatus(err)
+				err = newStatusError(err)
 			}
 		}()
 

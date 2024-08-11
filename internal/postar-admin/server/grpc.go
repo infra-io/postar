@@ -123,7 +123,7 @@ func checkSpaceInterceptor(spaceService service.SpaceService) grpc.UnaryServerIn
 
 		if space.Token != spaceToken {
 			err = errors.New("wrong token")
-			return nil, errors.Forbidden(err, errors.WithMsg("业务空间的令牌错误"))
+			return nil, errors.Forbidden("业务空间 （%d）%s 的令牌错误", space.ID, space.Name)
 		}
 
 		return handler(ctx, req)

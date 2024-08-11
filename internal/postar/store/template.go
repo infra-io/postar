@@ -42,7 +42,7 @@ func (ts *TemplateStore) newTemplate(row *stdsql.Row) (*model.Template, error) {
 
 	err := row.Scan(&template.ID, &template.AccountID, &template.Name, &template.Email.Subject, &to, &cc, &bcc, &template.Email.ContentType, &template.Email.Content, &template.State)
 	if err == stdsql.ErrNoRows {
-		return nil, errors.NotFound(err, errors.WithMsg("模板不存在"))
+		return nil, errors.NotFound("模板不存在").With(err)
 	}
 
 	template.Email.To = decodeStrings(to)

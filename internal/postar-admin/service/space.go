@@ -6,7 +6,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
@@ -41,8 +40,7 @@ func NewSpaceService(conf *config.PostarAdminConfig, spaceStore SpaceStore) Spac
 
 func (dss *defaultSpaceService) checkCreateSpaceParams(space *model.Space) error {
 	if strings.TrimSpace(space.Name) == "" {
-		err := errors.New("trim space.Name == ''")
-		return errors.BadRequest(err, errors.WithMsg("空间名称不能为空"))
+		return errors.BadRequest("业务空间名称不能为空")
 	}
 
 	return nil
@@ -80,18 +78,15 @@ func (dss *defaultSpaceService) CreateSpace(ctx context.Context, space *model.Sp
 
 func (dss *defaultSpaceService) checkUpdateSpaceParams(space *model.Space) error {
 	if space.ID <= 0 {
-		err := fmt.Errorf("space.ID %d <= 0", space.ID)
-		return errors.BadRequest(err, errors.WithMsg("空间编号需要大于 0"))
+		return errors.BadRequest("业务空间编号需要大于 0")
 	}
 
 	if strings.TrimSpace(space.Name) == "" {
-		err := errors.New("trim space.Name == ''")
-		return errors.BadRequest(err, errors.WithMsg("空间名称不能为空"))
+		return errors.BadRequest("业务空间名称不能为空")
 	}
 
 	if space.State > 0 && !space.State.Valid() {
-		err := fmt.Errorf("space.State %d not valid", space.State)
-		return errors.BadRequest(err, errors.WithMsg("账号状态无效"))
+		return errors.BadRequest("业务空间状态 %d 无效", space.State)
 	}
 
 	return nil
@@ -118,8 +113,7 @@ func (dss *defaultSpaceService) UpdateSpace(ctx context.Context, space *model.Sp
 
 func (dss *defaultSpaceService) checkGetSpaceParams(spaceID int32) error {
 	if spaceID <= 0 {
-		err := fmt.Errorf("spaceID %d <= 0", spaceID)
-		return errors.BadRequest(err, errors.WithMsg("空间编号非法"))
+		return errors.BadRequest("业务空间编号需要大于 0")
 	}
 
 	return nil
@@ -156,18 +150,15 @@ func (dss *defaultSpaceService) GetSpace(ctx context.Context, spaceID int32, wit
 
 func (dss *defaultSpaceService) checkListSpacesParams(pageSize int32, filter *model.ListSpacesFilter) error {
 	if pageSize < minPageSize || pageSize > maxPageSize {
-		err := fmt.Errorf("pageSize %d not in [%d, %d]", pageSize, minPageSize, maxPageSize)
-		return errors.BadRequest(err, errors.WithMsg("分页大小需要位于区间 [%d, %d] 内", minPageSize, maxPageSize))
+		return errors.BadRequest("分页大小 %d 需要位于区间 [%d, %d] 内", pageSize, minPageSize, maxPageSize)
 	}
 
 	if filter.SpaceID < 0 {
-		err := fmt.Errorf("filter.SpaceID %d < 0", filter.SpaceID)
-		return errors.BadRequest(err, errors.WithMsg("过滤的空间编号非法"))
+		return errors.BadRequest("业务空间编号不能为负数")
 	}
 
 	if filter.SpaceState > 0 && !filter.SpaceState.Valid() {
-		err := fmt.Errorf("filter.SpaceState %d not valid", filter.SpaceState)
-		return errors.BadRequest(err, errors.WithMsg("过滤的空间状态非法"))
+		return errors.BadRequest("业务空间状态 %d 无效", filter.SpaceState)
 	}
 
 	return nil
